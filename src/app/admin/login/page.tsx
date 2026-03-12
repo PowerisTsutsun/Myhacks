@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { LoginForm } from "@/components/forms/LoginForm";
 
 export const metadata: Metadata = {
@@ -46,12 +45,6 @@ export default function AdminLoginPage() {
           <p className="text-white/40 text-sm mb-6">For organizers and staff only.</p>
           <LoginForm />
 
-          <p className="text-center text-white/30 text-sm mt-6">
-            No account?{" "}
-            <Link href="/admin/signup" className="text-laser-400 hover:text-laser-300 transition-colors">
-              Create one
-            </Link>
-          </p>
         </div>
 
         <p className="text-center text-white/20 text-xs mt-6">
