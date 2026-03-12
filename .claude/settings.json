@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /F /PID 52256 /PID 32816 /PID 42916 /PID 44112 /PID 50292)",
+      "Bash(taskkill //F //PID 52256)",
+      "Bash(taskkill //F //PID 32816)",
+      "Bash(taskkill //F //PID 42916)",
+      "Bash(taskkill //F //PID 44112)",
+      "Bash(taskkill //F //PID 50292)",
+      "Bash(node -e \":*)",
+      "Bash(ls -la \"c:\\\\Users\\\\Valance\\\\Desktop\\\\ivc-laserhacks\\\\drizzle\"\" 2>/dev/null || echo \"No migrations yet \")",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); print\\(data[0][''''text'''']\\)\")",
+      "Bash(npx drizzle-kit:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/login -H \"Content-Type: application/json\" -d '{\"\"email\"\":\"\"admin@laserhacks.org\"\",\"\"password\"\":\"\"test\"\"}')",
+      "Bash(node -e \"require\\(''dotenv''\\).config\\({path:''.env.local''}\\); console.log\\(''RESEND_API_KEY set:'', !!process.env.RESEND_API_KEY\\)\")",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/login -H \"Content-Type: application/json\" -d \"{\"\"email\"\":\"\"admin@laserhacks.org\"\",\"\"password\"\":\"\"wrongpassword\"\"}\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Valance\\Desktop\\ivc-laserhacks\\src\\app\\api\\admin\\teams"
+    ]
+  }
+}

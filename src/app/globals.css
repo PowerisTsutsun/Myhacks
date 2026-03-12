@@ -1,0 +1,252 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    --font-geist-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-navy-950 text-white antialiased;
+    font-family: var(--font-geist-sans);
+  }
+
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-laser-400 rounded-sm;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Utility classes
+   --------------------------------------------------------------------------- */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* IVC blue gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-laser-400 to-laser-600 bg-clip-text text-transparent;
+  }
+
+  .gradient-text-gold {
+    @apply bg-gradient-to-r from-gold-400 to-gold-600 bg-clip-text text-transparent;
+  }
+
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24;
+  }
+
+  .container-narrow {
+    @apply max-w-4xl mx-auto;
+  }
+
+  /* Standardized dark page header used across About, Schedule, FAQ, Sponsors */
+  .page-header {
+    @apply bg-navy-900 py-16 sm:py-20 relative overflow-hidden;
+  }
+
+  .page-header-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(21,88,160,0.35) 0%, transparent 70%);
+  }
+
+  .page-header-content {
+    @apply relative max-w-4xl mx-auto px-4 sm:px-6 text-center;
+  }
+
+  .section-eyebrow {
+    @apply text-laser-400 font-semibold text-sm uppercase tracking-widest mb-3;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Decorative / animation helpers
+   --------------------------------------------------------------------------- */
+.laser-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(75, 159, 229, 0.6) 40%,
+    rgba(75, 159, 229, 0.9) 50%,
+    rgba(75, 159, 229, 0.6) 60%,
+    transparent 100%
+  );
+  filter: blur(0.5px);
+  box-shadow: 0 0 6px rgba(75, 159, 229, 0.5), 0 0 12px rgba(75, 159, 229, 0.2);
+}
+
+.sparkle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.7), 0 0 8px rgba(75, 159, 229, 0.35);
+}
+
+.cloud-shape {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+/* ---------------------------------------------------------------------------
+   Cyber theme — global sweeping laser beams
+   --------------------------------------------------------------------------- */
+.cyber-beam {
+  position: absolute;
+  left: 0;
+  width: 55%;
+  height: 1.5px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--beam-rgb), 0.7) 30%,
+    rgba(var(--beam-rgb), 1) 50%,
+    rgba(var(--beam-rgb), 0.7) 70%,
+    transparent 100%
+  );
+  filter: blur(0.5px);
+  box-shadow:
+    0 0 6px rgba(var(--beam-rgb), 0.8),
+    0 0 16px rgba(var(--beam-rgb), 0.4),
+    0 0 32px rgba(var(--beam-rgb), 0.15);
+  transform: rotate(var(--beam-angle, -8deg)) translateX(-200%);
+  animation: laserSweep var(--beam-dur, 10s) linear infinite;
+  animation-delay: var(--beam-delay, 0s);
+}
+
+@keyframes laserSweep {
+  from {
+    transform: rotate(var(--beam-angle, -8deg)) translateX(-200%);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(var(--beam-angle, -8deg)) translateX(400%);
+    opacity: 0;
+  }
+}
+
+/* Light sweep across title text */
+@keyframes titleSweep {
+  0%, 85%, 100% { background-position: -200% center; }
+  40%            { background-position: 200% center; }
+}
+
+.title-sweep {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.12) 40%,
+    rgba(255,255,255,0.22) 50%,
+    rgba(255,255,255,0.12) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: titleSweep 5s ease-in-out infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ---------------------------------------------------------------------------
+   Neon laser rotating border card
+   --------------------------------------------------------------------------- */
+.laser-border-card {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.laser-border-card::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  width: 300%;
+  height: 300%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 310deg,
+    rgba(75, 159, 229, 0.5) 340deg,
+    rgba(147, 210, 255, 0.9) 355deg,
+    rgba(75, 159, 229, 0.5) 360deg
+  );
+  animation: laser-border-spin 2.5s linear infinite;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.laser-border-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes laser-border-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.laser-border-card-inner {
+  position: relative;
+  z-index: 1;
+  border-radius: calc(1rem - 1.5px);
+  margin: 1.5px;
+  height: calc(100% - 3px);
+}
+
+/* ---------------------------------------------------------------------------
+   Admin prose-style body content
+   --------------------------------------------------------------------------- */
+.prose-content p {
+  @apply mb-4 last:mb-0;
+}
+
+.prose-content strong {
+  @apply font-semibold;
+}
+
+.prose-content a {
+  @apply text-laser-600 underline;
+}
+.prose-content a:hover {
+  @apply text-laser-500;
+}
+
+/* ---------------------------------------------------------------------------
+   Form field focus ring
+   --------------------------------------------------------------------------- */
+.field-ring {
+  @apply border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900
+    focus:outline-none focus:ring-2 focus:ring-laser-400 focus:border-transparent
+    transition-colors placeholder:text-slate-400;
+}
