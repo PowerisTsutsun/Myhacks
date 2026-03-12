@@ -276,15 +276,13 @@ function TwoFactorSection({ enabled: initial }: { enabled: boolean }) {
               <p className="text-white/50 text-sm mt-2 mb-4">
                 Your account is protected. A verification code is sent to your email each time you log in.
               </p>
-              {step !== "disabling" && (
-                <Button
-                  variant="outline"
-                  onClick={() => { setStep("disabling"); setError(null); setSuccess(null); }}
-                  className="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/50"
-                >
-                  Disable Two-Factor Authentication
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                onClick={() => { setStep("disabling"); setError(null); setSuccess(null); }}
+                className="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/50"
+              >
+                Disable Two-Factor Authentication
+              </Button>
             </>
           )}
 
