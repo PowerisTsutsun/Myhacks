@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 
-export default function TwoFactorPage() {
+function TwoFactorPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("next") ?? "/register";
@@ -161,5 +161,13 @@ export default function TwoFactorPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function TwoFactorPage() {
+  return (
+    <Suspense>
+      <TwoFactorPageInner />
+    </Suspense>
   );
 }
