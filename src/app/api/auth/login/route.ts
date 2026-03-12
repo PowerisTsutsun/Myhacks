@@ -60,14 +60,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
 
-  // Require email verification before allowing login
-  if (!user.emailVerifiedAt) {
-    return NextResponse.json(
-      { error: "verify_email", message: "Please verify your email before logging in." },
-      { status: 403 }
-    );
-  }
-
   // ── 2FA disabled: issue session directly ────────────────────────────────
   if (!user.twoFactorEnabled) {
     const token = await createSession({
