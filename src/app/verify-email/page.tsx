@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function VerifyEmailPage() {
+function VerifyEmailPageInner() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [state, setState] = useState<"loading" | "success" | "error">("loading");
@@ -85,5 +85,13 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailPageInner />
+    </Suspense>
   );
 }
