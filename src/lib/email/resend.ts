@@ -12,7 +12,12 @@ function getResend(): Resend {
 }
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? "LaserHacks <noreply@laserhacks.org>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://laserhacks.org";
+function normalizeAppUrl(raw?: string): string {
+  if (!raw) return "https://laserhacks.org";
+  if (/^https?:\/\//i.test(raw)) return raw.replace(/\/$/, "");
+  return `https://${raw.replace(/\/$/, "")}`;
+}
+const APP_URL = normalizeAppUrl(process.env.NEXT_PUBLIC_APP_URL);
 
 export interface SendResult {
   ok: boolean;
