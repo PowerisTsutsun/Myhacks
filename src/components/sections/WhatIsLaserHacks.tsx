@@ -25,11 +25,6 @@ const HIGHLIGHTS = [
     title: "Build Real Things",
     desc: "24–36 hours to design, prototype, and present a project from scratch. You'll be surprised what you can build in a weekend.",
   },
-  {
-    icon: <GlobeIcon />,
-    title: "Real Community",
-    desc: "Meet students, alumni, and tech professionals at Irvine Valley College who share your passion for building and learning.",
-  },
 ];
 
 export function WhatIsLaserHacks() {

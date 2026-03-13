@@ -246,7 +246,7 @@
    Form field focus ring
    --------------------------------------------------------------------------- */
 .field-ring {
-  @apply border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900
+  @apply border border-slate-200 rounded-lg px-3 py-2 text-sm
     focus:outline-none focus:ring-2 focus:ring-laser-400 focus:border-transparent
-    transition-colors placeholder:text-slate-400;
+    transition-colors;
 }

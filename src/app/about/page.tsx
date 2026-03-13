@@ -47,6 +47,14 @@ export const metadata: Metadata = {
   description: "Learn about LaserHacks — IVC's beginner-friendly annual hackathon.",
 };
 
+function PinIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+    </svg>
+  );
+}
+
 export default async function AboutPage() {
   const config = await getSiteConfig();
 
@@ -156,6 +164,59 @@ export default async function AboutPage() {
               </p>
             )}
           </section>
+
+          {/* Location + Map */}
+          {(config.venue_name || config.venue_address) && (() => {
+            const address = config.venue_address || config.venue_name || "";
+            const encoded = encodeURIComponent(address);
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encoded}`;
+            const appleMapsUrl = `https://maps.apple.com/?q=${encoded}`;
+            const embedUrl = "https://www.openstreetmap.org/export/embed.html?bbox=-117.785%2C33.634%2C-117.755%2C33.664&layer=mapnik&marker=33.6492%2C-117.7701";
+            return (
+              <section>
+                <h2 className="text-2xl font-bold text-white mb-2">Location</h2>
+                {config.venue_name && <p className="text-white/70 font-medium">{config.venue_name}</p>}
+                {config.venue_address && <p className="text-white/40 text-sm mb-5">{config.venue_address}</p>}
+
+                <div
+                  className="rounded-2xl overflow-hidden mb-4"
+                  style={{ border: "1px solid rgba(75,159,229,0.2)" }}
+                >
+                  <iframe
+                    src={embedUrl}
+                    width="100%"
+                    height="320"
+                    style={{ border: 0, display: "block", filter: "invert(90%) hue-rotate(180deg) saturate(0.8)" }}
+                    loading="lazy"
+                    title="Event location map"
+                  />
+                </div>
+
+                <div className="flex gap-3 flex-wrap">
+                  <a
+                    href={googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white transition-colors"
+                    style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+                  >
+                    <PinIcon />
+                    Open in Google Maps
+                  </a>
+                  <a
+                    href={appleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white transition-colors"
+                    style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+                  >
+                    <PinIcon />
+                    Open in Apple Maps
+                  </a>
+                </div>
+              </section>
+            );
+          })()}
         </div>
       </main>
       <Footer config={config} />
