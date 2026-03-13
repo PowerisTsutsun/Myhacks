@@ -47,12 +47,18 @@ export async function POST(request: NextRequest) {
   if (existing) {
     // If unverified, resend verification email so they can complete signup
     if (!existing.emailVerifiedAt) {
+      await db
+        .update(emailVerificationTokens)
+        .set({ usedAt: new Date() })
+        .where(eq(emailVerificationTokens.userId, existing.id));
+
       const rawToken = generateToken();
       await db.insert(emailVerificationTokens).values({
         userId: existing.id,
         tokenHash: hashToken(rawToken),
         expiresAt: expiresInMinutes(EMAIL_TTL),
       });
+
       const result = await sendVerificationEmail({
         to: normalizedEmail,
         name: existing.name,
