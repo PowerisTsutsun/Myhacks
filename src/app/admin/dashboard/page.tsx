@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ActivityLog } from "./ActivityLog";
 import { db } from "@/lib/db";
 import {
   announcements,
@@ -150,68 +151,7 @@ export default async function DashboardOverviewPage() {
           </div>
         </div>
 
-        {/* Activity Log */}
-        <div
-          className="lg:col-span-2 rounded-2xl border p-5"
-          style={{
-            background: "linear-gradient(160deg, rgba(10,18,12,0.98) 0%, rgba(8,14,10,0.96) 100%)",
-            borderColor: "rgba(52,211,153,0.18)",
-          }}
-        >
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-emerald-300/70">Recent Activity</h2>
-
-          {activity.length === 0 ? (
-            <p className="text-sm text-semantic-text-muted py-4 text-center">No activity yet.</p>
-          ) : (
-            <div className="space-y-0 divide-y" style={{ borderColor: "rgba(52,211,153,0.08)" }}>
-              {activity.map((event, i) => (
-                <div key={i} className="flex items-center gap-3 py-2.5">
-                  {/* Icon dot */}
-                  <div
-                    className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
-                    style={{
-                      background: event.type === "registration" ? "rgba(52,211,153,0.12)" : "rgba(75,159,229,0.12)",
-                      border: `1px solid ${event.type === "registration" ? "rgba(52,211,153,0.25)" : "rgba(75,159,229,0.25)"}`,
-                    }}
-                  >
-                    {event.type === "registration" ? (
-                      <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                      </svg>
-                    ) : (
-                      <svg className="w-3.5 h-3.5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    )}
-                  </div>
-
-                  {/* Text */}
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm text-white/80 font-medium truncate">{event.name}</span>
-                    <span className="mx-1.5 text-white/20 text-xs">·</span>
-                    <span className="text-xs text-white/35 truncate">{event.email}</span>
-                  </div>
-
-                  {/* Badge + time */}
-                  <div className="shrink-0 flex items-center gap-2">
-                    <span
-                      className="text-xs font-medium px-1.5 py-0.5 rounded"
-                      style={{
-                        background: event.type === "registration" ? "rgba(52,211,153,0.12)" : "rgba(75,159,229,0.12)",
-                        color: event.type === "registration" ? "#6ee7b7" : "#93c5fd",
-                      }}
-                    >
-                      {event.type === "registration" ? "Registered" : "Account"}
-                    </span>
-                    <span className="text-xs text-white/25 tabular-nums">
-                      {event.at.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <ActivityLog events={activity} />
       </div>
     </div>
   );
