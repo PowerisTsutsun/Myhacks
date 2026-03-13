@@ -126,7 +126,7 @@ export async function sendContactNotificationEmail(opts: {
 }): Promise<SendResult> {
   return send({
     to: CONTACT_TO,
-    subject: `[LaserHacks Contact] ${opts.subject}`,
+    subject: `Contact: ${opts.subject}`,
     replyTo: `${opts.fromName} <${opts.fromEmail}>`,
     html: contactNotificationTemplate(opts),
     text: `New contact form submission from ${opts.fromName} <${opts.fromEmail}>\n\nSubject: ${opts.subject}\n\n${opts.message}`,
