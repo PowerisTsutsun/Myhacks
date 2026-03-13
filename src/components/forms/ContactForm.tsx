@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, type ContactFormData } from "@/lib/validations";
@@ -15,10 +15,26 @@ export function ContactForm() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
   });
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user) {
+          reset((prev) => ({
+            ...prev,
+            name: data.user.name ?? "",
+            email: data.user.email ?? "",
+          }));
+        }
+      })
+      .catch(() => {});
+  }, [reset]);
 
   async function onSubmit(data: ContactFormData) {
     setServerError(null);
