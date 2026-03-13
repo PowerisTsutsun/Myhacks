@@ -103,7 +103,7 @@ export default async function DashboardOverviewPage() {
           <Link
             key={stat.label}
             href={stat.href}
-            className="group relative rounded-2xl border p-6 transition-all hover:border-emerald-400/40 hover:bg-emerald-500/[0.04]"
+            className="group relative rounded-2xl border p-5 transition-all hover:border-emerald-400/40 hover:bg-emerald-500/[0.04]"
             style={{
               background: "linear-gradient(160deg, rgba(10,18,12,0.98) 0%, rgba(8,14,10,0.96) 100%)",
               borderColor: "rgba(52,211,153,0.18)",
@@ -120,9 +120,11 @@ export default async function DashboardOverviewPage() {
                 </span>
               )}
             </div>
-            <div className="mt-4">
-              <p className="text-4xl font-bold text-white tracking-tight">{stat.value}</p>
-              <p className="mt-1 text-sm text-semantic-text-muted group-hover:text-white/60 transition-colors">{stat.label}</p>
+            <div className="mt-5 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-4xl font-bold leading-none text-white tracking-tight">{stat.value}</p>
+                <p className="mt-2 text-sm text-semantic-text-muted group-hover:text-white/60 transition-colors">{stat.label}</p>
+              </div>
             </div>
           </Link>
         ))}
