@@ -48,7 +48,7 @@ export default function NotificationsPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Notifications</h1>
         <p className="mt-1 text-sm text-semantic-text-muted">
-          Send a custom email notification to all registered participants.
+          Send a custom email notification to all registered participants and any teammate emails entered during registration.
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export default function NotificationsPage() {
 
         <div className="flex items-center justify-between pt-1">
           <p className="text-xs text-semantic-text-muted">
-            This will be sent to every participant who has registered.
+            This will be sent to every registered participant plus any teammate email addresses that were added on registration forms.
           </p>
           <button
             type="submit"
@@ -131,7 +131,7 @@ export default function NotificationsPage() {
           >
             <h2 className="text-lg font-semibold text-white">Send notification?</h2>
             <p className="mt-2 text-sm text-semantic-text-secondary">
-              This email will be sent to all registered participants and cannot be undone.
+              This email will be sent to all registered participants and any added teammate emails. This cannot be undone.
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button

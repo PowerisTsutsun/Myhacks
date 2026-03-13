@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/guard";
 import { db } from "@/lib/db";
-import { registrations } from "@/lib/db/schema";
+import { registrations, teammateEntries } from "@/lib/db/schema";
 import { sendCustomNotificationEmail } from "@/lib/email/resend";
 import { z } from "zod";
 
@@ -28,9 +28,35 @@ export async function POST(request: NextRequest) {
 
   const { subject, body: messageBody } = parsed.data;
 
-  const rows = await db
-    .select({ email: registrations.email, fullName: registrations.fullName })
+  const registrationRows = await db
+    .select({ email: registrations.email, name: registrations.fullName })
     .from(registrations);
+
+  const teammateRows = await db
+    .select({
+      email: teammateEntries.teammateEmail,
+      firstName: teammateEntries.teammateFirstName,
+      lastName: teammateEntries.teammateLastName,
+    })
+    .from(teammateEntries);
+
+  const recipients = new Map<string, { email: string; name: string }>();
+
+  for (const row of registrationRows) {
+    const email = row.email.trim().toLowerCase();
+    if (!email) continue;
+    recipients.set(email, { email, name: row.name });
+  }
+
+  for (const row of teammateRows) {
+    const email = row.email?.trim().toLowerCase();
+    if (!email || recipients.has(email)) continue;
+
+    const name = [row.firstName?.trim(), row.lastName?.trim()].filter(Boolean).join(" ");
+    recipients.set(email, { email, name: name || "LaserHacks participant" });
+  }
+
+  const rows = Array.from(recipients.values());
 
   if (rows.length === 0) {
     return NextResponse.json({ ok: true, sent: 0 });
@@ -38,7 +64,7 @@ export async function POST(request: NextRequest) {
 
   const results = await Promise.allSettled(
     rows.map((r) =>
-      sendCustomNotificationEmail({ to: r.email, name: r.fullName, subject, body: messageBody })
+      sendCustomNotificationEmail({ to: r.email, name: r.name, subject, body: messageBody })
     )
   );
 
