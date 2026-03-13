@@ -53,9 +53,7 @@ export async function POST(request: NextRequest) {
         tokenHash: hashToken(rawToken),
         expiresAt: expiresInMinutes(EMAIL_TTL),
       });
-      sendVerificationEmail({ to: normalizedEmail, name: existing.name, token: rawToken }).catch(
-        (err) => console.error("[signup] re-verification email failed:", err)
-      );
+      await sendVerificationEmail({ to: normalizedEmail, name: existing.name, token: rawToken });
     }
     // Generic response to avoid user enumeration
     return NextResponse.json({ ok: true, requiresVerification: true });
@@ -76,10 +74,7 @@ export async function POST(request: NextRequest) {
       expiresAt: expiresInMinutes(EMAIL_TTL),
     });
 
-    // Fire-and-forget — signup succeeds even if email fails
-    sendVerificationEmail({ to: user.email, name: user.name, token: rawToken }).catch(
-      (err) => console.error("[signup] verification email failed:", err)
-    );
+    await sendVerificationEmail({ to: user.email, name: user.name, token: rawToken });
 
     return NextResponse.json({ ok: true, requiresVerification: true });
   } catch {
