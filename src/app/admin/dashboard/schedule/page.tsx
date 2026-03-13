@@ -9,8 +9,8 @@ export default async function AdminSchedulePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-navy-900 mb-1">Schedule</h1>
-      <p className="text-slate-500 text-sm mb-6">Manage event schedule days and items.</p>
+      <h1 className="text-2xl font-bold text-white mb-1">Schedule</h1>
+      <p className="text-slate-400 text-sm mb-6">Manage event schedule days and items.</p>
       <ScheduleManager initialDays={days} initialItems={items} />
     </div>
   );

@@ -11,11 +11,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   const id = parseInt(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
 
-  // Prevent admins from demoting themselves
-  if (String(id) === guard.session.sub) {
-    return NextResponse.json({ error: "You cannot change your own role." }, { status: 400 });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -23,23 +18,58 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const { role } = body as { role?: string };
-  if (!role || !["admin", "editor"].includes(role)) {
-    return NextResponse.json({ error: "Role must be 'admin' or 'editor'." }, { status: 400 });
+  const { role, twoFactorEnabled } = body as { role?: string; twoFactorEnabled?: boolean };
+
+  // Role change
+  if (role !== undefined) {
+    if (String(id) === guard.session.sub) {
+      return NextResponse.json({ error: "You cannot change your own role." }, { status: 400 });
+    }
+    if (!["admin", "editor"].includes(role)) {
+      return NextResponse.json({ error: "Role must be 'admin' or 'editor'." }, { status: 400 });
+    }
+
+    try {
+      const [row] = await db
+        .update(users)
+        .set({ role: role as "admin" | "editor", updatedAt: new Date() })
+        .where(eq(users.id, id))
+        .returning({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+          twoFactorEnabled: users.twoFactorEnabled,
+        });
+      if (!row) return NextResponse.json({ error: "User not found." }, { status: 404 });
+      return NextResponse.json(row);
+    } catch {
+      return NextResponse.json({ error: "Failed to update user." }, { status: 500 });
+    }
   }
 
-  try {
-    const [row] = await db
-      .update(users)
-      .set({ role: role as "admin" | "editor", updatedAt: new Date() })
-      .where(eq(users.id, id))
-      .returning({ id: users.id, name: users.name, email: users.email, role: users.role });
-
-    if (!row) return NextResponse.json({ error: "User not found." }, { status: 404 });
-    return NextResponse.json(row);
-  } catch {
-    return NextResponse.json({ error: "Failed to update user." }, { status: 500 });
+  // 2FA toggle (allowed for self too)
+  if (twoFactorEnabled !== undefined) {
+    try {
+      const [row] = await db
+        .update(users)
+        .set({ twoFactorEnabled, updatedAt: new Date() })
+        .where(eq(users.id, id))
+        .returning({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+          twoFactorEnabled: users.twoFactorEnabled,
+        });
+      if (!row) return NextResponse.json({ error: "User not found." }, { status: 404 });
+      return NextResponse.json(row);
+    } catch {
+      return NextResponse.json({ error: "Failed to update 2FA setting." }, { status: 500 });
+    }
   }
+
+  return NextResponse.json({ error: "Nothing to update." }, { status: 400 });
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {

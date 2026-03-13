@@ -1,0 +1,49 @@
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth/guard";
+import { db } from "@/lib/db";
+import { registrations } from "@/lib/db/schema";
+import { sendCustomNotificationEmail } from "@/lib/email/resend";
+import { z } from "zod";
+
+const schema = z.object({
+  subject: z.string().min(1).max(200),
+  body: z.string().min(1).max(10000),
+});
+
+export async function POST(request: NextRequest) {
+  const guard = await requireAdmin(request);
+  if (guard.response) return guard.response;
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.errors[0]?.message ?? "Invalid input" }, { status: 400 });
+  }
+
+  const { subject, body: messageBody } = parsed.data;
+
+  const rows = await db
+    .select({ email: registrations.email, fullName: registrations.fullName })
+    .from(registrations);
+
+  if (rows.length === 0) {
+    return NextResponse.json({ ok: true, sent: 0 });
+  }
+
+  const results = await Promise.allSettled(
+    rows.map((r) =>
+      sendCustomNotificationEmail({ to: r.email, name: r.fullName, subject, body: messageBody })
+    )
+  );
+
+  const sent = results.filter((r) => r.status === "fulfilled" && r.value.ok).length;
+  const failed = results.length - sent;
+
+  return NextResponse.json({ ok: true, sent, failed, total: rows.length });
+}

@@ -20,6 +20,7 @@ const NAV_ITEMS = [
   { href: "/admin/dashboard/media", label: "Media", icon: <MediaIcon /> },
   { href: "/admin/dashboard/registrations", label: "Registrations", icon: <RegistrationsIcon /> },
   { href: "/admin/dashboard/teams", label: "Teams", icon: <TeamsIcon /> },
+  { href: "/admin/dashboard/notifications", label: "Notifications", icon: <NotificationsIcon /> },
   { href: "/admin/dashboard/users", label: "Users", icon: <UsersIcon /> },
 ];
 
@@ -239,6 +240,15 @@ function UsersIcon() {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
       <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
       <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
+function NotificationsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <polyline points="22,6 12,13 2,6" />
     </svg>
   );
 }

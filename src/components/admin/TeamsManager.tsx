@@ -166,8 +166,8 @@ export function TeamsManager({ initialTeams, initialUnmatched, initialPending }:
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-navy-900">Teams</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-white">Teams</h1>
+          <p className="text-slate-400 text-sm mt-1">
             {initialTeams.length} team{initialTeams.length !== 1 ? "s" : ""} &bull;{" "}
             {initialUnmatched.length} unmatched participant{initialUnmatched.length !== 1 ? "s" : ""}
           </p>

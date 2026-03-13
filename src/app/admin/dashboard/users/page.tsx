@@ -7,6 +7,7 @@ interface User {
   name: string;
   email: string;
   role: "admin" | "editor";
+  twoFactorEnabled: boolean;
   createdAt: string;
 }
 
@@ -40,7 +41,23 @@ export default function UsersPage() {
       });
       const json = await res.json();
       if (!res.ok) { alert(json.error); return; }
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role } : u)));
+      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role: json.role } : u)));
+    } finally {
+      setUpdating(null);
+    }
+  }
+
+  async function toggle2FA(id: number, current: boolean) {
+    setUpdating(id);
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ twoFactorEnabled: !current }),
+      });
+      const json = await res.json();
+      if (!res.ok) { alert(json.error); return; }
+      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, twoFactorEnabled: json.twoFactorEnabled } : u)));
     } finally {
       setUpdating(null);
     }
@@ -62,14 +79,14 @@ export default function UsersPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-slate-900">Users</h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Manage accounts and roles. Admins have full write access; editors can view only.
+        <h1 className="text-xl font-bold text-white">Users</h1>
+        <p className="text-slate-400 text-sm mt-1">
+          Manage accounts, roles, and two-factor authentication.
         </p>
       </div>
 
-      {loading && <p className="text-slate-500 text-sm">Loading…</p>}
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {loading && <p className="text-slate-400 text-sm">Loading…</p>}
+      {error && <p className="text-red-400 text-sm">{error}</p>}
 
       {!loading && !error && (
         <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
@@ -79,6 +96,7 @@ export default function UsersPage() {
                 <th className="px-4 py-3 text-left">Name</th>
                 <th className="px-4 py-3 text-left">Email</th>
                 <th className="px-4 py-3 text-left">Role</th>
+                <th className="px-4 py-3 text-left">2FA</th>
                 <th className="px-4 py-3 text-left">Joined</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
@@ -98,6 +116,22 @@ export default function UsersPage() {
                     >
                       {user.role}
                     </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => toggle2FA(user.id, user.twoFactorEnabled)}
+                      disabled={updating === user.id}
+                      title={user.twoFactorEnabled ? "Disable 2FA" : "Enable 2FA"}
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors disabled:opacity-40 ${
+                        user.twoFactorEnabled ? "bg-laser-500" : "bg-slate-200"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                          user.twoFactorEnabled ? "translate-x-4.5" : "translate-x-0.5"
+                        }`}
+                      />
+                    </button>
                   </td>
                   <td className="px-4 py-3 text-slate-400 text-xs">
                     {new Date(user.createdAt).toLocaleDateString()}
@@ -134,7 +168,7 @@ export default function UsersPage() {
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
                     No users found.
                   </td>
                 </tr>

@@ -24,6 +24,7 @@ async function send(opts: {
   subject: string;
   html: string;
   text: string;
+  replyTo?: string;
 }): Promise<SendResult> {
   try {
     const { error } = await getResend().emails.send({
@@ -32,6 +33,7 @@ async function send(opts: {
       subject: opts.subject,
       html: opts.html,
       text: opts.text,
+      ...(opts.replyTo ? { replyTo: opts.replyTo } : {}),
     });
     if (error) {
       console.error("[email] send error:", error);
@@ -108,6 +110,43 @@ export async function sendPasswordResetEmail(opts: {
     subject: "Reset your LaserHacks password",
     html: passwordResetTemplate({ name: opts.name, url }),
     text: `Hi ${opts.name},\n\nReset your LaserHacks password by visiting:\n${url}\n\nThis link expires in 1 hour. If you didn't request this, ignore this email.\n\n— LaserHacks Team`,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Email: Contact form notification (sent to team inbox)
+// ---------------------------------------------------------------------------
+const CONTACT_TO = process.env.CONTACT_EMAIL ?? "contact@laserhack.org";
+
+export async function sendContactNotificationEmail(opts: {
+  fromName: string;
+  fromEmail: string;
+  subject: string;
+  message: string;
+}): Promise<SendResult> {
+  return send({
+    to: CONTACT_TO,
+    subject: `[LaserHacks Contact] ${opts.subject}`,
+    replyTo: `${opts.fromName} <${opts.fromEmail}>`,
+    html: contactNotificationTemplate(opts),
+    text: `New contact form submission from ${opts.fromName} <${opts.fromEmail}>\n\nSubject: ${opts.subject}\n\n${opts.message}`,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Email: Custom notification (admin broadcast)
+// ---------------------------------------------------------------------------
+export async function sendCustomNotificationEmail(opts: {
+  to: string;
+  name: string;
+  subject: string;
+  body: string;
+}): Promise<SendResult> {
+  return send({
+    to: opts.to,
+    subject: opts.subject,
+    html: customNotificationTemplate({ name: opts.name, body: opts.body }),
+    text: `Hi ${opts.name},\n\n${opts.body}\n\n— LaserHacks Team`,
   });
 }
 
@@ -258,5 +297,41 @@ function passwordResetTemplate({ name, url }: { name: string; url: string }): st
     <p style="margin:12px 0 0;font-size:12px;color:#cbd5e1;word-break:break-all;">
       Or copy this link: ${url}
     </p>
+  `);
+}
+
+function customNotificationTemplate({ name, body }: { name: string; body: string }): string {
+  const escaped = body
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+  return wrap(`
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;">Hi ${name},</p>
+    <div style="color:#475569;line-height:1.7;">${escaped}</div>
+    <p style="margin:24px 0 0;color:#475569;">— The LaserHacks Team</p>
+  `);
+}
+
+function contactNotificationTemplate(opts: {
+  fromName: string;
+  fromEmail: string;
+  subject: string;
+  message: string;
+}): string {
+  const escaped = opts.message
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+  return wrap(`
+    <h1 style="margin:0 0 16px;font-size:20px;font-weight:700;color:#0d1b2a;">New Contact Form Submission</h1>
+    <div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;margin-bottom:20px;">
+      <p style="margin:0 0 6px;font-size:13px;color:#475569;"><strong>From:</strong> ${opts.fromName} &lt;${opts.fromEmail}&gt;</p>
+      <p style="margin:0;font-size:13px;color:#475569;"><strong>Subject:</strong> ${opts.subject}</p>
+    </div>
+    <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#1a2744;">Message:</p>
+    <div style="color:#475569;line-height:1.7;font-size:14px;">${escaped}</div>
+    <p style="margin:20px 0 0;font-size:12px;color:#94a3b8;">Reply directly to this email to respond to ${opts.fromName}.</p>
   `);
 }
