@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { contactSubmissions } from "@/lib/db/schema";
 import { inArray } from "drizzle-orm";
@@ -12,5 +13,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 
   await db.delete(contactSubmissions).where(inArray(contactSubmissions.id, parsed.data.ids));
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/dashboard/contact");
   return NextResponse.json({ ok: true });
 }

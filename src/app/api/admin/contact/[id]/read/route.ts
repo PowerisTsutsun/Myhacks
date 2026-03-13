@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { contactSubmissions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -15,5 +16,7 @@ export async function POST(
     .set({ isRead: true })
     .where(eq(contactSubmissions.id, id));
 
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/dashboard/contact");
   return NextResponse.json({ ok: true });
 }

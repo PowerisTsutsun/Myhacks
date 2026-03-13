@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Message = {
   id: number;
@@ -22,11 +23,17 @@ function formatDate(d: Date) {
 }
 
 export function ContactClient({ initialMessages }: { initialMessages: Message[] }) {
+  const router = useRouter();
   const [messages, setMessages] = useState(initialMessages);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [search, setSearch] = useState("");
   const [modal, setModal] = useState<ConfirmModal>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setMessages(initialMessages);
+    setSelected(new Set());
+  }, [initialMessages]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -66,21 +73,27 @@ export function ContactClient({ initialMessages }: { initialMessages: Message[] 
     }
   }
 
-  function markRead(id: number) {
-    // Optimistic update — DB write fires in background, no refresh needed
+  async function markRead(id: number) {
     setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, isRead: true } : m)));
-    fetch(`/api/admin/contact/${id}/read`, { method: "POST" });
+    const res = await fetch(`/api/admin/contact/${id}/read`, { method: "POST" });
+    if (!res.ok) {
+      setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, isRead: false } : m)));
+      return;
+    }
+    router.refresh();
   }
 
   async function confirmDelete() {
     if (!modal) return;
     setLoading(true);
     try {
+      let success = false;
       if (modal.type === "single") {
         const res = await fetch(`/api/admin/contact/${modal.id}`, { method: "DELETE" });
         if (res.ok) {
           setMessages((prev) => prev.filter((m) => m.id !== modal.id));
           setSelected((prev) => { const n = new Set(prev); n.delete(modal.id); return n; });
+          success = true;
         }
       } else {
         const res = await fetch("/api/admin/contact/batch-delete", {
@@ -92,8 +105,10 @@ export function ContactClient({ initialMessages }: { initialMessages: Message[] 
           const deleted = new Set(modal.ids);
           setMessages((prev) => prev.filter((m) => !deleted.has(m.id)));
           setSelected(new Set());
+          success = true;
         }
       }
+      if (success) router.refresh();
     } finally {
       setLoading(false);
       setModal(null);
