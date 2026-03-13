@@ -39,12 +39,24 @@ export async function POST(request: NextRequest) {
   const normalizedEmail = email.toLowerCase();
 
   const [existing] = await db
-    .select({ id: users.id })
+    .select({ id: users.id, name: users.name, emailVerifiedAt: users.emailVerifiedAt })
     .from(users)
     .where(eq(users.email, normalizedEmail))
     .limit(1);
 
   if (existing) {
+    // If unverified, resend verification email so they can complete signup
+    if (!existing.emailVerifiedAt) {
+      const rawToken = generateToken();
+      await db.insert(emailVerificationTokens).values({
+        userId: existing.id,
+        tokenHash: hashToken(rawToken),
+        expiresAt: expiresInMinutes(EMAIL_TTL),
+      });
+      sendVerificationEmail({ to: normalizedEmail, name: existing.name, token: rawToken }).catch(
+        (err) => console.error("[signup] re-verification email failed:", err)
+      );
+    }
     // Generic response to avoid user enumeration
     return NextResponse.json({ ok: true, requiresVerification: true });
   }
