@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 
 type Message = {
   id: number;
@@ -23,7 +22,6 @@ function formatDate(d: Date) {
 }
 
 export function ContactClient({ initialMessages }: { initialMessages: Message[] }) {
-  const router = useRouter();
   const [messages, setMessages] = useState(initialMessages);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [search, setSearch] = useState("");
@@ -79,23 +77,26 @@ export function ContactClient({ initialMessages }: { initialMessages: Message[] 
     setLoading(true);
     try {
       if (modal.type === "single") {
-        await fetch(`/api/admin/contact/${modal.id}`, { method: "DELETE" });
-        setMessages((prev) => prev.filter((m) => m.id !== modal.id));
-        setSelected((prev) => { const n = new Set(prev); n.delete(modal.id); return n; });
+        const res = await fetch(`/api/admin/contact/${modal.id}`, { method: "DELETE" });
+        if (res.ok) {
+          setMessages((prev) => prev.filter((m) => m.id !== modal.id));
+          setSelected((prev) => { const n = new Set(prev); n.delete(modal.id); return n; });
+        }
       } else {
-        await fetch("/api/admin/contact/batch-delete", {
+        const res = await fetch("/api/admin/contact/batch-delete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ids: modal.ids }),
         });
-        const deleted = new Set(modal.ids);
-        setMessages((prev) => prev.filter((m) => !deleted.has(m.id)));
-        setSelected(new Set());
+        if (res.ok) {
+          const deleted = new Set(modal.ids);
+          setMessages((prev) => prev.filter((m) => !deleted.has(m.id)));
+          setSelected(new Set());
+        }
       }
     } finally {
       setLoading(false);
       setModal(null);
-      router.refresh();
     }
   }
 
