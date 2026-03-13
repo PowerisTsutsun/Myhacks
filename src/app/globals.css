@@ -188,6 +188,17 @@
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.8), 0 0 8px rgba(77, 166, 255, 0.4);
 }
 
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.28;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
 .cloud-shape {
   position: absolute;
   background: rgba(255, 255, 255, 0.06);
@@ -198,6 +209,133 @@
 /* ---------------------------------------------------------------------------
    Cyber theme — global sweeping laser beams
    --------------------------------------------------------------------------- */
+.hero-stage {
+  position: relative;
+  padding: clamp(2rem, 5vw, 3.75rem) clamp(1rem, 3vw, 2rem);
+}
+
+.hero-stage::before {
+  content: "";
+  position: absolute;
+  inset: 5% 8% 7%;
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(9, 23, 43, 0.58), rgba(5, 12, 24, 0.16)),
+    radial-gradient(circle at 50% 0%, rgba(var(--laser-rgb), 0.14), transparent 62%);
+  border: 1px solid rgba(125, 180, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 30px 120px rgba(1, 7, 17, 0.28);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.hero-badge {
+  backdrop-filter: blur(12px);
+}
+
+.hero-title {
+  text-shadow:
+    0 0 18px rgba(255, 255, 255, 0.08),
+    0 0 42px rgba(var(--laser-rgb), 0.18);
+}
+
+.hero-title::before {
+  content: "";
+  position: absolute;
+  inset: -18% -10%;
+  background: radial-gradient(circle at 50% 48%, rgba(var(--laser-rgb), 0.18), transparent 60%);
+  filter: blur(24px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero-title-accent::after {
+  content: "";
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  top: 42%;
+  height: 22%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  filter: blur(8px);
+  opacity: 0.6;
+  animation: titleBeamPulse 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hero-meta {
+  text-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
+}
+
+.hero-primary-cta {
+  box-shadow:
+    0 12px 32px rgba(77, 163, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.hero-secondary-cta {
+  backdrop-filter: blur(10px);
+  background: rgba(7, 15, 28, 0.26);
+}
+
+.laser-grid {
+  opacity: 0.14;
+  background-image:
+    linear-gradient(rgba(109, 172, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(109, 172, 255, 0.16) 1px, transparent 1px),
+    radial-gradient(circle at 20% 24%, rgba(153, 214, 255, 0.22) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 72% 58%, rgba(153, 214, 255, 0.2) 0 1px, transparent 1.5px);
+  background-size: 72px 72px, 72px 72px, 240px 240px, 280px 280px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.35));
+}
+
+.laser-center-haze {
+  background:
+    radial-gradient(ellipse 54% 38% at 50% 28%, rgba(77, 163, 255, 0.18) 0%, rgba(77, 163, 255, 0.08) 32%, transparent 72%),
+    radial-gradient(ellipse 28% 22% at 50% 34%, rgba(101, 230, 255, 0.1) 0%, transparent 70%);
+  filter: blur(14px);
+  animation: hazeBreath 12s ease-in-out infinite;
+}
+
+.laser-vignette {
+  background:
+    radial-gradient(circle at 50% 34%, transparent 0%, rgba(3, 8, 17, 0.06) 42%, rgba(2, 5, 12, 0.52) 100%),
+    linear-gradient(90deg, rgba(2, 5, 12, 0.52) 0%, transparent 18%, transparent 82%, rgba(2, 5, 12, 0.56) 100%);
+}
+
+.laser-depth-back {
+  transform: translate3d(0, 0, 0);
+  animation: layerFloatBack 20s ease-in-out infinite;
+}
+
+.laser-depth-mid {
+  transform: translate3d(0, 0, 0);
+  animation: layerFloatMid 16s ease-in-out infinite;
+}
+
+.laser-depth-front {
+  transform: translate3d(0, 0, 0);
+  animation: layerFloatFront 14s ease-in-out infinite;
+}
+
+.laser-beam {
+  position: absolute;
+  height: var(--beam-core, 1.5px);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--beam-rgb), 0) 0%,
+    rgba(var(--beam-rgb), 0.52) 16%,
+    rgba(255, 255, 255, 0.92) 48%,
+    rgba(var(--beam-rgb), 0.68) 68%,
+    transparent 100%
+  );
+  transform: rotate(var(--beam-angle, -8deg)) translate3d(calc(var(--beam-travel, 140%) * -1), 0, 0);
+  animation: laserTraverse var(--beam-duration, 12s) linear infinite;
+  animation-delay: var(--beam-delay, 0s);
+  will-change: transform, opacity;
+}
+
 .cyber-beam {
   position: absolute;
   left: 0;
@@ -207,11 +345,10 @@
     90deg,
     transparent 0%,
     rgba(var(--beam-rgb), 0.7) 30%,
-    rgba(var(--beam-rgb), 1) 50%,
+    rgba(255, 255, 255, 0.92) 50%,
     rgba(var(--beam-rgb), 0.7) 70%,
     transparent 100%
   );
-  filter: blur(0.5px);
   box-shadow:
     0 0 6px rgba(var(--beam-rgb), 0.8),
     0 0 16px rgba(var(--beam-rgb), 0.4),
@@ -219,6 +356,93 @@
   transform: rotate(var(--beam-angle, -8deg)) translateX(-200%);
   animation: laserSweep var(--beam-dur, 10s) linear infinite;
   animation-delay: var(--beam-delay, 0s);
+}
+
+.laser-beam-primary {
+  box-shadow:
+    0 0 8px rgba(var(--beam-rgb), 0.85),
+    0 0 20px rgba(var(--beam-rgb), 0.28),
+    0 0 44px rgba(var(--beam-rgb), 0.14);
+}
+
+.laser-beam-atmospheric {
+  mix-blend-mode: screen;
+  box-shadow:
+    0 0 20px rgba(var(--beam-rgb), 0.26),
+    0 0 42px rgba(var(--beam-rgb), 0.14),
+    0 0 90px rgba(var(--beam-rgb), 0.08);
+}
+
+.laser-beam-micro {
+  box-shadow:
+    0 0 8px rgba(var(--beam-rgb), 0.5),
+    0 0 18px rgba(var(--beam-rgb), 0.14);
+}
+
+.laser-emitter {
+  position: absolute;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.72) 0 4%, var(--emitter-glow) 18%, transparent 70%);
+  filter: blur(8px);
+}
+
+.laser-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.42) 0%, rgba(121, 187, 255, 0.18) 28%, transparent 68%);
+  mix-blend-mode: screen;
+  animation: hotspotPulse 7s ease-in-out infinite;
+}
+
+.laser-hotspot::before,
+.laser-hotspot::after {
+  content: "";
+  position: absolute;
+  inset: 42%;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 10px rgba(125, 190, 255, 0.48);
+}
+
+.laser-hotspot::after {
+  inset: 30%;
+  background: transparent;
+  border: 1px solid rgba(125, 190, 255, 0.22);
+  box-shadow: none;
+}
+
+.laser-dust-field {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.22) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 34% 68%, rgba(101, 230, 255, 0.18) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.18) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 82% 64%, rgba(77, 163, 255, 0.16) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 58% 48%, rgba(255, 255, 255, 0.18) 0 0.8px, transparent 1.2px);
+  opacity: 0.42;
+  animation: dustDrift 18s linear infinite;
+}
+
+@keyframes laserTraverse {
+  from {
+    transform: rotate(var(--beam-angle, -8deg)) translate3d(calc(var(--beam-travel, 140%) * -1), 0, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(var(--beam-angle, -8deg)) translate3d(var(--beam-travel, 140%), 0, 0);
+    opacity: 0;
+  }
 }
 
 @keyframes laserSweep {
@@ -238,10 +462,79 @@
   }
 }
 
+@keyframes hazeBreath {
+  0%, 100% {
+    opacity: 0.72;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes hotspotPulse {
+  0%, 100% {
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes dustDrift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-2%, 1.5%, 0);
+  }
+}
+
+@keyframes layerFloatBack {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-1%, 1%, 0);
+  }
+}
+
+@keyframes layerFloatMid {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0.75%, -0.85%, 0);
+  }
+}
+
+@keyframes layerFloatFront {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(1.2%, -1%, 0);
+  }
+}
+
 /* Light sweep across title text */
 @keyframes titleSweep {
   0%, 85%, 100% { background-position: -200% center; }
   40%            { background-position: 200% center; }
+}
+
+@keyframes titleBeamPulse {
+  0%, 80%, 100% {
+    opacity: 0;
+    transform: translateX(-10%);
+  }
+  35% {
+    opacity: 0.72;
+    transform: translateX(8%);
+  }
 }
 
 .title-sweep {
@@ -257,6 +550,46 @@
   animation: titleSweep 5s ease-in-out infinite;
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+@media (max-width: 768px) {
+  .hero-stage {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .hero-stage::before {
+    inset: 8% 0 10%;
+    border-radius: 1.5rem;
+    backdrop-filter: blur(6px);
+  }
+
+  .laser-grid {
+    opacity: 0.1;
+    background-size: 88px 88px, 88px 88px, 260px 260px, 300px 300px;
+  }
+
+  .laser-depth-front {
+    opacity: 0.55;
+  }
+
+  .laser-dust-field {
+    opacity: 0.24;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laser-depth-back,
+  .laser-depth-mid,
+  .laser-depth-front,
+  .laser-center-haze,
+  .laser-dust-field,
+  .laser-hotspot,
+  .laser-beam,
+  .title-sweep,
+  .hero-title-accent::after {
+    animation: none !important;
+  }
 }
 
 /* ---------------------------------------------------------------------------
