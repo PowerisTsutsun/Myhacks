@@ -26,6 +26,8 @@ export default async function SettingsPage() {
       name: users.name,
       email: users.email,
       twoFactorEnabled: users.twoFactorEnabled,
+      totpEnabled: users.totpEnabled,
+      twoFactorMethod: users.twoFactorMethod,
       emailNotifications: users.emailNotifications,
     })
     .from(users)
