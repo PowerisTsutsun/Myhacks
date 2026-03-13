@@ -55,16 +55,24 @@ export function Hero({ config }: HeroProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.08 }}
           >
-            <h1 className="hero-title relative mb-5 inline-block select-none text-[clamp(4rem,14vw,9.5rem)] font-black leading-none tracking-tight text-white">
-              <span className="relative">
-                Laser
-                <span
-                  className="title-sweep pointer-events-none absolute inset-0"
-                  aria-hidden
-                />
-              </span>
-              <span className="hero-title-accent relative text-laser-400">
-                Hacks
+            <h1 className="hero-title relative z-[2] mb-5 inline-block w-full max-w-[min(96vw,1200px)] select-none font-black leading-none tracking-tight">
+              <span className="hero-wordmark-shell" aria-label="LaserHacks">
+                <span className="hero-wordmark-trace hero-wordmark-trace-base" aria-hidden>
+                  <span className="hero-wordmark">
+                    <span className="hero-wordmark-laser">Laser</span>
+                    <span className="hero-wordmark-hacks">Hacks</span>
+                  </span>
+                </span>
+                <span className="hero-wordmark-trace hero-wordmark-trace-sweep" aria-hidden>
+                  <span className="hero-wordmark">
+                    <span className="hero-wordmark-laser">Laser</span>
+                    <span className="hero-wordmark-hacks">Hacks</span>
+                  </span>
+                </span>
+                <span className="hero-wordmark">
+                  <span className="hero-wordmark-laser">Laser</span>
+                  <span className="hero-wordmark-hacks">Hacks</span>
+                </span>
               </span>
             </h1>
           </motion.div>

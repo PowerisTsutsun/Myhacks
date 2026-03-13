@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
+const SYSTEM_ADMIN_EMAIL = "admin@laserhack.org";
+
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const guard = await requireAdmin(request);
   if (guard.response) return guard.response;
@@ -84,6 +86,22 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   }
 
   try {
+    const [target] = await db
+      .select({ id: users.id, email: users.email })
+      .from(users)
+      .where(eq(users.id, id));
+
+    if (!target) {
+      return NextResponse.json({ error: "User not found." }, { status: 404 });
+    }
+
+    if (target.email.toLowerCase() === SYSTEM_ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: "The system admin account cannot be deleted." },
+        { status: 403 }
+      );
+    }
+
     await db.delete(users).where(eq(users.id, id));
     return NextResponse.json({ ok: true });
   } catch {

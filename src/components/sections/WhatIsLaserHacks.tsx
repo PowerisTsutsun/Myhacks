@@ -121,7 +121,7 @@ export function WhatIsLaserHacks() {
               loading="lazy"
               title="Irvine Valley College location"
             />
-            <div className="flex gap-3 px-4 py-3" style={{ background: "linear-gradient(180deg, rgba(8,20,37,0.98), rgba(6,16,30,0.98))", borderTop: "1px solid rgba(95,170,255,0.16)" }}>
+            <div className="flex flex-wrap justify-center sm:justify-start gap-3 px-4 py-3" style={{ background: "linear-gradient(180deg, rgba(8,20,37,0.98), rgba(6,16,30,0.98))", borderTop: "1px solid rgba(95,170,255,0.16)" }}>
               <a
                 href="https://www.google.com/maps/search/?api=1&query=5500+Irvine+Center+Dr%2C+Irvine%2C+CA+92618"
                 target="_blank"
@@ -155,7 +155,7 @@ export function WhatIsLaserHacks() {
           className="flex flex-col sm:flex-row items-center justify-center gap-3"
         >
           <Button asChild size="lg" variant="primary">
-            <Link href="/register">Register for Free</Link>
+            <Link href="/register">Register</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="border-white/20 text-white/80 hover:bg-white/8 hover:border-white/35 hover:text-white">
             <Link href="/#about">Learn More</Link>

@@ -11,6 +11,8 @@ interface User {
   createdAt: string;
 }
 
+const SYSTEM_ADMIN_EMAIL = "admin@laserhack.org";
+
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -152,6 +154,11 @@ export default function UsersPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
+                      {(() => {
+                        const isSystemAdmin = user.email.toLowerCase() === SYSTEM_ADMIN_EMAIL;
+
+                        return (
+                          <>
                       {user.role === "editor" ? (
                         <button
                           onClick={() => updateRole(user.id, "admin")}
@@ -171,11 +178,15 @@ export default function UsersPage() {
                       )}
                       <button
                         onClick={() => deleteUser(user.id, user.name)}
-                        disabled={updating === user.id}
-                        className="text-xs font-medium text-red-400 hover:text-red-300 disabled:opacity-40"
+                        disabled={updating === user.id || isSystemAdmin}
+                        title={isSystemAdmin ? "System admin cannot be deleted." : "Delete user"}
+                        className="text-xs font-medium text-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        Delete
+                        {isSystemAdmin ? "Protected" : "Delete"}
                       </button>
+                          </>
+                        );
+                      })()}
                     </div>
                   </td>
                 </tr>
