@@ -127,7 +127,7 @@ export async function sendContactNotificationEmail(opts: {
   return send({
     to: CONTACT_TO,
     subject: `New contact form message from ${opts.fromName}`,
-    replyTo: `${opts.fromName} <${opts.fromEmail}>`,
+    replyTo: opts.fromEmail,
     html: contactNotificationTemplate(opts),
     text: `New contact form submission from ${opts.fromName} <${opts.fromEmail}>\n\nSubject: ${opts.subject}\n\n${opts.message}`,
   });
