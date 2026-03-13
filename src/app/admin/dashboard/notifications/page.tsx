@@ -6,14 +6,13 @@ export default function NotificationsPage() {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [result, setResult] = useState<{ sent: number; failed: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSend(e: React.FormEvent) {
-    e.preventDefault();
-    if (!confirm("Send this email to all registered participants? This cannot be undone.")) return;
-
+  async function sendNotifications() {
     setSending(true);
+    setConfirmOpen(false);
     setResult(null);
     setError(null);
 
@@ -36,6 +35,12 @@ export default function NotificationsPage() {
     } finally {
       setSending(false);
     }
+  }
+
+  function handleSend(e: React.FormEvent) {
+    e.preventDefault();
+    if (sending || !subject.trim() || !body.trim()) return;
+    setConfirmOpen(true);
   }
 
   return (
@@ -113,6 +118,40 @@ export default function NotificationsPage() {
           </button>
         </div>
       </form>
+
+      {confirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+          <div
+            className="w-full max-w-md rounded-2xl border p-6"
+            style={{
+              background: "linear-gradient(180deg, rgba(8,10,10,0.98) 0%, rgba(12,16,14,0.96) 100%)",
+              borderColor: "rgba(52,211,153,0.22)",
+              boxShadow: "0 24px 60px rgba(0, 0, 0, 0.55)",
+            }}
+          >
+            <h2 className="text-lg font-semibold text-white">Send notification?</h2>
+            <p className="mt-2 text-sm text-semantic-text-secondary">
+              This email will be sent to all registered participants and cannot be undone.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmOpen(false)}
+                className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-semantic-text-secondary transition-colors hover:bg-white/[0.04] hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={sendNotifications}
+                className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-400"
+              >
+                Confirm Send
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
