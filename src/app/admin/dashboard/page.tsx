@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ActivityLog } from "./ActivityLog";
+
+export const dynamic = "force-dynamic";
 import { db } from "@/lib/db";
 import {
   announcements,
