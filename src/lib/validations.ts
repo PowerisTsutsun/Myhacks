@@ -129,7 +129,7 @@ export const scheduleItemSchema = z.object({
 export const sponsorSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   tier: z.enum(["platinum", "gold", "silver", "bronze", "community"]),
-  logoUrl: z.string().url("Must be a valid URL").optional().nullable().or(z.literal("")),
+  logoUrl: z.union([z.string().url(), z.string().startsWith("/")]).optional().nullable().or(z.literal("")),
   websiteUrl: z.string().url("Must be a valid URL").optional().nullable().or(z.literal("")),
   description: z.string().optional().nullable(),
   sortOrder: z.number().int().default(0),
