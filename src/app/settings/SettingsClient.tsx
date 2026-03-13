@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -16,6 +17,8 @@ interface UserData {
 }
 
 export function SettingsClient({ user, allowEmailTwoFactor = true }: { user: UserData; allowEmailTwoFactor?: boolean }) {
+  const canDeleteAccount = user.email.toLowerCase() !== "admin@laserhack.org";
+
   return (
     <div className="space-y-6">
       {/* Profile (read-only) */}
@@ -40,6 +43,9 @@ export function SettingsClient({ user, allowEmailTwoFactor = true }: { user: Use
 
       {/* Notifications */}
       <NotificationsSection enabled={user.emailNotifications} />
+
+      {/* Danger Zone */}
+      <DeleteAccountSection canDeleteAccount={canDeleteAccount} />
     </div>
   );
 }
@@ -641,6 +647,74 @@ function NotificationsSection({ enabled: initial }: { enabled: boolean }) {
   );
 }
 
+function DeleteAccountSection({ canDeleteAccount }: { canDeleteAccount: boolean }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  async function handleDelete() {
+    if (!canDeleteAccount) return;
+    if (!confirm("Delete your account permanently? This cannot be undone.")) return;
+
+    setLoading(true);
+    setStatus(null);
+    try {
+      const res = await fetch("/api/account", { method: "DELETE" });
+      const json = await res.json();
+
+      if (!res.ok) {
+        setStatus({ ok: false, msg: json.error || "Failed to delete account." });
+        return;
+      }
+
+      router.replace("/");
+      router.refresh();
+    } catch {
+      setStatus({ ok: false, msg: "Network error. Please try again." });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Card>
+      <div className="flex items-center gap-2.5 mb-5">
+        <span className="text-red-400"><DangerIcon /></span>
+        <h2 className="font-semibold text-white text-base">Danger Zone</h2>
+      </div>
+
+      <div className="flex flex-col gap-4 rounded-xl border p-4" style={{ borderColor: "rgba(248,113,113,0.2)", background: "rgba(127,29,29,0.1)" }}>
+        <div>
+          <p className="text-sm font-medium text-white">Delete account</p>
+          <p className="mt-1 text-sm text-white/55">
+            Permanently remove your account and sign out of this session.
+          </p>
+        </div>
+
+        {status && <StatusBanner ok={status.ok} msg={status.msg} />}
+
+        {canDeleteAccount ? (
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              loading={loading}
+              onClick={handleDelete}
+              className="border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-red-400/60"
+            >
+              Delete Account
+            </Button>
+          </div>
+        ) : (
+          <p className="text-sm text-white/50">
+            This protected system admin account cannot be deleted from settings.
+          </p>
+        )}
+      </div>
+    </Card>
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /* Shared UI primitives                                                         */
 /* -------------------------------------------------------------------------- */
@@ -722,4 +796,7 @@ function ShieldIcon() {
 }
 function BellIcon() {
   return <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden><path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>;
+}
+function DangerIcon() {
+  return <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.82A1 1 0 003.76 18h16.48a1 1 0 00.87-1.5l-7.4-12.82a1 1 0 00-1.74 0z" /></svg>;
 }
