@@ -9,6 +9,7 @@ function TwoFactorPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("next") ?? "/register";
+  const isTotp = searchParams.get("method") === "totp";
 
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState<string | null>(null);
@@ -97,8 +98,10 @@ function TwoFactorPageInner() {
             Two-Step Verification
           </p>
           <h1 className="text-2xl font-bold text-white mb-2">Enter your code</h1>
-          <p className="text-white/40 text-sm">
-            We sent a 6-digit code to your email. It expires in 10 minutes.
+          <p className="text-white/55 text-sm">
+            {isTotp
+              ? "Enter the 6-digit code from your authenticator app."
+              : "We sent a 6-digit code to your email. It expires in 10 minutes."}
           </p>
         </div>
 
@@ -146,14 +149,20 @@ function TwoFactorPageInner() {
         </form>
 
         <div className="mt-6 text-center space-y-2">
-          <button
-            type="button"
-            onClick={handleResend}
-            disabled={resendLoading}
-            className="text-sm text-white/40 hover:text-white/60 transition-colors"
-          >
-            Didn&apos;t get a code?
-          </button>
+          {isTotp ? (
+            <p className="text-sm text-white/40">
+              Open Google Authenticator, Authy, or a similar app to get your code.
+            </p>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resendLoading}
+              className="text-sm text-white/40 hover:text-white/60 transition-colors"
+            >
+              Didn&apos;t get a code?
+            </button>
+          )}
           <br />
           <Link href="/login" className="text-sm text-laser-400 hover:text-laser-300 transition-colors">
             ← Back to log in

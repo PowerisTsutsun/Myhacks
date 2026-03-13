@@ -23,7 +23,10 @@ export function FeaturedMedia({ items }: FeaturedMediaProps) {
   if (items.length === 0) return null;
 
   return (
-    <section className="section-padding bg-slate-50">
+    <section
+      className="section-padding"
+      style={{ background: "rgba(9,24,41,0.9)", borderTop: "1px solid rgba(77,166,255,0.08)", borderBottom: "1px solid rgba(77,166,255,0.08)" }}
+    >
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -32,13 +35,13 @@ export function FeaturedMedia({ items }: FeaturedMediaProps) {
           transition={{ duration: 0.6 }}
           className="text-center mb-10"
         >
-          <p className="text-laser-500 font-semibold text-sm uppercase tracking-widest mb-2">
+          <p className="text-laser-400 font-semibold text-sm uppercase tracking-widest mb-2">
             Media
           </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-3">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
             See it in action
           </h2>
-          <p className="text-slate-500 max-w-xl mx-auto">
+          <p className="text-white/60 max-w-xl mx-auto">
             Photos, videos, and highlights from LaserHacks events.
           </p>
         </motion.div>
@@ -76,10 +79,11 @@ function MediaCard({ item, index }: { item: MediaItem; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-shadow border border-slate-100"
+      className="rounded-2xl overflow-hidden transition-all duration-200 hover:translate-y-[-2px]"
+      style={{ background: "rgba(15,34,64,0.9)", border: "1px solid rgba(77,166,255,0.14)" }}
     >
       {/* Media embed or thumbnail */}
-      <div className="relative aspect-video bg-slate-100">
+      <div className="relative aspect-video" style={{ background: "rgba(5,13,27,0.8)" }}>
         {ytEmbed ? (
           <iframe
             src={ytEmbed}
@@ -105,13 +109,13 @@ function MediaCard({ item, index }: { item: MediaItem; index: number }) {
       {/* Info */}
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-medium text-navy-900 text-sm line-clamp-2">{item.title}</h3>
+          <h3 className="font-medium text-white text-sm line-clamp-2">{item.title}</h3>
           {item.externalUrl && (
             <a
               href={item.externalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="shrink-0 text-laser-500 hover:text-laser-600 transition-colors"
+              className="shrink-0 text-laser-400 hover:text-laser-300 transition-colors"
               aria-label={`View ${item.title} externally`}
             >
               <ExternalIcon />
@@ -119,7 +123,7 @@ function MediaCard({ item, index }: { item: MediaItem; index: number }) {
           )}
         </div>
         {item.caption && (
-          <p className="text-slate-400 text-xs mt-1 line-clamp-2">{item.caption}</p>
+          <p className="text-white/50 text-xs mt-1 line-clamp-2">{item.caption}</p>
         )}
       </div>
     </motion.div>
@@ -128,8 +132,8 @@ function MediaCard({ item, index }: { item: MediaItem; index: number }) {
 
 function MediaPlaceholder({ type }: { type: string }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
-      <span className="text-slate-300">
+    <div className="absolute inset-0 flex items-center justify-center">
+      <span className="text-white/25">
         {type === "youtube" || type === "video" ? (
           <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
             <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>

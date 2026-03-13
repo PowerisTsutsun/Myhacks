@@ -102,7 +102,7 @@ function ExternalRegistration({
         </Button>
       ) : (
         <div
-          className="p-6 rounded-2xl text-white/50 text-sm"
+          className="p-6 rounded-2xl text-white/65 text-sm"
           style={{ background: "rgba(56,189,248,0.05)", border: "1px solid rgba(56,189,248,0.1)" }}
         >
           Registration link coming soon. Check back later or{" "}

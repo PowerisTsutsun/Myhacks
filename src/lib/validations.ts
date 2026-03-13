@@ -176,6 +176,7 @@ export const siteSettingsSchema = z.object({
   instagram_url: z.string().url().optional().nullable().or(z.literal("")),
   twitter_url: z.string().url().optional().nullable().or(z.literal("")),
   linkedin_url: z.string().url().optional().nullable().or(z.literal("")),
+  discord_url: z.string().url().optional().nullable().or(z.literal("")),
   contact_email: z.string().email().optional().nullable().or(z.literal("")),
 });
 

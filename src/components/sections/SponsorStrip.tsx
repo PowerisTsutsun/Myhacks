@@ -41,7 +41,7 @@ export function SponsorStrip({ sponsors }: SponsorStripProps) {
           transition={{ duration: 0.5 }}
           className="text-center mb-8"
         >
-          <p className="text-xs uppercase tracking-widest text-laser-400/60 mb-1">Powered by</p>
+          <p className="text-xs uppercase tracking-widest text-laser-400/85 mb-1">Powered by</p>
           <h2 className="text-2xl font-bold text-white">Our Sponsors</h2>
         </motion.div>
 
@@ -91,7 +91,7 @@ function SponsorLogo({ sponsor }: { sponsor: Sponsor }) {
       className="max-h-10 max-w-[140px] object-contain opacity-50 hover:opacity-90 transition-opacity filter brightness-0 invert"
     />
   ) : (
-    <span className="text-xl font-bold text-white/60 hover:text-white transition-colors px-4 py-2">
+    <span className="text-xl font-bold text-white/75 hover:text-white transition-colors px-4 py-2">
       {sponsor.name}
     </span>
   );

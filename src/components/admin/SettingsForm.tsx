@@ -36,6 +36,7 @@ export function SettingsForm({ initialValues }: SettingsFormProps) {
       instagram_url: initialValues.instagram_url || "",
       twitter_url: initialValues.twitter_url || "",
       linkedin_url: initialValues.linkedin_url || "",
+      discord_url: initialValues.discord_url || "",
       contact_email: initialValues.contact_email || "",
     },
   });
@@ -126,6 +127,7 @@ export function SettingsForm({ initialValues }: SettingsFormProps) {
         <Input dark label="Instagram URL" type="url" placeholder="https://instagram.com/..." error={errors.instagram_url?.message} {...register("instagram_url")} />
         <Input dark label="Twitter/X URL" type="url" placeholder="https://twitter.com/..." error={errors.twitter_url?.message} {...register("twitter_url")} />
         <Input dark label="LinkedIn URL" type="url" placeholder="https://linkedin.com/..." error={errors.linkedin_url?.message} {...register("linkedin_url")} />
+        <Input dark label="Discord URL" type="url" placeholder="https://discord.gg/..." error={errors.discord_url?.message} {...register("discord_url")} />
       </Section>
 
       <Button type="submit" loading={isSubmitting} size="lg" className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600">

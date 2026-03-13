@@ -31,7 +31,7 @@ export default function VerifyEmailPendingPage({
           )}
           .
         </p>
-        <p className="text-white/40 text-sm mb-8">
+        <p className="text-white/55 text-sm mb-8">
           Click the link in the email to activate your account. The link expires in 24 hours.
         </p>
         <p className="text-white/30 text-sm">
@@ -45,7 +45,7 @@ export default function VerifyEmailPendingPage({
         </p>
         <p className="text-white/20 text-xs mt-4">
           Already verified?{" "}
-          <Link href="/login" className="text-white/40 hover:text-white/60 transition-colors">
+          <Link href="/login" className="text-white/55 hover:text-white/60 transition-colors">
             Log in
           </Link>
         </p>

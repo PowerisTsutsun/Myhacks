@@ -15,6 +15,7 @@ export type SiteConfig = {
   instagram_url: string | null;
   twitter_url: string | null;
   linkedin_url: string | null;
+  discord_url: string | null;
   contact_email: string | null;
 };
 
@@ -31,6 +32,7 @@ const DEFAULTS: SiteConfig = {
   instagram_url: null,
   twitter_url: null,
   linkedin_url: null,
+  discord_url: null,
   contact_email: "contact@laserhack.org",
 };
 
@@ -52,6 +54,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
       instagram_url: map["instagram_url"] || null,
       twitter_url: map["twitter_url"] || null,
       linkedin_url: map["linkedin_url"] || null,
+      discord_url: map["discord_url"] || null,
       contact_email: map["contact_email"] || DEFAULTS.contact_email,
     };
   } catch {

@@ -79,7 +79,29 @@ export async function POST(request: NextRequest) {
     return response;
   }
 
-  // ── 2FA enabled: send email verification code ────────────────────────────
+  // ── 2FA enabled: determine method (TOTP takes priority over email) ───────
+  const tfaMethod = user.totpEnabled ? "totp" : "email";
+
+  if (tfaMethod === "totp") {
+    // TOTP: no email code needed — issue pending token and let user enter app code
+    const pendingToken = await new SignJWT({ sub: String(user.id), step: "2fa", method: "totp" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime(`${TFA_TTL}m`)
+      .sign(getJwtSecret());
+
+    const response = NextResponse.json({ ok: true, requires2FA: true, method: "totp" });
+    response.cookies.set("lh-2fa-pending", pendingToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: TFA_TTL * 60,
+      path: "/",
+    });
+    return response;
+  }
+
+  // ── Email 2FA: send verification code ────────────────────────────────────
   if (!checkRateLimit(`2fa-send:${user.id}`, 3, 5 * 60 * 1000)) {
     return NextResponse.json(
       { error: "Too many code requests. Please wait a few minutes." },
@@ -116,13 +138,13 @@ export async function POST(request: NextRequest) {
   }
 
   // Issue a short-lived "2FA pending" token so the /login/2fa step knows who we are
-  const pendingToken = await new SignJWT({ sub: String(user.id), step: "2fa" })
+  const pendingToken = await new SignJWT({ sub: String(user.id), step: "2fa", method: "email" })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${TFA_TTL}m`)
     .sign(getJwtSecret());
 
-  const response = NextResponse.json({ ok: true, requires2FA: true });
+  const response = NextResponse.json({ ok: true, requires2FA: true, method: "email" });
   response.cookies.set("lh-2fa-pending", pendingToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

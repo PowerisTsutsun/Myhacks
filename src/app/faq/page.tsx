@@ -35,7 +35,7 @@ export default async function FaqPage() {
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(37,99,235,0.2) 0%, transparent 70%)",
+              background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(22,98,172,0.38) 0%, transparent 70%)",
             }}
           />
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
@@ -53,13 +53,13 @@ export default async function FaqPage() {
           {items.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-4xl mb-4">🤔</div>
-              <p className="text-white/50">FAQ coming soon. Check back later!</p>
+              <p className="text-white/65">FAQ coming soon. Check back later!</p>
             </div>
           ) : categories.length > 1 ? (
             <div className="space-y-10">
               {categories.map((cat) => (
                 <section key={cat}>
-                  <h2 className="text-sm font-semibold uppercase tracking-widest text-white/40 mb-4 capitalize">
+                  <h2 className="text-sm font-semibold uppercase tracking-widest text-white/55 mb-4 capitalize">
                     {cat}
                   </h2>
                   <Accordion items={items.filter((i) => i.category === cat)} />
@@ -76,7 +76,7 @@ export default async function FaqPage() {
             style={{ background: "rgba(8,20,37,0.6)", border: "1px solid rgba(75,159,229,0.15)" }}
           >
             <p className="font-medium text-white mb-1">Still have questions?</p>
-            <p className="text-white/50 text-sm mb-3">
+            <p className="text-white/65 text-sm mb-3">
               We&apos;re happy to help.{" "}
               {config.contact_email ? (
                 <>

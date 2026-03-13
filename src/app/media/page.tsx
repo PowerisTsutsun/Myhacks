@@ -31,7 +31,7 @@ export default async function MediaPage() {
         <div className="bg-navy-900 py-16 sm:py-20 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(37,99,235,0.2) 0%, transparent 70%)" }}
+            style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(22,98,172,0.38) 0%, transparent 70%)" }}
           />
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <p className="text-laser-400 font-semibold text-sm uppercase tracking-widest mb-3">Media</p>
@@ -46,7 +46,7 @@ export default async function MediaPage() {
           {items.length === 0 ? (
             <div className="text-center py-20">
               <h2 className="text-xl font-semibold text-white mb-2">Media coming soon</h2>
-              <p className="text-white/50">Check back after the event for photos and highlights!</p>
+              <p className="text-white/65">Check back after the event for photos and highlights!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -119,7 +119,7 @@ function MediaCard({ item }: { item: (typeof mediaItems.$inferSelect) }) {
           )}
         </div>
         {item.caption && (
-          <p className="text-white/40 text-xs mt-1 line-clamp-2">{item.caption}</p>
+          <p className="text-white/55 text-xs mt-1 line-clamp-2">{item.caption}</p>
         )}
       </div>
     </article>

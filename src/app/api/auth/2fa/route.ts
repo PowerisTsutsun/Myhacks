@@ -5,6 +5,7 @@ import { users, twoFactorCodes } from "@/lib/db/schema";
 import { createSession, setSessionCookie } from "@/lib/auth/session";
 import { checkRateLimit } from "@/lib/utils";
 import { hashToken } from "@/lib/auth/tokens";
+import { verifyTotpCode } from "@/lib/auth/totp";
 import { z } from "zod";
 import { eq, and, gt, isNull } from "drizzle-orm";
 
@@ -24,20 +25,22 @@ export async function POST(request: NextRequest) {
   }
 
   let userId: number;
+  let method: string;
   try {
     const { payload } = await jwtVerify(pendingToken, getJwtSecret());
     if (payload.step !== "2fa" || !payload.sub) throw new Error("invalid step");
     userId = Number(payload.sub);
+    method = (payload.method as string) ?? "email";
   } catch {
     const res = NextResponse.json({ error: "Session expired. Please log in again." }, { status: 401 });
     res.cookies.delete("lh-2fa-pending");
     return res;
   }
 
-  // Rate limit verification attempts per user
+  // Rate limit verification attempts per user (covers both TOTP and email)
   if (!checkRateLimit(`2fa-verify:${userId}`, 5, 10 * 60 * 1000)) {
     return NextResponse.json(
-      { error: "Too many attempts. Please request a new code." },
+      { error: "Too many attempts. Please wait a few minutes." },
       { status: 429 }
     );
   }
@@ -55,10 +58,40 @@ export async function POST(request: NextRequest) {
   }
 
   const { code } = parsed.data;
-  const codeHash = hashToken(code);
   const now = new Date();
 
-  // Find the most recent unused, unexpired code for this user
+  // ── TOTP verification ─────────────────────────────────────────────────────
+  if (method === "totp") {
+    const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    if (!user || !user.totpSecret || !user.totpEnabled) {
+      return NextResponse.json({ error: "Authenticator app not configured. Please log in again." }, { status: 401 });
+    }
+
+    const valid = await verifyTotpCode(code, user.totpSecret);
+    if (!valid) {
+      return NextResponse.json({ error: "Incorrect code. Check your authenticator app and try again." }, { status: 401 });
+    }
+
+    const sessionToken = await createSession({
+      sub: String(user.id),
+      email: user.email,
+      name: user.name,
+      role: user.role as "admin" | "editor",
+    });
+
+    await setSessionCookie(sessionToken);
+
+    const response = NextResponse.json({
+      ok: true,
+      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+    });
+    response.cookies.delete("lh-2fa-pending");
+    return response;
+  }
+
+  // ── Email code verification ───────────────────────────────────────────────
+  const codeHash = hashToken(code);
+
   const [record] = await db
     .select()
     .from(twoFactorCodes)
@@ -76,7 +109,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Code expired or not found. Please request a new code." }, { status: 401 });
   }
 
-  // Increment attempt count and check for brute force
+  // Increment attempt count; invalidate after 5 failures
   const newAttemptCount = record.attemptCount + 1;
   if (newAttemptCount > 5) {
     await db.update(twoFactorCodes).set({ usedAt: now }).where(eq(twoFactorCodes.id, record.id));

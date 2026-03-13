@@ -33,7 +33,7 @@ export function FaqPreview({ items }: FaqPreviewProps) {
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
             Common questions
           </h2>
-          <p className="text-white/50 text-lg">
+          <p className="text-white/65 text-lg">
             Everything you need to know about LaserHacks.
           </p>
         </motion.div>
