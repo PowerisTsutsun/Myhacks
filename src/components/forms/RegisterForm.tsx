@@ -236,8 +236,8 @@ export function RegisterForm({ eventName = "LaserHacks" }: RegisterFormProps) {
         <p className="text-xs text-white/25 leading-relaxed">
           Your information is collected solely to organize {eventName} and will not be sold or
           shared with third parties. Contact{" "}
-          <a href="mailto:info@laserhacks.org" className="underline hover:text-white/50 transition-colors">
-            info@laserhacks.org
+          <a href="mailto:info@laserhack.org" className="underline hover:text-white/50 transition-colors">
+            info@laserhack.org
           </a>{" "}
           to request removal of your data after the event.
         </p>

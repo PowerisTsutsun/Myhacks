@@ -11,9 +11,9 @@ function getResend(): Resend {
   return _resend;
 }
 
-const FROM = process.env.RESEND_FROM_EMAIL ?? "LaserHacks <noreply@laserhacks.org>";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "LaserHacks <noreply@laserhack.org>";
 function normalizeAppUrl(raw?: string): string {
-  if (!raw) return "https://laserhacks.org";
+  if (!raw) return "https://laserhack.org";
   if (/^https?:\/\//i.test(raw)) return raw.replace(/\/$/, "");
   return `https://${raw.replace(/\/$/, "")}`;
 }
@@ -178,7 +178,7 @@ function wrap(content: string): string {
   <div style="${BODY_STYLE}">${content}</div>
   <div style="${FOOTER_STYLE}">
     <p style="margin:0;">© 2026 LaserHacks — Irvine Valley College</p>
-    <p style="margin:4px 0 0;">Questions? Email <a href="mailto:info@laserhacks.org" style="color:#1558a0;">info@laserhacks.org</a></p>
+    <p style="margin:4px 0 0;">Questions? Email <a href="mailto:info@laserhack.org" style="color:#1558a0;">info@laserhack.org</a></p>
   </div>
 </div>
 </body></html>`;
@@ -241,7 +241,7 @@ function registrationConfirmTemplate({ firstName, eventName }: { firstName: stri
     <p style="margin:16px 0 0;color:#475569;line-height:1.6;">
       LaserHacks is beginner-friendly — no matter your experience level, you belong here.
       If you have any questions, just reply to this email or reach out at
-      <a href="mailto:info@laserhacks.org" style="color:#1558a0;">info@laserhacks.org</a>.
+      <a href="mailto:info@laserhack.org" style="color:#1558a0;">info@laserhack.org</a>.
     </p>
     <p style="margin:20px 0 0;color:#475569;">See you at the hackathon! 🚀</p>
   `);

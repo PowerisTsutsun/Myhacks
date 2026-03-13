@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { CyberBackground } from "@/components/decorative/CyberBackground";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://laserhacks.org";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://laserhack.org";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
