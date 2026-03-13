@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
+import { and, eq, gt, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { users, twoFactorCodes } from "@/lib/db/schema";
 import { loginSchema } from "@/lib/validations";
@@ -8,15 +9,31 @@ import { checkRateLimit } from "@/lib/utils";
 import { generate2FACode, hashToken, expiresInMinutes } from "@/lib/auth/tokens";
 import { send2FACode } from "@/lib/email/resend";
 import { createSession } from "@/lib/auth/session";
-import { eq, and, gt, isNull } from "drizzle-orm";
 
 const TFA_TTL = Number(process.env.TWO_FACTOR_CODE_TTL_MINUTES ?? 10);
-const SESSION_DURATION = 60 * 60 * 24; // 24 hours
+const SESSION_DURATION = 60 * 60 * 24;
 
 function getJwtSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
   if (!secret) throw new Error("JWT_SECRET is not set");
   return new TextEncoder().encode(secret);
+}
+
+function resolvePreferredMethod(user: typeof users.$inferSelect): "email" | "totp" {
+  const emailAvailable = user.role !== "admin" && user.twoFactorEnabled;
+  if (user.twoFactorMethod === "totp" && user.totpEnabled) return "totp";
+  if (user.twoFactorMethod === "email" && emailAvailable) return "email";
+  if (emailAvailable) return "email";
+  if (user.totpEnabled) return "totp";
+  return "email";
+}
+
+async function issuePendingToken(userId: number, method: "email" | "totp") {
+  return new SignJWT({ sub: String(userId), step: "2fa", method })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(`${TFA_TTL}m`)
+    .sign(getJwtSecret());
 }
 
 export async function POST(request: NextRequest) {
@@ -44,14 +61,10 @@ export async function POST(request: NextRequest) {
   const { email, password } = parsed.data;
   const normalizedEmail = email.toLowerCase();
 
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, normalizedEmail))
-    .limit(1);
+  const [user] = await db.select().from(users).where(eq(users.email, normalizedEmail)).limit(1);
 
   if (!user) {
-    await bcrypt.hash("dummy", 12); // timing-safe
+    await bcrypt.hash("dummy", 12);
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
 
@@ -60,8 +73,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
 
-  // ── 2FA disabled: issue session directly ────────────────────────────────
-  if (!user.twoFactorEnabled) {
+  const emailTwoFactorAvailable = user.role !== "admin" && user.twoFactorEnabled;
+  if (!emailTwoFactorAvailable && !user.totpEnabled) {
     const token = await createSession({
       sub: String(user.id),
       email: user.email,
@@ -79,18 +92,20 @@ export async function POST(request: NextRequest) {
     return response;
   }
 
-  // ── 2FA enabled: determine method (TOTP takes priority over email) ───────
-  const tfaMethod = user.totpEnabled ? "totp" : "email";
+  const availableMethods = {
+    email: emailTwoFactorAvailable,
+    totp: user.totpEnabled,
+  };
+  const method = resolvePreferredMethod(user);
 
-  if (tfaMethod === "totp") {
-    // TOTP: no email code needed — issue pending token and let user enter app code
-    const pendingToken = await new SignJWT({ sub: String(user.id), step: "2fa", method: "totp" })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime(`${TFA_TTL}m`)
-      .sign(getJwtSecret());
-
-    const response = NextResponse.json({ ok: true, requires2FA: true, method: "totp" });
+  if (method === "totp") {
+    const pendingToken = await issuePendingToken(user.id, "totp");
+    const response = NextResponse.json({
+      ok: true,
+      requires2FA: true,
+      method: "totp",
+      availableMethods,
+    });
     response.cookies.set("lh-2fa-pending", pendingToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -101,7 +116,6 @@ export async function POST(request: NextRequest) {
     return response;
   }
 
-  // ── Email 2FA: send verification code ────────────────────────────────────
   if (!checkRateLimit(`2fa-send:${user.id}`, 3, 5 * 60 * 1000)) {
     return NextResponse.json(
       { error: "Too many code requests. Please wait a few minutes." },
@@ -109,7 +123,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Invalidate any previous unused codes for this user
   await db
     .update(twoFactorCodes)
     .set({ usedAt: new Date() })
@@ -137,14 +150,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Issue a short-lived "2FA pending" token so the /login/2fa step knows who we are
-  const pendingToken = await new SignJWT({ sub: String(user.id), step: "2fa", method: "email" })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime(`${TFA_TTL}m`)
-    .sign(getJwtSecret());
-
-  const response = NextResponse.json({ ok: true, requires2FA: true, method: "email" });
+  const pendingToken = await issuePendingToken(user.id, "email");
+  const response = NextResponse.json({
+    ok: true,
+    requires2FA: true,
+    method: "email",
+    availableMethods,
+  });
   response.cookies.set("lh-2fa-pending", pendingToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

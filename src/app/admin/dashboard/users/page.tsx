@@ -123,15 +123,28 @@ export default function UsersPage() {
                   <td className="px-4 py-3 font-medium text-white">{user.name}</td>
                   <td className="px-4 py-3 text-semantic-text-secondary">{user.email}</td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
-                        user.role === "admin"
-                          ? "border-emerald-400/35 bg-emerald-500/16 text-emerald-200"
-                          : "border-semantic-border bg-semantic-background-secondary text-semantic-text-muted"
-                      }`}
-                    >
-                      {user.role}
-                    </span>
+                    {(() => {
+                      const isSystemAdmin = user.email.toLowerCase() === SYSTEM_ADMIN_EMAIL;
+
+                      return (
+                        <select
+                          value={user.role}
+                          onChange={(e) => updateRole(user.id, e.target.value as "admin" | "editor")}
+                          disabled={updating === user.id || isSystemAdmin}
+                          aria-label={`Role for ${user.name}`}
+                          className="rounded-full border px-2.5 py-1 text-xs font-medium capitalize outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                          style={{
+                            background: user.role === "admin" ? "rgba(16,185,129,0.16)" : "rgba(255,255,255,0.04)",
+                            borderColor: user.role === "admin" ? "rgba(52,211,153,0.35)" : "rgba(255,255,255,0.12)",
+                            color: user.role === "admin" ? "#bbf7d0" : "rgba(255,255,255,0.72)",
+                          }}
+                          title={isSystemAdmin ? "System admin role is protected." : "Change user role"}
+                        >
+                          <option value="editor">editor</option>
+                          <option value="admin">admin</option>
+                        </select>
+                      );
+                    })()}
                   </td>
                   <td className="px-4 py-3">
                     <button
@@ -159,23 +172,6 @@ export default function UsersPage() {
 
                         return (
                           <>
-                      {user.role === "editor" ? (
-                        <button
-                          onClick={() => updateRole(user.id, "admin")}
-                          disabled={updating === user.id}
-                          className="text-xs font-medium text-emerald-300 hover:text-emerald-200 disabled:opacity-40"
-                        >
-                          Make Admin
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => updateRole(user.id, "editor")}
-                          disabled={updating === user.id}
-                          className="text-xs font-medium text-semantic-text-muted hover:text-semantic-text-primary disabled:opacity-40"
-                        >
-                          Make Editor
-                        </button>
-                      )}
                       <button
                         onClick={() => deleteUser(user.id, user.name)}
                         disabled={updating === user.id || isSystemAdmin}

@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 
 interface SecuritySettingsProps {
+  allowEmailTwoFactor?: boolean;
   emailTwoFactorEnabled: boolean;
   totpEnabled: boolean;
   twoFactorMethod: string;
@@ -12,6 +13,7 @@ interface SecuritySettingsProps {
 type SetupState = "idle" | "setting-up" | "verifying" | "done";
 
 export function SecuritySettings({
+  allowEmailTwoFactor = true,
   emailTwoFactorEnabled: initialEmailEnabled,
   totpEnabled: initialTotpEnabled,
   twoFactorMethod: initialMethod,
@@ -19,6 +21,7 @@ export function SecuritySettings({
   const [emailEnabled, setEmailEnabled] = useState(initialEmailEnabled);
   const [totpEnabled, setTotpEnabled] = useState(initialTotpEnabled);
   const [method, setMethod] = useState(initialMethod);
+  const [methodLoading, setMethodLoading] = useState<"email" | "totp" | null>(null);
 
   // Email 2FA state
   const [emailLoading, setEmailLoading] = useState(false);
@@ -60,7 +63,7 @@ export function SecuritySettings({
       }
       if (action === "disable") {
         setEmailEnabled(false);
-        if (method === "email") setMethod("email");
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
       } else {
         // For enable, we need to verify a code — redirect to full flow
         // (This scenario only applies if TOTP is primary and user wants email as backup)
@@ -148,8 +151,7 @@ export function SecuritySettings({
         return;
       }
       setTotpEnabled(true);
-      setMethod("totp");
-      setEmailEnabled(true); // twoFactorEnabled is set to true server-side
+      if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
       setSetupState("done");
       setSetupSecret(null);
       setSetupQr(null);
@@ -175,6 +177,33 @@ export function SecuritySettings({
     setTimeout(() => setSecretCopied(false), 2000);
   }
 
+  async function setPreferredMethod(nextMethod: "email" | "totp") {
+    if (nextMethod === method) return;
+
+    setMethodLoading(nextMethod);
+    setEmailError(null);
+    setSetupError(null);
+    try {
+      const res = await fetch("/api/account/2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "set-method", method: nextMethod }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        if (nextMethod === "email") setEmailError(json.error ?? "Failed to update default method.");
+        else setSetupError(json.error ?? "Failed to update default method.");
+        return;
+      }
+      setMethod(nextMethod);
+    } catch {
+      if (nextMethod === "email") setEmailError("Network error. Please try again.");
+      else setSetupError("Network error. Please try again.");
+    } finally {
+      setMethodLoading(null);
+    }
+  }
+
   // ── TOTP disable ─────────────────────────────────────────────────────────
 
   async function handleDisableTotp() {
@@ -192,7 +221,7 @@ export function SecuritySettings({
         return;
       }
       setTotpEnabled(false);
-      setMethod("email");
+      if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
       setShowDisableConfirm(false);
       setSetupState("idle");
     } catch {
@@ -206,9 +235,40 @@ export function SecuritySettings({
 
   return (
     <div className="space-y-6 max-w-2xl">
+      {allowEmailTwoFactor && emailEnabled && totpEnabled && (
+        <SecurityCard title="Default Method">
+          <p className="text-sm text-white/70 leading-relaxed">
+            Choose which two-factor method should be used first when you log in. You can still switch methods during login.
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setPreferredMethod("email")}
+              disabled={methodLoading !== null}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                method === "email" ? "text-white" : "text-white/45 hover:text-white/70"
+              }`}
+              style={method === "email" ? { background: "rgba(75,159,229,0.18)" } : { background: "rgba(255,255,255,0.04)" }}
+            >
+              {methodLoading === "email" ? "Saving..." : "Email code"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreferredMethod("totp")}
+              disabled={methodLoading !== null}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                method === "totp" ? "text-white" : "text-white/45 hover:text-white/70"
+              }`}
+              style={method === "totp" ? { background: "rgba(75,159,229,0.18)" } : { background: "rgba(255,255,255,0.04)" }}
+            >
+              {methodLoading === "totp" ? "Saving..." : "Authenticator"}
+            </button>
+          </div>
+        </SecurityCard>
+      )}
 
       {/* Email 2FA card */}
-      <SecurityCard title="Email Verification">
+      {allowEmailTwoFactor && <SecurityCard title="Email Verification">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <p className="text-sm text-white/70 leading-relaxed">
@@ -234,7 +294,7 @@ export function SecuritySettings({
           </div>
         </div>
         {emailError && <ErrorMsg msg={emailError} />}
-      </SecurityCard>
+      </SecurityCard>}
 
       {/* Authenticator App card */}
       <SecurityCard title="Authenticator App">

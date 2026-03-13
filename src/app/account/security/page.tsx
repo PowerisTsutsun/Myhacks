@@ -22,6 +22,7 @@ export default async function AccountSecurityPage() {
 
   const [user] = await db
     .select({
+      role: users.role,
       twoFactorEnabled: users.twoFactorEnabled,
       totpEnabled: users.totpEnabled,
       twoFactorMethod: users.twoFactorMethod,
@@ -50,6 +51,7 @@ export default async function AccountSecurityPage() {
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <SecuritySettings
+            allowEmailTwoFactor={user?.role !== "admin"}
             emailTwoFactorEnabled={user?.twoFactorEnabled ?? false}
             totpEnabled={user?.totpEnabled ?? false}
             twoFactorMethod={user?.twoFactorMethod ?? "email"}

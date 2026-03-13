@@ -54,7 +54,7 @@ export default async function SettingsPage() {
             Manage your admin password, two-factor authentication, and notification preferences.
           </p>
         </div>
-        <SettingsClient user={user} />
+        <SettingsClient user={user} allowEmailTwoFactor={false} />
       </section>
 
       <section

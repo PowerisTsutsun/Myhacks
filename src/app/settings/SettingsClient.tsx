@@ -8,13 +8,14 @@ interface UserData {
   id: number;
   name: string;
   email: string;
+  role?: string;
   twoFactorEnabled: boolean;
   totpEnabled: boolean;
   twoFactorMethod: string;
   emailNotifications: boolean;
 }
 
-export function SettingsClient({ user }: { user: UserData }) {
+export function SettingsClient({ user, allowEmailTwoFactor = true }: { user: UserData; allowEmailTwoFactor?: boolean }) {
   return (
     <div className="space-y-6">
       {/* Profile (read-only) */}
@@ -31,6 +32,7 @@ export function SettingsClient({ user }: { user: UserData }) {
 
       {/* Two-Factor Authentication */}
       <TwoFactorSection
+        allowEmailTwoFactor={allowEmailTwoFactor}
         emailEnabled={user.twoFactorEnabled}
         totpEnabled={user.totpEnabled}
         method={user.twoFactorMethod}
@@ -112,10 +114,12 @@ type EmailStep = "idle" | "sent" | "disabling";
 type TotpStep = "idle" | "setting-up" | "disabling";
 
 function TwoFactorSection({
+  allowEmailTwoFactor = true,
   emailEnabled: initialEmailEnabled,
   totpEnabled: initialTotpEnabled,
   method: initialMethod,
 }: {
+  allowEmailTwoFactor?: boolean;
   emailEnabled: boolean;
   totpEnabled: boolean;
   method: string;
@@ -123,6 +127,7 @@ function TwoFactorSection({
   const [emailEnabled, setEmailEnabled] = useState(initialEmailEnabled);
   const [totpEnabled, setTotpEnabled] = useState(initialTotpEnabled);
   const [method, setMethod] = useState(initialMethod);
+  const [methodLoading, setMethodLoading] = useState<"email" | "totp" | null>(null);
 
   const [emailStep, setEmailStep] = useState<EmailStep>("idle");
   const [emailCode, setEmailCode] = useState("");
@@ -172,10 +177,14 @@ function TwoFactorSection({
       const json = await res.json();
       if (res.ok) {
         setEmailEnabled(true);
-        if (!totpEnabled) setMethod("email");
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
         setEmailStep("idle");
         setEmailCode("");
-        setEmailSuccess("Email two-factor authentication is now active.");
+        setEmailSuccess(
+          json.twoFactorMethod === "email"
+            ? "Email two-factor authentication is now active."
+            : "Email two-factor authentication is now active as a backup method."
+        );
       } else setEmailError(json.error || "Invalid code.");
     } catch { setEmailError("Network error. Please try again."); }
     finally { setEmailLoading(false); }
@@ -194,6 +203,7 @@ function TwoFactorSection({
       const json = await res.json();
       if (res.ok) {
         setEmailEnabled(false);
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
         setEmailStep("idle");
         setEmailSuccess("Email two-factor authentication has been disabled.");
       } else setEmailError(json.error || "Failed to disable.");
@@ -254,12 +264,15 @@ function TwoFactorSection({
       const json = await res.json();
       if (res.ok) {
         setTotpEnabled(true);
-        setEmailEnabled(true);
-        setMethod("totp");
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
         setTotpStep("idle");
         setTotpQr(null);
         setTotpSecret(null);
-        setTotpSuccess("Authenticator app is now active. It will be used at your next login.");
+        setTotpSuccess(
+          json.twoFactorMethod === "totp"
+            ? "Authenticator app is now active. It will be used at your next login."
+            : "Authenticator app is now active. You can set it as your default method below."
+        );
       } else {
         setTotpError(json.error || "Verification failed.");
         setTotpCode(["", "", "", "", "", ""]);
@@ -282,7 +295,7 @@ function TwoFactorSection({
       const json = await res.json();
       if (res.ok) {
         setTotpEnabled(false);
-        setMethod("email");
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
         setTotpStep("idle");
         setTotpSuccess("Authenticator app removed. Email 2FA will be used if enabled.");
       } else setTotpError(json.error || "Failed to disable.");
@@ -297,6 +310,38 @@ function TwoFactorSection({
     setTimeout(() => setSecretCopied(false), 2000);
   }
 
+  async function setPreferredMethod(nextMethod: "email" | "totp") {
+    if (nextMethod === method) return;
+
+    setMethodLoading(nextMethod);
+    setEmailError(null);
+    setTotpError(null);
+    try {
+      const res = await fetch("/api/account/2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "set-method", method: nextMethod }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        const msg = json.error || "Failed to update your default method.";
+        if (nextMethod === "email") setEmailError(msg);
+        else setTotpError(msg);
+        return;
+      }
+
+      setMethod(nextMethod);
+      if (nextMethod === "email") setEmailSuccess("Email is now your default sign-in verification method.");
+      else setTotpSuccess("Authenticator app is now your default sign-in verification method.");
+    } catch {
+      const msg = "Network error. Please try again.";
+      if (nextMethod === "email") setEmailError(msg);
+      else setTotpError(msg);
+    } finally {
+      setMethodLoading(null);
+    }
+  }
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -306,8 +351,41 @@ function TwoFactorSection({
         <h2 className="font-semibold text-white text-base">Two-Factor Authentication</h2>
       </div>
 
+      {allowEmailTwoFactor && emailEnabled && totpEnabled && (
+        <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4">
+          <p className="text-sm font-medium text-white">Default login method</p>
+          <p className="mt-1 text-xs text-white/45">
+            Choose which 2FA method should be used first when you sign in. You can still switch methods on the login verification screen.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setPreferredMethod("email")}
+              disabled={methodLoading !== null}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                method === "email" ? "text-white" : "text-white/45 hover:text-white/70"
+              }`}
+              style={method === "email" ? { background: "rgba(75,159,229,0.18)" } : { background: "rgba(255,255,255,0.04)" }}
+            >
+              {methodLoading === "email" ? "Saving..." : "Email code"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreferredMethod("totp")}
+              disabled={methodLoading !== null}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                method === "totp" ? "text-white" : "text-white/45 hover:text-white/70"
+              }`}
+              style={method === "totp" ? { background: "rgba(75,159,229,0.18)" } : { background: "rgba(255,255,255,0.04)" }}
+            >
+              {methodLoading === "totp" ? "Saving..." : "Authenticator"}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Email 2FA ── */}
-      <div className="space-y-1 mb-5">
+      {allowEmailTwoFactor && <div className="space-y-1 mb-5">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-medium text-white">Email verification code</p>
@@ -372,10 +450,10 @@ function TwoFactorSection({
             </div>
           </div>
         )}
-      </div>
+      </div>}
 
       {/* Divider */}
-      <div className="h-px mb-5" style={{ background: "rgba(75,159,229,0.12)" }} />
+      {allowEmailTwoFactor && <div className="h-px mb-5" style={{ background: "rgba(75,159,229,0.12)" }} />}
 
       {/* ── Authenticator App (TOTP) ── */}
       <div className="space-y-1">

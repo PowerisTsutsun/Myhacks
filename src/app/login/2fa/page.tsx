@@ -1,22 +1,32 @@
 "use client";
 
-import { useState, useRef, Suspense } from "react";
+import { Suspense, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import Link from "next/link";
 
 function TwoFactorPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("next") ?? "/register";
-  const isTotp = searchParams.get("method") === "totp";
+  const emailAvailable = searchParams.get("email2fa") === "1";
+  const totpAvailable = searchParams.get("totp") === "1";
+  const [method, setMethod] = useState<"email" | "totp">(
+    searchParams.get("method") === "totp" ? "totp" : "email"
+  );
 
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [switchLoading, setSwitchLoading] = useState<"email" | "totp" | null>(null);
   const [resendLoading, setResendLoading] = useState(false);
-  const [resendMessage, setResendMessage] = useState<string | null>(null);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
+
+  function resetCodeInputs() {
+    setCode(["", "", "", "", "", ""]);
+    inputs.current[0]?.focus();
+  }
 
   function handleChange(index: number, value: string) {
     const digit = value.replace(/\D/g, "").slice(-1);
@@ -57,13 +67,12 @@ function TwoFactorPageInner() {
       const res = await fetch("/api/auth/2fa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: fullCode }),
+        body: JSON.stringify({ action: "verify", code: fullCode }),
       });
       const json = await res.json();
       if (!res.ok) {
         setError(json.error ?? "Verification failed.");
-        setCode(["", "", "", "", "", ""]);
-        inputs.current[0]?.focus();
+        resetCodeInputs();
         return;
       }
       router.push(redirectTo);
@@ -75,12 +84,56 @@ function TwoFactorPageInner() {
     }
   }
 
+  async function handleSwitch(nextMethod: "email" | "totp") {
+    if (nextMethod === method) return;
+
+    setSwitchLoading(nextMethod);
+    setError(null);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/auth/2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "switch", method: nextMethod }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Failed to switch verification method.");
+        return;
+      }
+
+      setMethod(nextMethod);
+      resetCodeInputs();
+      if (json.message) setMessage(json.message);
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setSwitchLoading(null);
+    }
+  }
+
   async function handleResend() {
     setResendLoading(true);
-    setResendMessage(null);
-    // Re-submit credentials isn't available — tell user to log in again
-    setResendMessage("Please go back and log in again to receive a new code.");
-    setResendLoading(false);
+    setError(null);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/auth/2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "resend" }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Failed to send a new code.");
+        return;
+      }
+      setMessage(json.message ?? "A new verification code was sent to your email.");
+      resetCodeInputs();
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setResendLoading(false);
+    }
   }
 
   return (
@@ -99,28 +152,61 @@ function TwoFactorPageInner() {
           </p>
           <h1 className="text-2xl font-bold text-white mb-2">Enter your code</h1>
           <p className="text-white/55 text-sm">
-            {isTotp
+            {method === "totp"
               ? "Enter the 6-digit code from your authenticator app."
               : "We sent a 6-digit code to your email. It expires in 10 minutes."}
           </p>
         </div>
 
+        {(emailAvailable && totpAvailable) && (
+          <div className="mb-6">
+            <p className="mb-2 text-xs uppercase tracking-[0.18em] text-white/35">Choose method</p>
+            <div className="grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/5 p-1.5">
+              <button
+                type="button"
+                onClick={() => handleSwitch("email")}
+                disabled={switchLoading !== null}
+                className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                  method === "email" ? "text-white" : "text-white/45 hover:text-white/70"
+                }`}
+                style={method === "email" ? { background: "rgba(75,159,229,0.18)" } : undefined}
+              >
+                {switchLoading === "email" ? "Switching..." : "Email code"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSwitch("totp")}
+                disabled={switchLoading !== null}
+                className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                  method === "totp" ? "text-white" : "text-white/45 hover:text-white/70"
+                }`}
+                style={method === "totp" ? { background: "rgba(75,159,229,0.18)" } : undefined}
+              >
+                {switchLoading === "totp" ? "Switching..." : "Authenticator"}
+              </button>
+            </div>
+          </div>
+        )}
+
         {error && (
-          <div className="mb-5 p-3 rounded-lg text-sm text-red-300 border border-red-500/30 text-center"
-            style={{ background: "rgba(239,68,68,0.1)" }}>
+          <div
+            className="mb-5 p-3 rounded-lg text-sm text-red-300 border border-red-500/30 text-center"
+            style={{ background: "rgba(239,68,68,0.1)" }}
+          >
             {error}
           </div>
         )}
 
-        {resendMessage && (
-          <div className="mb-5 p-3 rounded-lg text-sm text-blue-300 border border-blue-500/30 text-center"
-            style={{ background: "rgba(59,130,246,0.1)" }}>
-            {resendMessage}
+        {message && (
+          <div
+            className="mb-5 p-3 rounded-lg text-sm text-blue-300 border border-blue-500/30 text-center"
+            style={{ background: "rgba(59,130,246,0.1)" }}
+          >
+            {message}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 6-digit code input */}
           <div className="flex gap-2 justify-center" onPaste={handlePaste}>
             {code.map((digit, i) => (
               <input
@@ -149,7 +235,7 @@ function TwoFactorPageInner() {
         </form>
 
         <div className="mt-6 text-center space-y-2">
-          {isTotp ? (
+          {method === "totp" ? (
             <p className="text-sm text-white/40">
               Open Google Authenticator, Authy, or a similar app to get your code.
             </p>
@@ -158,14 +244,14 @@ function TwoFactorPageInner() {
               type="button"
               onClick={handleResend}
               disabled={resendLoading}
-              className="text-sm text-white/40 hover:text-white/60 transition-colors"
+              className="text-sm text-white/40 hover:text-white/60 transition-colors disabled:opacity-50"
             >
-              Didn&apos;t get a code?
+              {resendLoading ? "Sending..." : "Didn&apos;t get a code?"}
             </button>
           )}
           <br />
           <Link href="/login" className="text-sm text-laser-400 hover:text-laser-300 transition-colors">
-            ← Back to log in
+            Back to log in
           </Link>
         </div>
       </div>

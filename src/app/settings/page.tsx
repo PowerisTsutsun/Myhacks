@@ -25,6 +25,7 @@ export default async function SettingsPage() {
       id: users.id,
       name: users.name,
       email: users.email,
+      role: users.role,
       twoFactorEnabled: users.twoFactorEnabled,
       totpEnabled: users.totpEnabled,
       twoFactorMethod: users.twoFactorMethod,
@@ -48,7 +49,7 @@ export default async function SettingsPage() {
             <p className="text-white/50 mt-2">Manage your password, security, and notifications.</p>
           </div>
 
-          <SettingsClient user={user} />
+          <SettingsClient user={user} allowEmailTwoFactor={user.role !== "admin"} />
         </div>
       </main>
       <Footer config={config} />
