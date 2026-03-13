@@ -59,17 +59,7 @@ export async function POST(request: NextRequest) {
         expiresAt: expiresInMinutes(EMAIL_TTL),
       });
 
-      const result = await sendVerificationEmail({
-        to: normalizedEmail,
-        name: existing.name,
-        token: rawToken,
-      });
-      if (!result.ok) {
-        return NextResponse.json(
-          { error: result.error || "Failed to send verification email." },
-          { status: 502 }
-        );
-      }
+      await sendVerificationEmail({ to: normalizedEmail, name: existing.name, token: rawToken });
     }
     // Generic response to avoid user enumeration
     return NextResponse.json({ ok: true, requiresVerification: true });
@@ -90,17 +80,7 @@ export async function POST(request: NextRequest) {
       expiresAt: expiresInMinutes(EMAIL_TTL),
     });
 
-    const result = await sendVerificationEmail({
-      to: user.email,
-      name: user.name,
-      token: rawToken,
-    });
-    if (!result.ok) {
-      return NextResponse.json(
-        { error: result.error || "Failed to send verification email." },
-        { status: 502 }
-      );
-    }
+    await sendVerificationEmail({ to: user.email, name: user.name, token: rawToken });
 
     return NextResponse.json({ ok: true, requiresVerification: true });
   } catch {
