@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 
+const SYSTEM_ADMIN_EMAIL = "admin@laserhack.org";
+
 export async function GET() {
   const guard = await requireAdmin();
   if (guard.response) return guard.response;
@@ -20,6 +22,21 @@ export async function GET() {
       })
       .from(users)
       .orderBy(desc(users.createdAt));
+
+    rows.sort((a, b) => {
+      const aIsSystemAdmin = a.email.toLowerCase() === SYSTEM_ADMIN_EMAIL;
+      const bIsSystemAdmin = b.email.toLowerCase() === SYSTEM_ADMIN_EMAIL;
+
+      if (aIsSystemAdmin !== bIsSystemAdmin) {
+        return aIsSystemAdmin ? 1 : -1;
+      }
+
+      if (a.role !== b.role) {
+        return a.role === "admin" ? 1 : -1;
+      }
+
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
     return NextResponse.json(rows);
   } catch {
