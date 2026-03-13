@@ -220,8 +220,8 @@
   inset: 5% 8% 7%;
   border-radius: 2rem;
   background:
-    linear-gradient(180deg, rgba(9, 23, 43, 0.58), rgba(5, 12, 24, 0.16)),
-    radial-gradient(circle at 50% 0%, rgba(var(--laser-rgb), 0.14), transparent 62%);
+    linear-gradient(180deg, rgba(6, 17, 31, 0.74), rgba(4, 10, 20, 0.28)),
+    radial-gradient(circle at 50% 0%, rgba(var(--laser-rgb), 0.1), transparent 58%);
   border: 1px solid rgba(125, 180, 255, 0.12);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -230,22 +230,34 @@
   pointer-events: none;
 }
 
+.hero-stage::after {
+  content: "";
+  position: absolute;
+  inset: 16% 14% 16%;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(ellipse 60% 34% at 50% 44%, rgba(6, 17, 31, 0.82) 0%, rgba(6, 17, 31, 0.56) 48%, transparent 100%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .hero-badge {
   backdrop-filter: blur(12px);
 }
 
 .hero-title {
   text-shadow:
-    0 0 18px rgba(255, 255, 255, 0.08),
-    0 0 42px rgba(var(--laser-rgb), 0.18);
+    0 0 12px rgba(255, 255, 255, 0.06),
+    0 0 28px rgba(var(--laser-rgb), 0.12);
 }
 
 .hero-title::before {
   content: "";
   position: absolute;
   inset: -18% -10%;
-  background: radial-gradient(circle at 50% 48%, rgba(var(--laser-rgb), 0.18), transparent 60%);
-  filter: blur(24px);
+  background: radial-gradient(circle at 50% 48%, rgba(var(--laser-rgb), 0.11), transparent 58%);
+  filter: blur(20px);
   z-index: -1;
   pointer-events: none;
 }
@@ -265,18 +277,30 @@
 }
 
 .hero-meta {
+  position: relative;
+  z-index: 1;
+  padding: 0.55rem 1rem;
+  border-radius: 9999px;
+  background: rgba(5, 12, 24, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
   text-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
 }
 
 .hero-primary-cta {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(93, 178, 255, 1), rgba(56, 140, 231, 1));
   box-shadow:
-    0 12px 32px rgba(77, 163, 255, 0.24),
+    0 12px 24px rgba(77, 163, 255, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .hero-secondary-cta {
+  position: relative;
+  z-index: 1;
   backdrop-filter: blur(10px);
-  background: rgba(7, 15, 28, 0.26);
+  background: rgba(7, 15, 28, 0.42);
 }
 
 .laser-grid {
@@ -292,9 +316,9 @@
 
 .laser-center-haze {
   background:
-    radial-gradient(ellipse 54% 38% at 50% 28%, rgba(77, 163, 255, 0.18) 0%, rgba(77, 163, 255, 0.08) 32%, transparent 72%),
-    radial-gradient(ellipse 28% 22% at 50% 34%, rgba(101, 230, 255, 0.1) 0%, transparent 70%);
-  filter: blur(14px);
+    radial-gradient(ellipse 52% 26% at 50% 18%, rgba(77, 163, 255, 0.12) 0%, rgba(77, 163, 255, 0.05) 34%, transparent 70%),
+    radial-gradient(ellipse 20% 14% at 50% 28%, rgba(101, 230, 255, 0.05) 0%, transparent 74%);
+  filter: blur(10px);
   animation: hazeBreath 12s ease-in-out infinite;
 }
 
@@ -360,17 +384,17 @@
 
 .laser-beam-primary {
   box-shadow:
-    0 0 8px rgba(var(--beam-rgb), 0.85),
-    0 0 20px rgba(var(--beam-rgb), 0.28),
-    0 0 44px rgba(var(--beam-rgb), 0.14);
+    0 0 6px rgba(var(--beam-rgb), 0.7),
+    0 0 16px rgba(var(--beam-rgb), 0.2),
+    0 0 30px rgba(var(--beam-rgb), 0.1);
 }
 
 .laser-beam-atmospheric {
   mix-blend-mode: screen;
   box-shadow:
-    0 0 20px rgba(var(--beam-rgb), 0.26),
-    0 0 42px rgba(var(--beam-rgb), 0.14),
-    0 0 90px rgba(var(--beam-rgb), 0.08);
+    0 0 14px rgba(var(--beam-rgb), 0.18),
+    0 0 30px rgba(var(--beam-rgb), 0.1),
+    0 0 64px rgba(var(--beam-rgb), 0.05);
 }
 
 .laser-beam-micro {
@@ -393,7 +417,7 @@
   transform: translate(-50%, -50%);
   border-radius: 9999px;
   background:
-    radial-gradient(circle at center, rgba(255, 255, 255, 0.42) 0%, rgba(121, 187, 255, 0.18) 28%, transparent 68%);
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.26) 0%, rgba(121, 187, 255, 0.1) 28%, transparent 68%);
   mix-blend-mode: screen;
   animation: hotspotPulse 7s ease-in-out infinite;
 }
@@ -424,7 +448,7 @@
     radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.18) 0 1px, transparent 1.5px),
     radial-gradient(circle at 82% 64%, rgba(77, 163, 255, 0.16) 0 1px, transparent 1.5px),
     radial-gradient(circle at 58% 48%, rgba(255, 255, 255, 0.18) 0 0.8px, transparent 1.2px);
-  opacity: 0.42;
+  opacity: 0.24;
   animation: dustDrift 18s linear infinite;
 }
 
@@ -564,6 +588,10 @@
     backdrop-filter: blur(6px);
   }
 
+  .hero-stage::after {
+    inset: 19% 4% 16%;
+  }
+
   .laser-grid {
     opacity: 0.1;
     background-size: 88px 88px, 88px 88px, 260px 260px, 300px 300px;
@@ -574,7 +602,7 @@
   }
 
   .laser-dust-field {
-    opacity: 0.24;
+    opacity: 0.14;
   }
 }
 

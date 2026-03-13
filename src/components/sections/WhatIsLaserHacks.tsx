@@ -31,7 +31,7 @@ export function WhatIsLaserHacks() {
   return (
     <section
       className="section-padding relative overflow-hidden"
-      style={{ background: "rgba(8,20,37,0.55)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderTop: "1px solid rgba(75,159,229,0.08)", borderBottom: "1px solid rgba(75,159,229,0.08)" }}
+      style={{ background: "rgba(8,20,37,0.62)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderTop: "1px solid rgba(75,159,229,0.1)", borderBottom: "1px solid rgba(75,159,229,0.1)" }}
     >
       {/* Subtle background glow orbs */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -54,7 +54,7 @@ export function WhatIsLaserHacks() {
             A hackathon built for{" "}
             <span className="text-laser-400">every student</span>
           </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto text-balance">
+          <p className="text-white/70 text-lg max-w-2xl mx-auto text-balance">
             LaserHacks is Irvine Valley College&apos;s annual student hackathon — a 24-hour event
             where students of all backgrounds come together to build projects, learn new skills,
             and have a great time.
@@ -70,17 +70,33 @@ export function WhatIsLaserHacks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="group laser-border-card"
+              className="group laser-border-card rounded-2xl"
+              style={{
+                background: "linear-gradient(180deg, rgba(9,24,46,0.92), rgba(6,16,30,0.92))",
+                border: "1px solid rgba(95,170,255,0.16)",
+                boxShadow: "0 18px 48px rgba(2,8,23,0.28), inset 0 1px 0 rgba(255,255,255,0.04)",
+              }}
             >
               <div
                 className="laser-border-card-inner p-6 relative"
-                style={{ background: "rgba(8,20,37,0.9)", backdropFilter: "blur(8px)" }}
+                style={{
+                  background: "linear-gradient(180deg, rgba(10,24,48,0.96), rgba(7,18,34,0.94))",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.03)",
+                }}
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-laser-400 transition-colors duration-200" style={{ background: "rgba(75,159,229,0.1)", border: "1px solid rgba(75,159,229,0.2)" }}>
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-laser-300 transition-colors duration-200"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(75,159,229,0.16), rgba(75,159,229,0.08))",
+                    border: "1px solid rgba(95,170,255,0.28)",
+                    boxShadow: "0 0 24px rgba(77,163,255,0.12)",
+                  }}
+                >
                   {item.icon}
                 </div>
-                <h3 className="font-semibold text-white mb-2">{item.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{item.desc}</p>
+                <h3 className="font-semibold text-white mb-2 drop-shadow-[0_0_12px_rgba(77,163,255,0.08)]">{item.title}</h3>
+                <p className="text-white/78 text-sm leading-relaxed">{item.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -91,23 +107,27 @@ export function WhatIsLaserHacks() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.4 }}
             className="sm:col-span-2 lg:col-span-2 rounded-2xl overflow-hidden flex flex-col"
-            style={{ border: "1px solid rgba(75,159,229,0.2)" }}
+            style={{
+              background: "linear-gradient(180deg, rgba(9,24,46,0.94), rgba(6,16,30,0.94))",
+              border: "1px solid rgba(95,170,255,0.18)",
+              boxShadow: "0 18px 48px rgba(2,8,23,0.3), inset 0 1px 0 rgba(255,255,255,0.04)",
+            }}
           >
             <iframe
               src="https://www.openstreetmap.org/export/embed.html?bbox=-117.791%2C33.667%2C-117.767%2C33.682&layer=mapnik&marker=33.67457%2C-117.77906"
               width="100%"
               height="100%"
-              style={{ border: 0, display: "block", minHeight: "220px", filter: "invert(90%) hue-rotate(180deg) saturate(0.8)", flex: 1 }}
+              style={{ border: 0, display: "block", minHeight: "220px", filter: "invert(90%) hue-rotate(180deg) saturate(0.8) contrast(0.92) brightness(0.88)", flex: 1 }}
               loading="lazy"
               title="Irvine Valley College location"
             />
-            <div className="flex gap-3 px-4 py-3" style={{ background: "rgba(8,20,37,0.95)", borderTop: "1px solid rgba(75,159,229,0.15)" }}>
+            <div className="flex gap-3 px-4 py-3" style={{ background: "linear-gradient(180deg, rgba(8,20,37,0.98), rgba(6,16,30,0.98))", borderTop: "1px solid rgba(95,170,255,0.16)" }}>
               <a
                 href="https://www.google.com/maps/search/?api=1&query=5500+Irvine+Center+Dr%2C+Irvine%2C+CA+92618"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white transition-colors"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+                style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)" }}
               >
                 <PinIcon />
                 Google Maps
@@ -117,7 +137,7 @@ export function WhatIsLaserHacks() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white transition-colors"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+                style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)" }}
               >
                 <PinIcon />
                 Apple Maps
