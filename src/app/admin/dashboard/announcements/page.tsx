@@ -12,7 +12,7 @@ export default async function AnnouncementsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-white mb-1">Announcements</h1>
-      <p className="text-slate-400 text-sm mb-6">Manage homepage news and updates.</p>
+      <p className="mb-6 text-sm text-semantic-text-muted">Manage homepage news and updates.</p>
       <AnnouncementsManager initialData={rows} />
     </div>
   );

@@ -8,7 +8,7 @@ export default async function AdminSponsorsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-white mb-1">Sponsors</h1>
-      <p className="text-slate-400 text-sm mb-6">Manage sponsor listings and tiers.</p>
+      <p className="mb-6 text-sm text-semantic-text-muted">Manage sponsor listings and tiers.</p>
       <SponsorsManager initialData={rows} />
     </div>
   );

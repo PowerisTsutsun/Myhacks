@@ -10,10 +10,10 @@ export default async function RegistrationsPage() {
     .from(registrations)
     .orderBy(desc(registrations.createdAt));
 
-  const EXPERIENCE_BADGE: Record<string, "laser" | "gold" | "green"> = {
+  const EXPERIENCE_BADGE: Record<string, "default" | "green"> = {
     beginner: "green",
-    intermediate: "laser",
-    advanced: "gold",
+    intermediate: "default",
+    advanced: "green",
   };
 
   return (

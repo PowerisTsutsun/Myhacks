@@ -110,7 +110,7 @@ export function MediaManager({ initialData }: { initialData: Row[] }) {
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="font-medium text-white text-sm">{row.title}</span>
                       <Badge variant="default" className="capitalize">{row.type}</Badge>
-                      {row.isFeatured && <Badge variant="gold">Featured</Badge>}
+                      {row.isFeatured && <Badge variant="green">Featured</Badge>}
                       {!row.isPublished && <Badge variant="gray">Hidden</Badge>}
                     </div>
                     {row.caption && <p className="truncate text-xs text-semantic-text-muted">{row.caption}</p>}

@@ -35,7 +35,7 @@ export function AdminShell({ children, user }: AdminShellProps) {
   }
 
   return (
-    <div className="min-h-screen flex bg-admin-bg text-semantic-text-primary">
+    <div className="admin-theme min-h-screen flex bg-admin-bg text-semantic-text-primary">
       {/* Sidebar */}
       <aside
         className={cn(
@@ -43,17 +43,17 @@ export function AdminShell({ children, user }: AdminShellProps) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
         style={{
-          background: "#071424",
-          borderRight: "1px solid rgba(36,61,104,0.95)",
+          background: "#050707",
+          borderRight: "1px solid rgba(52,211,153,0.14)",
         }}
       >
         {/* Brand */}
         <div
           className="px-5 py-4"
-          style={{ borderBottom: "1px solid rgba(36,61,104,0.92)" }}
+          style={{ borderBottom: "1px solid rgba(52,211,153,0.14)" }}
         >
           <Link href="/admin/dashboard" className="font-bold text-lg text-white">
-            Laser<span className="text-laser-400">Hacks</span>
+            Laser<span className="text-emerald-400">Hacks</span>
           </Link>
           <p className="mt-0.5 text-xs font-medium uppercase tracking-widest text-semantic-text-muted">
             Admin Panel
@@ -75,12 +75,12 @@ export function AdminShell({ children, user }: AdminShellProps) {
                 className={cn(
                   "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors mb-0.5",
                   isActive
-                    ? "bg-semantic-surface-elevated text-laser-300 font-medium"
-                    : "text-semantic-text-muted hover:bg-semantic-surface/80 hover:text-semantic-text-primary"
+                    ? "bg-emerald-500/12 text-emerald-200 font-medium"
+                    : "text-semantic-text-muted hover:bg-white/[0.04] hover:text-semantic-text-primary"
                 )}
                 style={
                   isActive
-                    ? { border: "1px solid rgba(49,84,135,0.95)" }
+                    ? { border: "1px solid rgba(52,211,153,0.26)" }
                     : { border: "1px solid transparent" }
                 }
               >
@@ -94,21 +94,21 @@ export function AdminShell({ children, user }: AdminShellProps) {
         {/* User footer */}
         <div
           className="px-4 py-3"
-          style={{ borderTop: "1px solid rgba(36,61,104,0.92)" }}
+          style={{ borderTop: "1px solid rgba(52,211,153,0.12)" }}
         >
           <p className="text-sm font-medium truncate text-semantic-text-primary">{user.name}</p>
           <p className="mb-3 truncate text-xs text-semantic-text-muted">{user.email}</p>
           <div className="flex items-center gap-1">
             <Link
               href="/"
-              className="flex-1 rounded-md py-1.5 text-center text-xs text-semantic-text-muted transition-colors hover:bg-semantic-surface/80 hover:text-laser-300"
+              className="flex-1 rounded-md py-1.5 text-center text-xs text-semantic-text-muted transition-colors hover:bg-white/[0.04] hover:text-emerald-300"
               target="_blank"
             >
               View site ↗
             </Link>
             <button
               onClick={handleLogout}
-              className="flex-1 rounded-md py-1.5 text-center text-xs text-semantic-text-muted transition-colors hover:bg-semantic-surface/80 hover:text-semantic-danger"
+              className="flex-1 rounded-md py-1.5 text-center text-xs text-semantic-text-muted transition-colors hover:bg-white/[0.04] hover:text-semantic-danger"
             >
               Sign out
             </button>
@@ -131,13 +131,13 @@ export function AdminShell({ children, user }: AdminShellProps) {
         <header
           className="sticky top-0 z-20 px-4 sm:px-6 h-14 flex items-center gap-3"
           style={{
-            background: "rgba(7,20,36,0.96)",
-            borderBottom: "1px solid rgba(36,61,104,0.92)",
+            background: "rgba(5,7,7,0.96)",
+            borderBottom: "1px solid rgba(52,211,153,0.12)",
             backdropFilter: "blur(8px)",
           }}
         >
           <button
-            className="lg:hidden rounded-md p-1.5 text-semantic-text-muted transition-colors hover:bg-semantic-surface/80 hover:text-semantic-text-primary"
+            className="lg:hidden rounded-md p-1.5 text-semantic-text-muted transition-colors hover:bg-white/[0.04] hover:text-semantic-text-primary"
             onClick={() => setSidebarOpen(true)}
             aria-label="Open navigation"
           >

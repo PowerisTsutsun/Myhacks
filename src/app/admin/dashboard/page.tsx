@@ -27,41 +27,51 @@ export default async function DashboardOverviewPage() {
   ]);
 
   const stats = [
-    { label: "Registrations", value: registrationCount, icon: "📝", href: "/admin/dashboard/registrations", accent: "rgba(75,159,229,0.15)", border: "rgba(75,159,229,0.25)", text: "#90c0f7" },
-    { label: "Announcements", value: announcementCount, icon: "📢", href: "/admin/dashboard/announcements", accent: "rgba(59,130,246,0.12)", border: "rgba(59,130,246,0.25)", text: "#93c5fd" },
-    { label: "FAQ Items", value: faqCount, icon: "❓", href: "/admin/dashboard/faq", accent: "rgba(139,92,246,0.12)", border: "rgba(139,92,246,0.25)", text: "#c4b5fd" },
-    { label: "Sponsors", value: sponsorCount, icon: "🤝", href: "/admin/dashboard/sponsors", accent: "rgba(234,179,8,0.1)", border: "rgba(234,179,8,0.2)", text: "#fde68a" },
-    { label: "Media Items", value: mediaCount, icon: "🎬", href: "/admin/dashboard/media", accent: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.2)", text: "#6ee7b7" },
-    { label: "Unread Messages", value: contactCount, icon: "✉️", href: "/admin/dashboard/registrations", accent: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.2)", text: "#fca5a5" },
+    { label: "Registrations", value: registrationCount, icon: "R", href: "/admin/dashboard/registrations" },
+    { label: "Announcements", value: announcementCount, icon: "A", href: "/admin/dashboard/announcements" },
+    { label: "FAQ Items", value: faqCount, icon: "F", href: "/admin/dashboard/faq" },
+    { label: "Sponsors", value: sponsorCount, icon: "S", href: "/admin/dashboard/sponsors" },
+    { label: "Media Items", value: mediaCount, icon: "M", href: "/admin/dashboard/media" },
+    { label: "Unread Messages", value: contactCount, icon: "C", href: "/admin/dashboard/registrations" },
   ];
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-white/40 text-sm mt-1">LaserHacks admin overview</p>
+        <p className="mt-1 text-sm text-semantic-text-muted">LaserHacks admin overview</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => (
           <a
             key={stat.label}
             href={stat.href}
-            className="flex items-center gap-4 p-5 rounded-xl transition-opacity hover:opacity-80"
-            style={{ background: stat.accent, border: `1px solid ${stat.border}` }}
+            className="rounded-2xl border p-5 transition-colors hover:bg-emerald-500/[0.05]"
+            style={{
+              background: "linear-gradient(180deg, rgba(8,10,10,0.98) 0%, rgba(12,16,14,0.96) 100%)",
+              borderColor: "rgba(52,211,153,0.18)",
+              boxShadow: "0 18px 42px rgba(0, 0, 0, 0.42)",
+            }}
           >
-            <span className="text-3xl" role="img" aria-label={stat.label}>{stat.icon}</span>
-            <div>
-              <p className="text-2xl font-bold" style={{ color: stat.text }}>{stat.value}</p>
-              <p className="text-sm text-white/50">{stat.label}</p>
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-500/10 text-sm font-semibold text-emerald-200">
+              {stat.icon}
             </div>
+            <p className="text-3xl font-bold text-white">{stat.value}</p>
+            <p className="mt-1 text-sm text-semantic-text-secondary">{stat.label}</p>
           </a>
         ))}
       </div>
 
-      {/* Quick links */}
-      <div className="rounded-xl p-5" style={{ background: "rgba(8,20,37,0.6)", border: "1px solid rgba(75,159,229,0.12)" }}>
-        <h2 className="font-semibold text-white mb-3">Quick Actions</h2>
+      <div
+        className="rounded-2xl border p-5"
+        style={{
+          background: "linear-gradient(180deg, rgba(8,10,10,0.98) 0%, rgba(12,16,14,0.96) 100%)",
+          borderColor: "rgba(52,211,153,0.18)",
+          boxShadow: "0 18px 42px rgba(0, 0, 0, 0.42)",
+        }}
+      >
+        <h2 className="mb-3 font-semibold text-white">Quick Actions</h2>
         <div className="flex flex-wrap gap-2">
           {[
             ["+ Announcement", "/admin/dashboard/announcements"],
@@ -74,8 +84,8 @@ export default async function DashboardOverviewPage() {
             <a
               key={href}
               href={href}
-              className="px-3 py-1.5 text-sm rounded-lg text-white/60 hover:text-white transition-colors"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}
+              className="rounded-lg border px-3 py-1.5 text-sm text-semantic-text-secondary transition-colors hover:bg-emerald-500/10 hover:text-white"
+              style={{ borderColor: "rgba(52,211,153,0.18)", background: "rgba(255,255,255,0.02)" }}
             >
               {label}
             </a>

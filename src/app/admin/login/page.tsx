@@ -10,7 +10,7 @@ export default function AdminLoginPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{ background: "radial-gradient(ellipse 80% 60% at 50% 20%, #1a3a6e 0%, #0d1b2a 60%, #050d1a 100%)" }}
+      style={{ background: "radial-gradient(ellipse 80% 60% at 50% 20%, rgba(52,211,153,0.2) 0%, #0a0d0b 55%, #030403 100%)" }}
     >
       {/* Cyber grid */}
       <div
@@ -18,7 +18,7 @@ export default function AdminLoginPage() {
         aria-hidden
         style={{
           backgroundImage:
-            "linear-gradient(rgba(56,189,248,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px)",
+            "linear-gradient(rgba(52,211,153,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.05) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-1">
-            Laser<span className="text-laser-400" style={{ textShadow: "0 0 20px rgba(56,189,248,0.5)" }}>Hacks</span>
+            Laser<span className="text-emerald-400" style={{ textShadow: "0 0 20px rgba(52,211,153,0.35)" }}>Hacks</span>
           </h1>
           <p className="text-white/40 text-sm">Admin Dashboard</p>
         </div>
@@ -36,9 +36,9 @@ export default function AdminLoginPage() {
         <div
           className="rounded-2xl p-8"
           style={{
-            background: "rgba(13,27,42,0.85)",
+            background: "rgba(8,10,10,0.9)",
             backdropFilter: "blur(12px)",
-            boxShadow: "0 0 0 1px rgba(56,189,248,0.15), 0 20px 60px rgba(0,0,0,0.6)",
+            boxShadow: "0 0 0 1px rgba(52,211,153,0.14), 0 20px 60px rgba(0,0,0,0.6)",
           }}
         >
           <h2 className="text-xl font-bold text-white mb-1">Sign In</h2>

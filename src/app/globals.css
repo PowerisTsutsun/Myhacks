@@ -29,6 +29,15 @@
     --success: #34D399;
     --warning: #FBBF24;
     --danger: #FB7185;
+    --button-primary: #4DA3FF;
+    --button-primary-hover: #79BBFF;
+    --button-primary-active: #2E81D8;
+    --button-primary-disabled: rgba(46, 129, 216, 0.5);
+    --button-outline-border: rgba(49, 84, 135, 0.95);
+    --button-outline-border-hover: #79BBFF;
+    --button-outline-text: #94C6FF;
+    --button-outline-text-hover: #E9F4FF;
+    --button-outline-bg: rgba(77, 163, 255, 0.12);
     --laser-rgb: 77, 163, 255;
     --laser-dark-rgb: 46, 129, 216;
     --cyan-rgb: 101, 230, 255;
@@ -136,10 +145,22 @@
   }
 
   .admin-surface {
-    background: rgba(10, 24, 48, 0.94);
-    border: 1px solid rgba(36, 61, 104, 0.95);
-    box-shadow: 0 18px 46px rgba(1, 6, 16, 0.44);
+    background: rgba(8, 10, 10, 0.96);
+    border: 1px solid rgba(52, 211, 153, 0.18);
+    box-shadow: 0 22px 54px rgba(0, 0, 0, 0.5);
   }
+}
+
+.admin-theme {
+  --button-primary: #22C55E;
+  --button-primary-hover: #34D399;
+  --button-primary-active: #16A34A;
+  --button-primary-disabled: rgba(22, 163, 74, 0.45);
+  --button-outline-border: rgba(52, 211, 153, 0.35);
+  --button-outline-border-hover: #34D399;
+  --button-outline-text: #A7F3D0;
+  --button-outline-text-hover: #F5F9FF;
+  --button-outline-bg: rgba(52, 211, 153, 0.12);
 }
 
 /* ---------------------------------------------------------------------------

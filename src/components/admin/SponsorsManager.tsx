@@ -20,9 +20,9 @@ type Row = {
   isPublished: boolean;
 };
 
-const TIER_BADGE: Record<string, "laser" | "gold" | "default" | "gray"> = {
-  platinum: "laser",
-  gold: "gold",
+const TIER_BADGE: Record<string, "green" | "default" | "gray"> = {
+  platinum: "green",
+  gold: "green",
   silver: "default",
   bronze: "default",
   community: "gray",

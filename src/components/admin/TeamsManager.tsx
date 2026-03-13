@@ -68,16 +68,16 @@ const FORMATION_LABEL: Record<Team["formationType"], string> = {
   organizer_created: "Created by organizer",
 };
 
-const STATUS_BADGE: Record<Team["status"], "default" | "green" | "gold"> = {
+const STATUS_BADGE: Record<Team["status"], "default" | "green"> = {
   forming: "default",
   complete: "green",
-  locked: "gold",
+  locked: "green",
 };
 
-const EXPERIENCE_BADGE: Record<string, "laser" | "gold" | "green"> = {
+const EXPERIENCE_BADGE: Record<string, "default" | "green"> = {
   beginner: "green",
-  intermediate: "laser",
-  advanced: "gold",
+  intermediate: "default",
+  advanced: "green",
 };
 
 type Tab = "unmatched" | "premade" | "auto_matched" | "organizer_created" | "locked";
@@ -303,9 +303,9 @@ function TeamCard({
     <div
       className={cn(
         "overflow-hidden rounded-2xl border admin-surface",
-        isLocked ? "border-gold-400/40" : ""
+        isLocked ? "border-emerald-400/30" : ""
       )}
-      style={{ borderColor: isLocked ? "rgba(251,191,36,0.28)" : "rgba(52,211,153,0.18)" }}
+      style={{ borderColor: "rgba(52,211,153,0.18)" }}
     >
       {/* Team header */}
       <div className="flex items-center justify-between border-b px-4 py-3" style={{ background: "rgba(11,29,47,0.85)", borderColor: "rgba(52,211,153,0.12)" }}>
@@ -349,7 +349,7 @@ function TeamCard({
               <div className="flex-1 min-w-0">
                 <span className="font-medium text-sm text-white">{m.fullName}</span>
                 {m.role === "lead" && (
-                  <span className="ml-1.5 text-xs text-laser-400 font-medium">Lead</span>
+                  <span className="ml-1.5 text-xs text-emerald-300 font-medium">Lead</span>
                 )}
                 <p className="text-xs text-semantic-text-muted truncate">{m.email}</p>
               </div>

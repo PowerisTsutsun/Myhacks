@@ -15,11 +15,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-laser-500 hover:bg-laser-400 active:bg-laser-600 text-white shadow-sm hover:shadow-glow-sm disabled:bg-laser-600/50",
+    "bg-[var(--button-primary)] hover:bg-[var(--button-primary-hover)] active:bg-[var(--button-primary-active)] text-white shadow-sm hover:shadow-glow-sm disabled:bg-[var(--button-primary-disabled)]",
   secondary:
     "bg-navy-700 hover:bg-navy-600 active:bg-navy-600 text-semantic-text-primary shadow-sm border border-semantic-border hover:border-semantic-border-strong disabled:border-semantic-border/60",
   outline:
-    "border border-semantic-border-strong text-laser-300 hover:bg-laser-500/12 hover:border-laser-400 hover:text-laser-200",
+    "border border-[var(--button-outline-border)] text-[var(--button-outline-text)] hover:bg-[var(--button-outline-bg)] hover:border-[var(--button-outline-border-hover)] hover:text-[var(--button-outline-text-hover)]",
   ghost:
     "text-semantic-text-secondary hover:bg-white/[0.06] hover:text-semantic-text-primary",
   danger:
