@@ -45,7 +45,7 @@ export function SignupForm({ redirectTo = "/register" }: { redirectTo?: string }
         className="rounded-lg border px-3 py-2.5 text-xs text-yellow-300/70"
         style={{ background: "rgba(234,179,8,0.06)", borderColor: "rgba(234,179,8,0.2)" }}
       >
-        Use a personal email (Gmail, etc.) — @ivc.edu addresses can take up to 6 minutes due to IVC&apos;s Microsoft 365 filtering.
+        @ivc.edu verification can take up to 6mins due to IVC&apos;s Microsoft 365 filtering.
       </div>
       {error && (
         <div
