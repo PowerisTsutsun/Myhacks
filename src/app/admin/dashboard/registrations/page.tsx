@@ -42,6 +42,7 @@ export default async function RegistrationsPage() {
                 >
                   <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Name</th>
                   <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Email</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Student ID</th>
                   <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Major</th>
                   <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Level</th>
                   <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Team</th>
@@ -53,6 +54,7 @@ export default async function RegistrationsPage() {
                   <tr key={row.id} className="transition-colors hover:bg-emerald-500/[0.05]">
                     <td className="px-4 py-3 font-medium text-white">{row.fullName}</td>
                     <td className="px-4 py-3 text-semantic-text-secondary">{row.email}</td>
+                    <td className="px-4 py-3 text-semantic-text-muted font-mono text-xs">{row.studentId || "-"}</td>
                     <td className="px-4 py-3 text-semantic-text-muted">{row.major || "-"}</td>
                     <td className="px-4 py-3">
                       <Badge variant={EXPERIENCE_BADGE[row.experienceLevel] || "default"} className="capitalize">
