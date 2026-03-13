@@ -55,7 +55,7 @@ export function Hero({ config }: HeroProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.08 }}
           >
-            <h1 className="hero-title relative mb-2 inline-block select-none text-[clamp(4rem,14vw,9.5rem)] font-black leading-none tracking-tight text-white">
+            <h1 className="hero-title relative mb-5 inline-block select-none text-[clamp(4rem,14vw,9.5rem)] font-black leading-none tracking-tight text-white">
               <span className="relative">
                 Laser
                 <span
@@ -72,11 +72,6 @@ export function Hero({ config }: HeroProps) {
                 Hacks
               </span>
             </h1>
-            <div className="mb-5 text-center">
-              <span className="inline-block rounded-full border border-laser-300/20 bg-white/[0.03] px-4 py-1 text-sm font-semibold uppercase tracking-[0.5em] text-laser-200/90 shadow-[0_0_18px_rgba(77,163,255,0.14)] backdrop-blur-sm sm:text-base">
-                2026
-              </span>
-            </div>
           </motion.div>
 
           {(eventDate || config.venue_name) && (
@@ -84,7 +79,7 @@ export function Hero({ config }: HeroProps) {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.26 }}
-              className="hero-meta mb-11 flex flex-wrap items-center justify-center gap-4 text-sm text-white"
+              className="hero-meta mb-11 inline-flex flex-wrap items-center justify-center gap-4 text-sm text-white"
             >
               {eventDate && (
                 <span className="flex items-center gap-1.5">
