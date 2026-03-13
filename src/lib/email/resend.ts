@@ -124,12 +124,54 @@ export async function sendContactNotificationEmail(opts: {
   subject: string;
   message: string;
 }): Promise<SendResult> {
+  const safeName = opts.fromName
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const safeEmail = opts.fromEmail
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const safeSubject = opts.subject
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const escapedMessage = opts.message
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+
   return send({
     to: CONTACT_TO,
     subject: `New contact form message from ${opts.fromName}`,
     replyTo: opts.fromEmail,
-    html: contactNotificationTemplate(opts),
-    text: `New contact form submission from ${opts.fromName} <${opts.fromEmail}>\n\nSubject: ${opts.subject}\n\n${opts.message}`,
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contact form message</title></head>
+<body style="margin:0;padding:24px;background:#f8fafc;color:#0f172a;font-family:Arial,sans-serif;">
+  <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #dbe3ee;border-radius:12px;padding:24px;">
+    <h1 style="margin:0 0 16px;font-size:20px;line-height:1.3;">New contact form message</h1>
+    <p style="margin:0 0 8px;font-size:14px;"><strong>Name:</strong> ${safeName}</p>
+    <p style="margin:0 0 8px;font-size:14px;"><strong>Email:</strong> ${safeEmail}</p>
+    <p style="margin:0 0 16px;font-size:14px;"><strong>Subject:</strong> ${safeSubject}</p>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e2e8f0;">
+      <p style="margin:0 0 8px;font-size:14px;font-weight:700;">Message</p>
+      <div style="font-size:14px;line-height:1.7;white-space:normal;">${escapedMessage}</div>
+    </div>
+  </div>
+</body>
+</html>`,
+    text: [
+      "New contact form message",
+      "",
+      `Name: ${opts.fromName}`,
+      `Email: ${opts.fromEmail}`,
+      `Subject: ${opts.subject}`,
+      "",
+      "Message:",
+      opts.message,
+    ].join("\n"),
   });
 }
 
@@ -310,28 +352,5 @@ function customNotificationTemplate({ name, body }: { name: string; body: string
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;">Hi ${name},</p>
     <div style="color:#475569;line-height:1.7;">${escaped}</div>
     <p style="margin:24px 0 0;color:#475569;">— The LaserHacks Team</p>
-  `);
-}
-
-function contactNotificationTemplate(opts: {
-  fromName: string;
-  fromEmail: string;
-  subject: string;
-  message: string;
-}): string {
-  const escaped = opts.message
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\n/g, "<br>");
-  return wrap(`
-    <h1 style="margin:0 0 16px;font-size:20px;font-weight:700;color:#0d1b2a;">New Contact Form Submission</h1>
-    <div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;margin-bottom:20px;">
-      <p style="margin:0 0 6px;font-size:13px;color:#475569;"><strong>From:</strong> ${opts.fromName} &lt;${opts.fromEmail}&gt;</p>
-      <p style="margin:0;font-size:13px;color:#475569;"><strong>Subject:</strong> ${opts.subject}</p>
-    </div>
-    <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#1a2744;">Message:</p>
-    <div style="color:#475569;line-height:1.7;font-size:14px;">${escaped}</div>
-    <p style="margin:20px 0 0;font-size:12px;color:#94a3b8;">Reply directly to this email to respond to ${opts.fromName}.</p>
   `);
 }
