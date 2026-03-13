@@ -24,7 +24,13 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      await jwtVerify(token, getJwtSecret());
+      const { payload } = await jwtVerify(token, getJwtSecret());
+      if (payload.role !== "admin") {
+        if (pathname.startsWith("/api/")) {
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+        return NextResponse.redirect(new URL("/", request.url));
+      }
       return NextResponse.next();
     } catch {
       if (pathname.startsWith("/api/")) {
