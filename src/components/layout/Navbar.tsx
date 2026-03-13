@@ -115,7 +115,7 @@ export function Navbar() {
                 </button>
               </>
             ) : (
-              <Button asChild size="sm" variant="primary">
+              <Button asChild size="md" variant="primary" className="px-5 py-2.5 text-base">
                 <Link href="/login">Log in</Link>
               </Button>
             )}

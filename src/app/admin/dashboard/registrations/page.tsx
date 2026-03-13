@@ -3,6 +3,7 @@ import { registrations } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
+import { DeleteRegistrationButton } from "./DeleteRegistrationButton";
 
 export default async function RegistrationsPage() {
   const rows = await db
@@ -47,6 +48,7 @@ export default async function RegistrationsPage() {
                   <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Level</th>
                   <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Team</th>
                   <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Registered</th>
+                  <th className="px-4 py-3 text-right font-medium text-semantic-text-muted">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y" style={{ borderColor: "rgba(52,211,153,0.08)" }}>
@@ -67,6 +69,9 @@ export default async function RegistrationsPage() {
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-semantic-text-muted">{formatDate(row.createdAt)}</td>
+                    <td className="px-4 py-3 text-right">
+                      <DeleteRegistrationButton id={row.id} name={row.fullName} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
