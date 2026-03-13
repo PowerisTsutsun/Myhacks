@@ -58,9 +58,17 @@ export async function POST(request: NextRequest) {
     expiresAt: expiresInMinutes(EMAIL_TTL),
   });
 
-  sendVerificationEmail({ to: user.email, name: user.name, token: rawToken }).catch(
-    (err) => console.error("[resend-verification] email failed:", err)
-  );
+  const result = await sendVerificationEmail({
+    to: user.email,
+    name: user.name,
+    token: rawToken,
+  });
+  if (!result.ok) {
+    return NextResponse.json(
+      { error: result.error || "Failed to send verification email." },
+      { status: 502 }
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }
