@@ -84,33 +84,23 @@ export function WhatIsLaserHacks() {
               </div>
             </motion.div>
           ))}
-          {/* Extra card: IVC pride */}
+          {/* Map card */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="group laser-border-card sm:col-span-2 lg:col-span-1"
+            className="sm:col-span-2 lg:col-span-2 rounded-2xl overflow-hidden"
+            style={{ border: "1px solid rgba(75,159,229,0.2)" }}
           >
-            <div
-              className="laser-border-card-inner p-6 relative overflow-hidden text-white"
-              style={{ background: "linear-gradient(135deg, #0c2a5e 0%, #081425 100%)" }}
-            >
-              {/* Decorative glow */}
-              <div
-                className="absolute top-0 right-0 w-32 h-32 rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle, rgba(75,159,229,0.2) 0%, transparent 70%)", transform: "translate(25%, -25%)" }}
-                aria-hidden
-              />
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 bg-laser-500/20 border border-laser-400/30">
-                <GradCapIcon />
-              </div>
-              <h3 className="font-semibold mb-2 text-white">Hosted by IVC</h3>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Organized by the ASIVC student government at Irvine Valley College. Open to all
-                current IVC students and community college students in the region.
-              </p>
-            </div>
+            <iframe
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-117.785%2C33.634%2C-117.755%2C33.664&layer=mapnik&marker=33.6492%2C-117.7701"
+              width="100%"
+              height="100%"
+              style={{ border: 0, display: "block", minHeight: "220px", filter: "invert(90%) hue-rotate(180deg) saturate(0.8)" }}
+              loading="lazy"
+              title="Irvine Valley College location"
+            />
           </motion.div>
         </div>
 
@@ -171,20 +161,3 @@ function LightbulbIcon() {
   );
 }
 
-function GlobeIcon() {
-  return (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-    </svg>
-  );
-}
-
-function GradCapIcon() {
-  return (
-    <svg className="w-5 h-5 text-laser-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-      <path d="M6 12v5c3 3 9 3 12 0v-5" />
-    </svg>
-  );
-}
