@@ -123,13 +123,29 @@ export async function sendContactNotificationEmail(opts: {
   fromEmail: string;
   subject: string;
   message: string;
+  submittedAt: string;
+  sourcePage?: string;
 }): Promise<SendResult> {
+  const safeName = cleanHeader(opts.fromName) || "Unknown sender";
+  const safeEmail = opts.fromEmail.trim().toLowerCase();
+
   return send({
     to: CONTACT_TO,
-    subject: `Contact: ${opts.subject}`,
-    replyTo: `${opts.fromName} <${opts.fromEmail}>`,
+    subject: `New contact form message from ${safeName}`,
+    replyTo: safeEmail,
     html: contactNotificationTemplate(opts),
-    text: `New contact form submission from ${opts.fromName} <${opts.fromEmail}>\n\nSubject: ${opts.subject}\n\n${opts.message}`,
+    text: [
+      "New contact form message",
+      "",
+      `Name: ${opts.fromName}`,
+      `Email: ${safeEmail}`,
+      `Subject: ${opts.subject}`,
+      `Submitted at: ${opts.submittedAt}`,
+      `Source: ${opts.sourcePage ?? "Unknown"}`,
+      "",
+      "Message:",
+      opts.message,
+    ].join("\n"),
   });
 }
 
@@ -313,25 +329,61 @@ function customNotificationTemplate({ name, body }: { name: string; body: string
   `);
 }
 
+function cleanHeader(value: string): string {
+  return value.replace(/[\r\n<>"]/g, "").trim();
+}
+
 function contactNotificationTemplate(opts: {
   fromName: string;
   fromEmail: string;
   subject: string;
   message: string;
+  submittedAt: string;
+  sourcePage?: string;
 }): string {
+  const source = opts.sourcePage ? escapeHtml(opts.sourcePage) : "Unknown";
+  const submittedAt = escapeHtml(opts.submittedAt);
+  const safeName = escapeHtml(opts.fromName);
+  const safeEmail = escapeHtml(opts.fromEmail.trim().toLowerCase());
+  const safeSubject = escapeHtml(opts.subject);
   const escaped = opts.message
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/\n/g, "<br>");
-  return wrap(`
-    <h1 style="margin:0 0 16px;font-size:20px;font-weight:700;color:#0d1b2a;">New Contact Form Submission</h1>
-    <div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;margin-bottom:20px;">
-      <p style="margin:0 0 6px;font-size:13px;color:#475569;"><strong>From:</strong> ${opts.fromName} &lt;${opts.fromEmail}&gt;</p>
-      <p style="margin:0;font-size:13px;color:#475569;"><strong>Subject:</strong> ${opts.subject}</p>
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>New contact form message</title>
+</head>
+<body style="margin:0;padding:24px;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#0f172a;">
+  <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
+    <div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;background:#f8fbff;">
+      <h1 style="margin:0;font-size:20px;font-weight:700;color:#0f172a;">New contact form message</h1>
     </div>
-    <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#1a2744;">Message:</p>
-    <div style="color:#475569;line-height:1.7;font-size:14px;">${escaped}</div>
-    <p style="margin:20px 0 0;font-size:12px;color:#94a3b8;">Reply directly to this email to respond to ${opts.fromName}.</p>
-  `);
+    <div style="padding:24px;">
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <tr><td style="padding:0 0 10px;font-size:14px;color:#475569;"><strong style="color:#0f172a;">Name:</strong> ${safeName}</td></tr>
+        <tr><td style="padding:0 0 10px;font-size:14px;color:#475569;"><strong style="color:#0f172a;">Email:</strong> ${safeEmail}</td></tr>
+        <tr><td style="padding:0 0 10px;font-size:14px;color:#475569;"><strong style="color:#0f172a;">Subject:</strong> ${safeSubject}</td></tr>
+        <tr><td style="padding:0 0 10px;font-size:14px;color:#475569;"><strong style="color:#0f172a;">Submitted at:</strong> ${submittedAt}</td></tr>
+        <tr><td style="padding:0;font-size:14px;color:#475569;"><strong style="color:#0f172a;">Source:</strong> ${source}</td></tr>
+      </table>
+      <div style="border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px;background:#ffffff;">
+        <p style="margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:0.02em;text-transform:uppercase;color:#64748b;">Message</p>
+        <div style="font-size:15px;line-height:1.7;color:#334155;">${escaped}</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }

@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
   }
 
   const { website: _website, ...fields } = parsed.data;
+  const submittedAt = new Date().toISOString();
+  const sourcePage = request.headers.get("referer") ?? request.headers.get("origin") ?? undefined;
 
   // Save to DB first
   try {
@@ -57,6 +59,8 @@ export async function POST(request: NextRequest) {
     fromEmail: fields.email.toLowerCase(),
     subject: fields.subject,
     message: fields.message,
+    submittedAt,
+    sourcePage,
   });
 
   if (!emailResult.ok) {
