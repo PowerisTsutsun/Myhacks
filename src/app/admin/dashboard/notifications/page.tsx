@@ -42,7 +42,7 @@ export default function NotificationsPage() {
     <div className="max-w-2xl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Notifications</h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-semantic-text-muted">
           Send a custom email notification to all registered participants.
         </p>
       </div>
@@ -50,7 +50,7 @@ export default function NotificationsPage() {
       {result && (
         <div
           className="mb-6 rounded-2xl border px-4 py-3 text-sm text-emerald-100"
-          style={{ background: "rgba(16, 185, 129, 0.14)", borderColor: "rgba(52, 211, 153, 0.35)" }}
+          style={{ background: "rgba(52, 211, 153, 0.16)", borderColor: "rgba(52, 211, 153, 0.38)" }}
         >
           <strong>Sent!</strong> {result.sent} of {result.total} emails delivered
           {result.failed > 0 && ` (${result.failed} failed)`}.
@@ -69,10 +69,10 @@ export default function NotificationsPage() {
       <form
         onSubmit={handleSend}
         className="space-y-5 rounded-2xl border p-6"
-        style={{ background: "rgba(7, 19, 38, 0.92)", borderColor: "rgba(59, 130, 246, 0.18)" }}
+        style={{ background: "linear-gradient(180deg, rgba(7,20,36,0.98) 0%, rgba(10,24,48,0.96) 100%)", borderColor: "rgba(52,211,153,0.22)", boxShadow: "0 18px 42px rgba(1, 6, 16, 0.42)" }}
       >
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-100">Subject</label>
+          <label className="mb-1.5 block text-sm font-medium text-emerald-100">Subject</label>
           <input
             type="text"
             value={subject}
@@ -81,12 +81,12 @@ export default function NotificationsPage() {
             maxLength={200}
             placeholder="e.g. Important update about LaserHacks 2026"
             className="w-full rounded-xl border px-3 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-laser-400"
-            style={{ background: "rgba(12, 28, 55, 0.96)", borderColor: "rgba(71, 85, 105, 0.5)" }}
+            style={{ background: "rgba(9, 27, 45, 0.96)", borderColor: "rgba(52,211,153,0.2)" }}
           />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-100">Message</label>
+          <label className="mb-1.5 block text-sm font-medium text-emerald-100">Message</label>
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
@@ -95,19 +95,19 @@ export default function NotificationsPage() {
             rows={10}
             placeholder="Write your message here..."
             className="w-full resize-y rounded-xl border px-3 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-laser-400"
-            style={{ background: "rgba(12, 28, 55, 0.96)", borderColor: "rgba(71, 85, 105, 0.5)" }}
+            style={{ background: "rgba(9, 27, 45, 0.96)", borderColor: "rgba(52,211,153,0.2)" }}
           />
-          <p className="mt-1 text-xs text-slate-400">{body.length} / 10,000 characters</p>
+          <p className="mt-1 text-xs text-semantic-text-muted">{body.length} / 10,000 characters</p>
         </div>
 
         <div className="flex items-center justify-between pt-1">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-semantic-text-muted">
             This will be sent to every participant who has registered.
           </p>
           <button
             type="submit"
             disabled={sending || !subject.trim() || !body.trim()}
-            className="rounded-xl bg-laser-500 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-laser-600 disabled:opacity-40"
+            className="rounded-xl bg-emerald-500 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-400 disabled:opacity-40"
           >
             {sending ? "Sending..." : "Send to All"}
           </button>

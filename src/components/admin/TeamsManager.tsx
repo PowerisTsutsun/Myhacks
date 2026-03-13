@@ -167,7 +167,7 @@ export function TeamsManager({ initialTeams, initialUnmatched, initialPending }:
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Teams</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-sm mt-1 text-semantic-text-muted">
             {initialTeams.length} team{initialTeams.length !== 1 ? "s" : ""} &bull;{" "}
             {initialUnmatched.length} unmatched participant{initialUnmatched.length !== 1 ? "s" : ""}
           </p>
@@ -183,13 +183,13 @@ export function TeamsManager({ initialTeams, initialUnmatched, initialPending }:
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="mb-4 rounded-xl border px-3 py-3 text-sm text-red-100" style={{ background: "rgba(251,113,133,0.14)", borderColor: "rgba(251,113,133,0.35)" }}>
           {error}
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-slate-200 mb-6 overflow-x-auto">
+      <div className="mb-6 flex gap-1 overflow-x-auto border-b" style={{ borderColor: "rgba(52,211,153,0.16)" }}>
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -197,13 +197,13 @@ export function TeamsManager({ initialTeams, initialUnmatched, initialPending }:
             className={cn(
               "px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors",
               activeTab === tab.id
-                ? "border-laser-500 text-laser-600"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "border-emerald-400 text-emerald-200"
+                : "border-transparent text-semantic-text-muted hover:text-semantic-text-primary"
             )}
           >
             {tab.label}
             {tab.count !== undefined && tab.count > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-slate-100 rounded-full">
+              <span className="ml-1.5 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-xs text-emerald-200">
                 {tab.count}
               </span>
             )}
@@ -219,7 +219,7 @@ export function TeamsManager({ initialTeams, initialUnmatched, initialPending }:
           ) : (
             <>
               {initialPending.length > 0 && (
-                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
+                <div className="mb-4 rounded-xl border px-3 py-3 text-sm text-emerald-100" style={{ background: "rgba(52,211,153,0.16)", borderColor: "rgba(52,211,153,0.3)" }}>
                   <strong>{initialPending.length}</strong> pending teammate entr{initialPending.length !== 1 ? "ies" : "y"} waiting for
                   referenced participants to register.
                 </div>
@@ -228,12 +228,13 @@ export function TeamsManager({ initialTeams, initialUnmatched, initialPending }:
                 {initialUnmatched.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3"
+                    className="admin-surface flex items-center gap-3 rounded-xl border px-4 py-3"
+                    style={{ borderColor: "rgba(52,211,153,0.16)" }}
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-navy-900 text-sm truncate">{p.fullName}</p>
-                      <p className="text-slate-500 text-xs truncate">{p.email}</p>
-                      {p.major && <p className="text-slate-400 text-xs">{p.major}</p>}
+                      <p className="font-medium text-white text-sm truncate">{p.fullName}</p>
+                      <p className="text-semantic-text-secondary text-xs truncate">{p.email}</p>
+                      {p.major && <p className="text-semantic-text-muted text-xs">{p.major}</p>}
                     </div>
                     <Badge variant={EXPERIENCE_BADGE[p.experienceLevel] ?? "default"} className="capitalize text-xs">
                       {p.experienceLevel}
@@ -299,27 +300,30 @@ function TeamCard({
   const isLocked = team.status === "locked";
 
   return (
-    <div className={cn(
-      "bg-white border rounded-xl overflow-hidden",
-      isLocked ? "border-gold-300 bg-amber-50/30" : "border-slate-200"
-    )}>
+    <div
+      className={cn(
+        "overflow-hidden rounded-2xl border admin-surface",
+        isLocked ? "border-gold-400/40" : ""
+      )}
+      style={{ borderColor: isLocked ? "rgba(251,191,36,0.28)" : "rgba(52,211,153,0.18)" }}
+    >
       {/* Team header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+      <div className="flex items-center justify-between border-b px-4 py-3" style={{ background: "rgba(11,29,47,0.85)", borderColor: "rgba(52,211,153,0.12)" }}>
         <div className="flex items-center gap-2 min-w-0">
-          <span className="font-medium text-navy-900 text-sm">
+          <span className="font-medium text-white text-sm">
             {team.name ?? `Team #${team.id}`}
           </span>
           <Badge variant={STATUS_BADGE[team.status]} className="text-xs capitalize">
             {team.status}
           </Badge>
-          <span className="text-xs text-slate-400">{FORMATION_LABEL[team.formationType]}</span>
+          <span className="text-xs text-semantic-text-muted">{FORMATION_LABEL[team.formationType]}</span>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-xs text-slate-400">{team.members.length}/{team.maxSize}</span>
+          <span className="text-xs text-semantic-text-muted">{team.members.length}/{team.maxSize}</span>
           <button
             onClick={onToggleLock}
             disabled={isPending}
-            className="text-xs px-2.5 py-1 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-50"
+            className="text-xs px-2.5 py-1 rounded-md border border-emerald-400/20 text-semantic-text-secondary hover:bg-emerald-500/10 hover:text-white transition-colors disabled:opacity-50"
           >
             {isLocked ? "Unlock" : "Lock / Finalize"}
           </button>
@@ -327,7 +331,7 @@ function TeamCard({
             <button
               onClick={onDelete}
               disabled={isPending}
-              className="text-xs px-2.5 py-1 rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+              className="text-xs px-2.5 py-1 rounded-md border border-red-400/30 text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
             >
               Delete
             </button>
@@ -337,17 +341,17 @@ function TeamCard({
 
       {/* Members */}
       {team.members.length === 0 ? (
-        <p className="px-4 py-3 text-xs text-slate-400 italic">No members yet.</p>
+        <p className="px-4 py-3 text-xs italic text-semantic-text-muted">No members yet.</p>
       ) : (
-        <ul className="divide-y divide-slate-50">
+        <ul className="divide-y" style={{ borderColor: "rgba(52,211,153,0.08)" }}>
           {team.members.map((m) => (
             <li key={m.memberId} className="flex items-center gap-3 px-4 py-2.5">
               <div className="flex-1 min-w-0">
-                <span className="font-medium text-sm text-navy-900">{m.fullName}</span>
+                <span className="font-medium text-sm text-white">{m.fullName}</span>
                 {m.role === "lead" && (
-                  <span className="ml-1.5 text-xs text-laser-600 font-medium">Lead</span>
+                  <span className="ml-1.5 text-xs text-laser-400 font-medium">Lead</span>
                 )}
-                <p className="text-xs text-slate-500 truncate">{m.email}</p>
+                <p className="text-xs text-semantic-text-muted truncate">{m.email}</p>
               </div>
               <Badge variant={EXPERIENCE_BADGE[m.experienceLevel] ?? "default"} className="text-xs capitalize">
                 {m.experienceLevel}
@@ -356,7 +360,7 @@ function TeamCard({
                 <button
                   onClick={() => onRemoveMember(m.registrationId)}
                   disabled={isPending}
-                  className="text-xs text-slate-400 hover:text-red-500 transition-colors ml-1 disabled:opacity-50"
+                  className="ml-1 text-xs text-semantic-text-muted transition-colors hover:text-red-400 disabled:opacity-50"
                   aria-label={`Remove ${m.fullName}`}
                 >
                   ✕
@@ -368,7 +372,7 @@ function TeamCard({
       )}
 
       {team.notes && (
-        <p className="px-4 py-2 text-xs text-slate-500 border-t border-slate-100 bg-slate-50">
+        <p className="border-t px-4 py-2 text-xs text-semantic-text-muted" style={{ background: "rgba(11,29,47,0.6)", borderColor: "rgba(52,211,153,0.1)" }}>
           {team.notes}
         </p>
       )}
@@ -378,8 +382,8 @@ function TeamCard({
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
-      <p className="text-slate-400 text-sm">{message}</p>
+    <div className="admin-surface rounded-2xl border p-10 text-center" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+      <p className="text-sm text-semantic-text-muted">{message}</p>
     </div>
   );
 }

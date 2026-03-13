@@ -18,37 +18,42 @@ export default async function RegistrationsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Registrations</h1>
-          <p className="text-slate-400 text-sm mt-1">{rows.length} total registration{rows.length !== 1 ? "s" : ""}</p>
+          <p className="mt-1 text-sm text-semantic-text-muted">
+            {rows.length} total registration{rows.length !== 1 ? "s" : ""}
+          </p>
         </div>
       </div>
 
       {rows.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
-          <p className="text-slate-400">No registrations yet.</p>
+        <div className="admin-surface rounded-2xl border p-10 text-center" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+          <p className="text-semantic-text-muted">No registrations yet.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="admin-surface overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Name</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Email</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Major</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Level</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Team</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Registered</th>
+                <tr
+                  className="border-b"
+                  style={{ background: "rgba(11,29,47,0.98)", borderColor: "rgba(52,211,153,0.16)" }}
+                >
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Name</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Email</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Major</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Level</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Team</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Registered</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y" style={{ borderColor: "rgba(52,211,153,0.08)" }}>
                 {rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-navy-900">{row.fullName}</td>
-                    <td className="px-4 py-3 text-slate-600">{row.email}</td>
-                    <td className="px-4 py-3 text-slate-500">{row.major || "—"}</td>
+                  <tr key={row.id} className="transition-colors hover:bg-emerald-500/[0.05]">
+                    <td className="px-4 py-3 font-medium text-white">{row.fullName}</td>
+                    <td className="px-4 py-3 text-semantic-text-secondary">{row.email}</td>
+                    <td className="px-4 py-3 text-semantic-text-muted">{row.major || "-"}</td>
                     <td className="px-4 py-3">
                       <Badge variant={EXPERIENCE_BADGE[row.experienceLevel] || "default"} className="capitalize">
                         {row.experienceLevel}
@@ -59,7 +64,7 @@ export default async function RegistrationsPage() {
                         {row.teamStatus.replace("_", " ")}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-slate-400">{formatDate(row.createdAt)}</td>
+                    <td className="px-4 py-3 text-semantic-text-muted">{formatDate(row.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
