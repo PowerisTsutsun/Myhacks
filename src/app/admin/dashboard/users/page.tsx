@@ -13,6 +13,10 @@ interface User {
 
 const SYSTEM_ADMIN_EMAIL = "admin@laserhack.org";
 
+function getRoleLabel(role: "admin" | "editor") {
+  return role === "editor" ? "user" : "admin";
+}
+
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -127,22 +131,41 @@ export default function UsersPage() {
                       const isSystemAdmin = user.email.toLowerCase() === SYSTEM_ADMIN_EMAIL;
 
                       return (
-                        <select
-                          value={user.role}
-                          onChange={(e) => updateRole(user.id, e.target.value as "admin" | "editor")}
-                          disabled={updating === user.id || isSystemAdmin}
-                          aria-label={`Role for ${user.name}`}
-                          className="rounded-full border px-2.5 py-1 text-xs font-medium capitalize outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                        <div
+                          className="inline-flex items-center rounded-full border p-1"
                           style={{
-                            background: user.role === "admin" ? "rgba(16,185,129,0.16)" : "rgba(255,255,255,0.04)",
-                            borderColor: user.role === "admin" ? "rgba(52,211,153,0.35)" : "rgba(255,255,255,0.12)",
-                            color: user.role === "admin" ? "#bbf7d0" : "rgba(255,255,255,0.72)",
+                            background: "rgba(5,18,34,0.92)",
+                            borderColor: user.role === "admin" ? "rgba(52,211,153,0.26)" : "rgba(255,255,255,0.1)",
                           }}
                           title={isSystemAdmin ? "System admin role is protected." : "Change user role"}
                         >
-                          <option value="editor">editor</option>
-                          <option value="admin">admin</option>
-                        </select>
+                          {(["editor", "admin"] as const).map((roleOption) => {
+                            const active = user.role === roleOption;
+                            return (
+                              <button
+                                key={roleOption}
+                                type="button"
+                                onClick={() => updateRole(user.id, roleOption)}
+                                disabled={updating === user.id || isSystemAdmin || active}
+                                aria-pressed={active}
+                                className="rounded-full px-3 py-1 text-xs font-semibold capitalize transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                                style={
+                                  active
+                                    ? {
+                                        background: roleOption === "admin" ? "rgba(16,185,129,0.18)" : "rgba(96,165,250,0.16)",
+                                        color: roleOption === "admin" ? "#bbf7d0" : "#c4dafe",
+                                      }
+                                    : {
+                                        background: "transparent",
+                                        color: "rgba(255,255,255,0.58)",
+                                      }
+                                }
+                              >
+                                {getRoleLabel(roleOption)}
+                              </button>
+                            );
+                          })}
+                        </div>
                       );
                     })()}
                   </td>

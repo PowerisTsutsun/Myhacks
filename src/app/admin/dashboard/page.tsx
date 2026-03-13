@@ -27,12 +27,12 @@ export default async function DashboardOverviewPage() {
   ]);
 
   const stats = [
-    { label: "Registrations", value: registrationCount, icon: "R", href: "/admin/dashboard/registrations" },
-    { label: "Announcements", value: announcementCount, icon: "A", href: "/admin/dashboard/announcements" },
-    { label: "FAQ Items", value: faqCount, icon: "F", href: "/admin/dashboard/faq" },
-    { label: "Sponsors", value: sponsorCount, icon: "S", href: "/admin/dashboard/sponsors" },
-    { label: "Media Items", value: mediaCount, icon: "M", href: "/admin/dashboard/media" },
-    { label: "Unread Messages", value: contactCount, icon: "C", href: "/admin/dashboard/registrations" },
+    { label: "Registrations", value: registrationCount, icon: "Registration", href: "/admin/dashboard/registrations", hideLabel: true },
+    { label: "Announcements", value: announcementCount, icon: "Announcement", href: "/admin/dashboard/announcements", hideLabel: true },
+    { label: "FAQ Items", value: faqCount, icon: "FAQ", href: "/admin/dashboard/faq", hideLabel: true },
+    { label: "Sponsors", value: sponsorCount, icon: "Sponsor", href: "/admin/dashboard/sponsors", hideLabel: true },
+    { label: "Media Items", value: mediaCount, icon: "Media", href: "/admin/dashboard/media", hideLabel: true },
+    { label: "Unread Messages", value: contactCount, icon: "Contact", href: "/admin/dashboard/registrations", hideLabel: true },
   ];
 
   return (
@@ -54,11 +54,15 @@ export default async function DashboardOverviewPage() {
               boxShadow: "0 18px 42px rgba(0, 0, 0, 0.42)",
             }}
           >
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-500/10 text-sm font-semibold text-emerald-200">
+            <div
+              className={`mb-4 flex items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-500/10 font-semibold text-emerald-200 ${
+                stat.icon.length > 1 ? "min-h-11 px-3 py-2 text-xs" : "h-11 w-11 text-sm"
+              }`}
+            >
               {stat.icon}
             </div>
             <p className="text-3xl font-bold text-white">{stat.value}</p>
-            <p className="mt-1 text-sm text-semantic-text-secondary">{stat.label}</p>
+            {!stat.hideLabel && <p className="mt-1 text-sm text-semantic-text-secondary">{stat.label}</p>}
           </a>
         ))}
       </div>
