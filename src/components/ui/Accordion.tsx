@@ -25,21 +25,21 @@ export function Accordion({ items, className }: AccordionProps) {
         return (
           <div
             key={item.id}
-            className="border border-laser-500/20 rounded-xl overflow-hidden"
+            className="overflow-hidden rounded-2xl border border-semantic-border bg-semantic-surface/75 shadow-card"
           >
             <button
               type="button"
               onClick={() => setOpenId(isOpen ? null : item.id)}
               className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left
-                         bg-navy-800/60 hover:bg-navy-700/60 transition-colors"
+                         bg-semantic-surface/80 hover:bg-semantic-surface-elevated/85 transition-colors"
               aria-expanded={isOpen}
             >
-              <span className="font-medium text-white text-sm sm:text-base">
+              <span className="font-medium text-semantic-text-primary text-sm sm:text-base">
                 {item.question}
               </span>
               <svg
                 className={cn(
-                  "shrink-0 w-5 h-5 text-laser-400 transition-transform duration-200",
+                  "shrink-0 w-5 h-5 text-cyan-400 transition-transform duration-200",
                   isOpen && "rotate-180"
                 )}
                 fill="none"
@@ -58,7 +58,7 @@ export function Accordion({ items, className }: AccordionProps) {
               )}
               aria-hidden={!isOpen}
             >
-              <div className="px-5 pb-5 pt-1 text-white/60 text-sm sm:text-base leading-relaxed border-t border-laser-500/10">
+              <div className="border-t border-semantic-border px-5 pb-5 pt-1 text-semantic-text-secondary text-sm sm:text-base leading-relaxed">
                 {item.answer}
               </div>
             </div>

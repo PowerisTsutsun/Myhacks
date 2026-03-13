@@ -35,7 +35,7 @@ export function AdminShell({ children, user }: AdminShellProps) {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: "#060f1e" }}>
+    <div className="min-h-screen flex bg-admin-bg text-semantic-text-primary">
       {/* Sidebar */}
       <aside
         className={cn(
@@ -43,19 +43,19 @@ export function AdminShell({ children, user }: AdminShellProps) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
         style={{
-          background: "rgba(4,10,22,0.99)",
-          borderRight: "1px solid rgba(75,159,229,0.1)",
+          background: "#071424",
+          borderRight: "1px solid rgba(36,61,104,0.95)",
         }}
       >
         {/* Brand */}
         <div
           className="px-5 py-4"
-          style={{ borderBottom: "1px solid rgba(75,159,229,0.1)" }}
+          style={{ borderBottom: "1px solid rgba(36,61,104,0.92)" }}
         >
           <Link href="/admin/dashboard" className="font-bold text-lg text-white">
             Laser<span className="text-laser-400">Hacks</span>
           </Link>
-          <p className="text-white/25 text-xs mt-0.5 font-medium uppercase tracking-widest">
+          <p className="mt-0.5 text-xs font-medium uppercase tracking-widest text-semantic-text-muted">
             Admin Panel
           </p>
         </div>
@@ -75,10 +75,14 @@ export function AdminShell({ children, user }: AdminShellProps) {
                 className={cn(
                   "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors mb-0.5",
                   isActive
-                    ? "text-laser-400 bg-laser-500/10"
-                    : "text-white/40 hover:text-white/80 hover:bg-white/5"
+                    ? "bg-semantic-surface-elevated text-laser-300 font-medium"
+                    : "text-semantic-text-muted hover:bg-semantic-surface/80 hover:text-semantic-text-primary"
                 )}
-                style={isActive ? { border: "1px solid rgba(75,159,229,0.15)" } : { border: "1px solid transparent" }}
+                style={
+                  isActive
+                    ? { border: "1px solid rgba(49,84,135,0.95)" }
+                    : { border: "1px solid transparent" }
+                }
               >
                 <span className="w-4 h-4 flex-shrink-0">{item.icon}</span>
                 {item.label}
@@ -90,21 +94,21 @@ export function AdminShell({ children, user }: AdminShellProps) {
         {/* User footer */}
         <div
           className="px-4 py-3"
-          style={{ borderTop: "1px solid rgba(75,159,229,0.1)" }}
+          style={{ borderTop: "1px solid rgba(36,61,104,0.92)" }}
         >
-          <p className="text-white text-sm font-medium truncate">{user.name}</p>
-          <p className="text-white/30 text-xs truncate mb-3">{user.email}</p>
+          <p className="text-sm font-medium truncate text-semantic-text-primary">{user.name}</p>
+          <p className="mb-3 truncate text-xs text-semantic-text-muted">{user.email}</p>
           <div className="flex items-center gap-1">
             <Link
               href="/"
-              className="flex-1 text-center text-xs text-white/35 hover:text-laser-400 transition-colors py-1.5 rounded-md hover:bg-white/5"
+              className="flex-1 rounded-md py-1.5 text-center text-xs text-semantic-text-muted transition-colors hover:bg-semantic-surface/80 hover:text-laser-300"
               target="_blank"
             >
               View site ↗
             </Link>
             <button
               onClick={handleLogout}
-              className="flex-1 text-center text-xs text-white/35 hover:text-red-400 transition-colors py-1.5 rounded-md hover:bg-white/5"
+              className="flex-1 rounded-md py-1.5 text-center text-xs text-semantic-text-muted transition-colors hover:bg-semantic-surface/80 hover:text-semantic-danger"
             >
               Sign out
             </button>
@@ -115,7 +119,7 @@ export function AdminShell({ children, user }: AdminShellProps) {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/60 lg:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-hidden
         />
@@ -124,9 +128,16 @@ export function AdminShell({ children, user }: AdminShellProps) {
       {/* Main content */}
       <div className="flex-1 lg:ml-60 flex flex-col min-h-screen">
         {/* Topbar */}
-        <header className="sticky top-0 z-20 px-4 sm:px-6 h-14 flex items-center gap-3" style={{ background: "rgba(4,10,22,0.95)", borderBottom: "1px solid rgba(75,159,229,0.1)", backdropFilter: "blur(8px)" }}>
+        <header
+          className="sticky top-0 z-20 px-4 sm:px-6 h-14 flex items-center gap-3"
+          style={{
+            background: "rgba(7,20,36,0.96)",
+            borderBottom: "1px solid rgba(36,61,104,0.92)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
           <button
-            className="lg:hidden p-1.5 rounded-md text-white/40 hover:bg-white/5 transition-colors"
+            className="lg:hidden rounded-md p-1.5 text-semantic-text-muted transition-colors hover:bg-semantic-surface/80 hover:text-semantic-text-primary"
             onClick={() => setSidebarOpen(true)}
             aria-label="Open navigation"
           >
@@ -135,8 +146,8 @@ export function AdminShell({ children, user }: AdminShellProps) {
             </svg>
           </button>
           <div className="flex-1" />
-          <span className="text-xs text-white/30 hidden sm:block">
-            Logged in as <strong className="text-white/60">{user.name}</strong>
+          <span className="hidden text-xs text-semantic-text-muted sm:block">
+            Logged in as <strong className="font-semibold text-semantic-text-primary">{user.name}</strong>
           </span>
         </header>
 

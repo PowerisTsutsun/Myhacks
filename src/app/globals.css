@@ -11,6 +11,27 @@
       "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
       "Liberation Mono", "Courier New", monospace;
+
+    /* Semantic laser-blue RGB — update once, used in inline rgba() throughout */
+    --background: #06111F;
+    --background-secondary: #0A1830;
+    --surface: #10213F;
+    --surface-elevated: #16305A;
+    --surface-hover: #1B3B6F;
+    --border: #243D68;
+    --border-strong: #315487;
+    --text-primary: #F5F9FF;
+    --text-secondary: #B8C7E6;
+    --text-muted: #8EA3C7;
+    --accent-primary: #4DA3FF;
+    --accent-primary-hover: #79BBFF;
+    --accent-secondary: #65E6FF;
+    --success: #34D399;
+    --warning: #FBBF24;
+    --danger: #FB7185;
+    --laser-rgb: 77, 163, 255;
+    --laser-dark-rgb: 46, 129, 216;
+    --cyan-rgb: 101, 230, 255;
   }
 
   html {
@@ -18,12 +39,27 @@
   }
 
   body {
-    @apply bg-navy-950 text-white antialiased;
+    color: var(--text-primary);
+    background:
+      radial-gradient(circle at top, rgba(var(--laser-rgb), 0.16), transparent 34%),
+      linear-gradient(180deg, var(--background-secondary) 0%, var(--background) 38%, #040c18 100%);
+    @apply antialiased;
     font-family: var(--font-geist-sans);
+  }
+
+  ::selection {
+    background: rgba(var(--laser-rgb), 0.28);
+    color: var(--text-primary);
   }
 
   *:focus-visible {
     @apply outline-2 outline-offset-2 outline-laser-400 rounded-sm;
+  }
+
+  input,
+  select,
+  textarea {
+    color-scheme: dark;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -64,14 +100,19 @@
 
   /* Standardized dark page header used across About, Schedule, FAQ, Sponsors */
   .page-header {
-    @apply bg-navy-900 py-16 sm:py-20 relative overflow-hidden;
+    @apply py-16 sm:py-20 relative overflow-hidden;
+    background:
+      linear-gradient(180deg, rgba(10, 24, 48, 0.98) 0%, rgba(6, 17, 31, 0.92) 100%);
+    border-bottom: 1px solid rgba(49, 84, 135, 0.42);
   }
 
   .page-header-glow {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(21,88,160,0.35) 0%, transparent 70%);
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(var(--laser-rgb), 0.34) 0%, transparent 70%),
+      radial-gradient(ellipse 35% 55% at 50% 10%, rgba(var(--cyan-rgb), 0.14) 0%, transparent 70%);
   }
 
   .page-header-content {
@@ -80,6 +121,24 @@
 
   .section-eyebrow {
     @apply text-laser-400 font-semibold text-sm uppercase tracking-widest mb-3;
+  }
+
+  .app-surface {
+    background: rgba(16, 33, 63, 0.84);
+    border: 1px solid rgba(36, 61, 104, 0.9);
+    box-shadow: 0 14px 40px rgba(2, 8, 23, 0.34);
+  }
+
+  .app-surface-elevated {
+    background: linear-gradient(180deg, rgba(22, 48, 90, 0.96), rgba(16, 33, 63, 0.96));
+    border: 1px solid rgba(49, 84, 135, 0.95);
+    box-shadow: 0 18px 46px rgba(2, 8, 23, 0.38);
+  }
+
+  .admin-surface {
+    background: rgba(10, 24, 48, 0.94);
+    border: 1px solid rgba(36, 61, 104, 0.95);
+    box-shadow: 0 18px 46px rgba(1, 6, 16, 0.44);
   }
 }
 
@@ -92,20 +151,20 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(75, 159, 229, 0.6) 40%,
-    rgba(75, 159, 229, 0.9) 50%,
-    rgba(75, 159, 229, 0.6) 60%,
+    rgba(77, 166, 255, 0.65) 40%,
+    rgba(77, 166, 255, 0.95) 50%,
+    rgba(77, 166, 255, 0.65) 60%,
     transparent 100%
   );
   filter: blur(0.5px);
-  box-shadow: 0 0 6px rgba(75, 159, 229, 0.5), 0 0 12px rgba(75, 159, 229, 0.2);
+  box-shadow: 0 0 6px rgba(77, 166, 255, 0.55), 0 0 12px rgba(77, 166, 255, 0.22);
 }
 
 .sparkle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.7), 0 0 8px rgba(75, 159, 229, 0.35);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8), 0 0 8px rgba(77, 166, 255, 0.4);
 }
 
 .cloud-shape {
@@ -198,9 +257,9 @@
     from 0deg,
     transparent 0deg,
     transparent 310deg,
-    rgba(75, 159, 229, 0.5) 340deg,
-    rgba(147, 210, 255, 0.9) 355deg,
-    rgba(75, 159, 229, 0.5) 360deg
+    rgba(77, 166, 255, 0.55) 340deg,
+    rgba(134, 194, 255, 0.92) 355deg,
+    rgba(77, 166, 255, 0.55) 360deg
   );
   animation: laser-border-spin 2.5s linear infinite;
   opacity: 0;
@@ -236,17 +295,23 @@
 }
 
 .prose-content a {
-  @apply text-laser-600 underline;
+  @apply text-laser-400 underline;
 }
 .prose-content a:hover {
-  @apply text-laser-500;
+  @apply text-laser-300;
 }
 
 /* ---------------------------------------------------------------------------
    Form field focus ring
    --------------------------------------------------------------------------- */
 .field-ring {
-  @apply border border-slate-200 rounded-lg px-3 py-2 text-sm
-    focus:outline-none focus:ring-2 focus:ring-laser-400 focus:border-transparent
-    transition-colors;
+  border: 1px solid rgba(36, 61, 104, 0.92);
+  background: rgba(10, 24, 48, 0.78);
+  color: var(--text-primary);
+  @apply rounded-xl px-3 py-2.5 text-sm transition-colors
+    focus:outline-none focus:ring-2 focus:ring-laser-400 focus:border-transparent;
+}
+
+.field-ring::placeholder {
+  color: var(--text-muted);
 }
