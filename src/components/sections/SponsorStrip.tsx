@@ -58,9 +58,24 @@ export function SponsorStrip({ sponsors }: SponsorStripProps) {
         </motion.div>
 
         <div className="text-center mt-8">
-          <Button asChild variant="ghost">
-            <Link href="/sponsors" className="text-white/40 hover:text-white">View all sponsors →</Link>
-          </Button>
+          <Link
+            href="/sponsors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all duration-200"
+            style={{
+              background: "rgba(75,159,229,0.12)",
+              border: "1px solid rgba(75,159,229,0.35)",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(75,159,229,0.25)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(75,159,229,0.7)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(75,159,229,0.12)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(75,159,229,0.35)";
+            }}
+          >
+            View all sponsors
+          </Link>
         </div>
       </div>
     </section>

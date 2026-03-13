@@ -58,7 +58,7 @@ export default async function HomePage() {
             eventName={config.event_name}
           />
         )}
-        <SponsorStrip sponsors={pubSponsors} />
+        <div id="sponsors"><SponsorStrip sponsors={pubSponsors} /></div>
         <div id="media"><FeaturedMedia items={featuredMedia} /></div>
         <div id="faq"><FaqPreview items={pubFaq} /></div>
       </main>

@@ -34,7 +34,7 @@ export function AdminShell({ children, user }: AdminShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen flex" style={{ background: "#060f1e" }}>
       {/* Sidebar */}
       <aside
         className={cn(
@@ -123,9 +123,9 @@ export function AdminShell({ children, user }: AdminShellProps) {
       {/* Main content */}
       <div className="flex-1 lg:ml-60 flex flex-col min-h-screen">
         {/* Topbar */}
-        <header className="sticky top-0 z-20 bg-white border-b border-slate-200 px-4 sm:px-6 h-14 flex items-center gap-3">
+        <header className="sticky top-0 z-20 px-4 sm:px-6 h-14 flex items-center gap-3" style={{ background: "rgba(4,10,22,0.95)", borderBottom: "1px solid rgba(75,159,229,0.1)", backdropFilter: "blur(8px)" }}>
           <button
-            className="lg:hidden p-1.5 rounded-md text-slate-500 hover:bg-slate-100 transition-colors"
+            className="lg:hidden p-1.5 rounded-md text-white/40 hover:bg-white/5 transition-colors"
             onClick={() => setSidebarOpen(true)}
             aria-label="Open navigation"
           >
@@ -134,8 +134,8 @@ export function AdminShell({ children, user }: AdminShellProps) {
             </svg>
           </button>
           <div className="flex-1" />
-          <span className="text-xs text-slate-400 hidden sm:block">
-            Logged in as <strong className="text-slate-600">{user.name}</strong>
+          <span className="text-xs text-white/30 hidden sm:block">
+            Logged in as <strong className="text-white/60">{user.name}</strong>
           </span>
         </header>
 

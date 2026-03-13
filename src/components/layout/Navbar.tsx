@@ -6,12 +6,11 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
-
 const NAV_LINKS = [
   { href: "/#about", label: "About" },
   { href: "/#faq", label: "FAQ" },
   { href: "/#media", label: "Media" },
-  { href: "/sponsors", label: "Sponsors" },
+  { href: "/#sponsors", label: "Sponsors" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -79,12 +78,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={cn(
-                  "px-4 py-2 text-lg font-semibold rounded-lg transition-colors",
-                  !link.href.startsWith("/#") && pathname === link.href
-                    ? "text-laser-400 bg-white/5"
-                    : "text-white hover:text-laser-300 hover:bg-white/5"
-                )}
+                className="px-4 py-2 text-lg font-semibold rounded-lg transition-colors text-white hover:text-laser-300 hover:bg-white/5"
               >
                 {link.label}
               </Link>
@@ -158,12 +152,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={cn(
-                "px-3 py-2.5 text-sm rounded-lg transition-colors",
-                !link.href.startsWith("/#") && pathname === link.href
-                  ? "text-laser-400 bg-white/5"
-                  : "text-white/80 hover:text-white hover:bg-white/5"
-              )}
+              className="px-3 py-2.5 text-sm rounded-lg transition-colors text-white/80 hover:text-white hover:bg-white/5"
             >
               {link.label}
             </Link>

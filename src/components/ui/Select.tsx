@@ -28,7 +28,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             "field-ring w-full appearance-none cursor-pointer",
             dark
               ? "bg-navy-800/80 border border-white/10 text-white focus:ring-laser-400 [&>option]:bg-navy-900 [&>option]:text-white"
-              : "bg-white text-slate-900",
+              : "bg-white text-slate-900 placeholder:text-slate-400",
             error && "border-red-400 focus:ring-red-400",
             className
           )}

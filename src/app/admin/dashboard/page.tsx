@@ -27,19 +27,19 @@ export default async function DashboardOverviewPage() {
   ]);
 
   const stats = [
-    { label: "Registrations", value: registrationCount, icon: "📝", href: "/admin/dashboard/registrations", color: "bg-laser-50 text-laser-700 border-laser-100" },
-    { label: "Announcements", value: announcementCount, icon: "📢", href: "/admin/dashboard/announcements", color: "bg-blue-50 text-blue-700 border-blue-100" },
-    { label: "FAQ Items", value: faqCount, icon: "❓", href: "/admin/dashboard/faq", color: "bg-purple-50 text-purple-700 border-purple-100" },
-    { label: "Sponsors", value: sponsorCount, icon: "🤝", href: "/admin/dashboard/sponsors", color: "bg-gold-50 text-gold-700 border-gold-100" },
-    { label: "Media Items", value: mediaCount, icon: "🎬", href: "/admin/dashboard/media", color: "bg-emerald-50 text-emerald-700 border-emerald-100" },
-    { label: "Unread Messages", value: contactCount, icon: "✉️", href: "/admin/dashboard/registrations", color: "bg-red-50 text-red-700 border-red-100" },
+    { label: "Registrations", value: registrationCount, icon: "📝", href: "/admin/dashboard/registrations", accent: "rgba(75,159,229,0.15)", border: "rgba(75,159,229,0.25)", text: "#90c0f7" },
+    { label: "Announcements", value: announcementCount, icon: "📢", href: "/admin/dashboard/announcements", accent: "rgba(59,130,246,0.12)", border: "rgba(59,130,246,0.25)", text: "#93c5fd" },
+    { label: "FAQ Items", value: faqCount, icon: "❓", href: "/admin/dashboard/faq", accent: "rgba(139,92,246,0.12)", border: "rgba(139,92,246,0.25)", text: "#c4b5fd" },
+    { label: "Sponsors", value: sponsorCount, icon: "🤝", href: "/admin/dashboard/sponsors", accent: "rgba(234,179,8,0.1)", border: "rgba(234,179,8,0.2)", text: "#fde68a" },
+    { label: "Media Items", value: mediaCount, icon: "🎬", href: "/admin/dashboard/media", accent: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.2)", text: "#6ee7b7" },
+    { label: "Unread Messages", value: contactCount, icon: "✉️", href: "/admin/dashboard/registrations", accent: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.2)", text: "#fca5a5" },
   ];
 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-navy-900">Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-1">LaserHacks admin overview</p>
+        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        <p className="text-white/40 text-sm mt-1">LaserHacks admin overview</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -47,20 +47,21 @@ export default async function DashboardOverviewPage() {
           <a
             key={stat.label}
             href={stat.href}
-            className={`flex items-center gap-4 p-5 rounded-xl border ${stat.color} hover:opacity-90 transition-opacity`}
+            className="flex items-center gap-4 p-5 rounded-xl transition-opacity hover:opacity-80"
+            style={{ background: stat.accent, border: `1px solid ${stat.border}` }}
           >
             <span className="text-3xl" role="img" aria-label={stat.label}>{stat.icon}</span>
             <div>
-              <p className="text-2xl font-bold">{stat.value}</p>
-              <p className="text-sm opacity-80">{stat.label}</p>
+              <p className="text-2xl font-bold" style={{ color: stat.text }}>{stat.value}</p>
+              <p className="text-sm text-white/50">{stat.label}</p>
             </div>
           </a>
         ))}
       </div>
 
       {/* Quick links */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5">
-        <h2 className="font-semibold text-navy-900 mb-3">Quick Actions</h2>
+      <div className="rounded-xl p-5" style={{ background: "rgba(8,20,37,0.6)", border: "1px solid rgba(75,159,229,0.12)" }}>
+        <h2 className="font-semibold text-white mb-3">Quick Actions</h2>
         <div className="flex flex-wrap gap-2">
           {[
             ["+ Announcement", "/admin/dashboard/announcements"],
@@ -73,7 +74,8 @@ export default async function DashboardOverviewPage() {
             <a
               key={href}
               href={href}
-              className="px-3 py-1.5 text-sm rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+              className="px-3 py-1.5 text-sm rounded-lg text-white/60 hover:text-white transition-colors"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}
             >
               {label}
             </a>
