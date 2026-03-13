@@ -64,37 +64,46 @@ export function SettingsForm({ initialValues }: SettingsFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm" role="alert">
+        <div
+          className="rounded-xl border px-3 py-3 text-sm text-red-100"
+          role="alert"
+          style={{ background: "rgba(251,113,133,0.14)", borderColor: "rgba(251,113,133,0.35)" }}
+        >
           {error}
         </div>
       )}
       {saved && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm">
-          ✓ Settings saved successfully.
+        <div
+          className="rounded-xl border px-3 py-3 text-sm text-emerald-100"
+          style={{ background: "rgba(52,211,153,0.16)", borderColor: "rgba(52,211,153,0.38)" }}
+        >
+          Settings saved successfully.
         </div>
       )}
 
       <Section title="Event Details">
-        <Input label="Event Name" required error={errors.event_name?.message} {...register("event_name")} />
-        <Input label="Tagline" error={errors.tagline?.message} {...register("tagline")} />
-        <Input label="Event Start Date" type="date" error={errors.event_start?.message} {...register("event_start")} />
-        <Input label="Event End Date" type="date" error={errors.event_end?.message} {...register("event_end")} />
-        <Input label="Venue Name" error={errors.venue_name?.message} {...register("venue_name")} />
-        <Input label="Venue Address" error={errors.venue_address?.message} {...register("venue_address")} />
+        <Input dark label="Event Name" required error={errors.event_name?.message} {...register("event_name")} />
+        <Input dark label="Tagline" error={errors.tagline?.message} {...register("tagline")} />
+        <Input dark label="Event Start Date" type="date" error={errors.event_start?.message} {...register("event_start")} />
+        <Input dark label="Event End Date" type="date" error={errors.event_end?.message} {...register("event_end")} />
+        <Input dark label="Venue Name" error={errors.venue_name?.message} {...register("venue_name")} />
+        <Input dark label="Venue Address" error={errors.venue_address?.message} {...register("venue_address")} />
       </Section>
 
       <Section title="Registration">
         <Select
+          dark
           label="Registration Mode"
           required
           options={[
-            { value: "external", label: "External — link to Google Form or other URL" },
-            { value: "internal", label: "Internal — built-in registration form" },
+            { value: "external", label: "External - link to Google Form or other URL" },
+            { value: "internal", label: "Internal - built-in registration form" },
           ]}
           error={errors.registration_mode?.message}
           {...register("registration_mode")}
         />
         <Input
+          dark
           label="External Registration URL"
           type="url"
           hint="Used when registration mode is set to External"
@@ -103,6 +112,7 @@ export function SettingsForm({ initialValues }: SettingsFormProps) {
           {...register("external_registration_url")}
         />
         <Input
+          dark
           label="Sponsor Packet URL"
           type="url"
           placeholder="https://..."
@@ -112,13 +122,13 @@ export function SettingsForm({ initialValues }: SettingsFormProps) {
       </Section>
 
       <Section title="Contact &amp; Social">
-        <Input label="Contact Email" type="email" error={errors.contact_email?.message} {...register("contact_email")} />
-        <Input label="Instagram URL" type="url" placeholder="https://instagram.com/..." error={errors.instagram_url?.message} {...register("instagram_url")} />
-        <Input label="Twitter/X URL" type="url" placeholder="https://twitter.com/..." error={errors.twitter_url?.message} {...register("twitter_url")} />
-        <Input label="LinkedIn URL" type="url" placeholder="https://linkedin.com/..." error={errors.linkedin_url?.message} {...register("linkedin_url")} />
+        <Input dark label="Contact Email" type="email" error={errors.contact_email?.message} {...register("contact_email")} />
+        <Input dark label="Instagram URL" type="url" placeholder="https://instagram.com/..." error={errors.instagram_url?.message} {...register("instagram_url")} />
+        <Input dark label="Twitter/X URL" type="url" placeholder="https://twitter.com/..." error={errors.twitter_url?.message} {...register("twitter_url")} />
+        <Input dark label="LinkedIn URL" type="url" placeholder="https://linkedin.com/..." error={errors.linkedin_url?.message} {...register("linkedin_url")} />
       </Section>
 
-      <Button type="submit" loading={isSubmitting} size="lg">
+      <Button type="submit" loading={isSubmitting} size="lg" className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600">
         Save Settings
       </Button>
     </form>
@@ -127,8 +137,18 @@ export function SettingsForm({ initialValues }: SettingsFormProps) {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
-      <h2 className="font-semibold text-navy-900 text-sm uppercase tracking-wider text-slate-500 pb-1 border-b border-slate-100">
+    <div
+      className="space-y-4 rounded-2xl border p-5"
+      style={{
+        background: "linear-gradient(180deg, rgba(7,20,36,0.98) 0%, rgba(10,24,48,0.96) 100%)",
+        borderColor: "rgba(52,211,153,0.22)",
+        boxShadow: "0 18px 42px rgba(1, 6, 16, 0.42)",
+      }}
+    >
+      <h2
+        className="border-b pb-2 text-xs font-semibold uppercase tracking-[0.18em]"
+        style={{ color: "#A7F3D0", borderColor: "rgba(52,211,153,0.18)" }}
+      >
         {title}
       </h2>
       {children}
