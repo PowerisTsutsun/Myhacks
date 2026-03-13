@@ -59,7 +59,7 @@ export default async function ContactPage() {
 
                 {(config.instagram_url || config.twitter_url || config.linkedin_url) && (
                   <ContactItem icon={<SocialIcon />} label="Follow Us">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 pt-1">
                       {config.instagram_url && (
                         <a
                           href={config.instagram_url}
