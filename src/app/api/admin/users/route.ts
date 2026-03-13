@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/guard";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { asc } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 
 export async function GET() {
   const guard = await requireAdmin();
@@ -19,7 +19,7 @@ export async function GET() {
         createdAt: users.createdAt,
       })
       .from(users)
-      .orderBy(asc(users.createdAt));
+      .orderBy(desc(users.createdAt));
 
     return NextResponse.json(rows);
   } catch {

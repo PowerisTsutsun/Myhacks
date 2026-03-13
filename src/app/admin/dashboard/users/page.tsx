@@ -25,7 +25,7 @@ export default function UsersPage() {
 
   async function load() {
     try {
-      const res = await fetch("/api/admin/users");
+      const res = await fetch("/api/admin/users", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to load");
       setUsers(await res.json());
     } catch {
