@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { Button } from "@/components/ui/Button";
 import { getSiteConfig } from "@/lib/settings";
 
 const VALUES = [
@@ -64,13 +66,18 @@ export default async function AboutPage() {
       <main className="pt-20">
         {/* Page header */}
         <div className="bg-navy-900 py-16 sm:py-20 relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(37,99,235,0.2) 0%, transparent 70%)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(22,98,172,0.38) 0%, transparent 70%)" }} />
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <p className="text-laser-400 font-semibold text-sm uppercase tracking-widest mb-3">About</p>
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">What is LaserHacks?</h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto text-balance">
+            <p className="text-white/70 text-lg max-w-2xl mx-auto text-balance">
               A hackathon built for every student — regardless of experience, background, or major.
             </p>
+            <div className="mt-8 flex items-center justify-center">
+              <Button asChild size="lg" variant="primary" className="about-register-cta">
+                <Link href="/register">Register</Link>
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -78,12 +85,12 @@ export default async function AboutPage() {
           {/* Mission */}
           <section>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Our Mission</h2>
-            <p className="text-white/60 leading-relaxed mb-4">
+            <p className="text-white/70 leading-relaxed mb-4">
               LaserHacks was founded to make the hackathon experience accessible to every student at
               Irvine Valley College. We believe the best ideas come from diverse teams, and that
               coding experience should never be a barrier to entry.
             </p>
-            <p className="text-white/60 leading-relaxed">
+            <p className="text-white/70 leading-relaxed">
               Whether you&apos;re a computer science student or a visual arts major, whether you&apos;ve written
               thousands of lines of code or none at all — LaserHacks is for you.
             </p>
@@ -104,7 +111,7 @@ export default async function AboutPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-white mb-1">{v.title}</h3>
-                    <p className="text-white/50 text-sm">{v.desc}</p>
+                    <p className="text-white/65 text-sm">{v.desc}</p>
                   </div>
                 </div>
               ))}
@@ -114,7 +121,7 @@ export default async function AboutPage() {
           {/* Who can participate */}
           <section>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Who Can Participate?</h2>
-            <ul className="space-y-3 text-white/60">
+            <ul className="space-y-3 text-white/70">
               {[
                 "Current Irvine Valley College students (any major)",
                 "Community college students from partner institutions",
@@ -136,12 +143,12 @@ export default async function AboutPage() {
             style={{ background: "rgba(21,88,160,0.15)", border: "1px solid rgba(75,159,229,0.2)" }}
           >
             <h2 className="text-2xl font-bold text-white mb-3">You don&apos;t need to know how to code.</h2>
-            <p className="text-white/60 leading-relaxed mb-4">
+            <p className="text-white/70 leading-relaxed mb-4">
               Seriously. LaserHacks is designed for beginners first. We run workshops at the start of
               the event, pair teams with mentors, and encourage projects at any technical level. A
               beautifully designed poster, a thoughtful wireframe, a simple website — all valid submissions.
             </p>
-            <p className="text-white/60 leading-relaxed">
+            <p className="text-white/70 leading-relaxed">
               Many of our past participants had never built anything before LaserHacks. Many went on
               to study computer science, land internships, and build startups. It starts here.
             </p>
@@ -150,13 +157,13 @@ export default async function AboutPage() {
           {/* Hosted by */}
           <section>
             <h2 className="text-2xl font-bold text-white mb-3">Hosted by IVC</h2>
-            <p className="text-white/60 leading-relaxed">
+            <p className="text-white/70 leading-relaxed">
               LaserHacks is organized by the Associated Students of Irvine Valley College (ASIVC)
               and volunteer student organizers. We partner with the IVC Computer Science department,
               local tech companies, and alumni to make the event possible.
             </p>
             {config.contact_email && (
-              <p className="mt-3 text-white/60">
+              <p className="mt-3 text-white/70">
                 Questions? Email us at{" "}
                 <a href={`mailto:${config.contact_email}`} className="text-laser-400 underline hover:text-laser-300">
                   {config.contact_email}
@@ -176,7 +183,7 @@ export default async function AboutPage() {
               <section>
                 <h2 className="text-2xl font-bold text-white mb-2">Location</h2>
                 {config.venue_name && <p className="text-white/70 font-medium">{config.venue_name}</p>}
-                {config.venue_address && <p className="text-white/40 text-sm mb-5">{config.venue_address}</p>}
+                {config.venue_address && <p className="text-white/55 text-sm mb-5">{config.venue_address}</p>}
 
                 <div
                   className="rounded-2xl overflow-hidden mb-4"

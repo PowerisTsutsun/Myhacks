@@ -63,12 +63,7 @@ export function Hero({ config }: HeroProps) {
                   aria-hidden
                 />
               </span>
-              <span
-                className="hero-title-accent relative text-laser-400"
-                style={{
-                  textShadow: "0 0 32px rgba(75,159,229,0.62), 0 0 82px rgba(75,159,229,0.22)",
-                }}
-              >
+              <span className="hero-title-accent relative text-laser-400">
                 Hacks
               </span>
             </h1>
@@ -115,7 +110,7 @@ export function Hero({ config }: HeroProps) {
             className="flex flex-col items-center justify-center gap-3 sm:flex-row"
           >
             <Button asChild size="lg" variant="primary" className="hero-primary-cta">
-              <Link href="/register">Register for Free</Link>
+              <Link href="/register">Register</Link>
             </Button>
             <Button
               asChild
