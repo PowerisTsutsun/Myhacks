@@ -8,8 +8,8 @@ const CSP = [
     : "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
-  // Allow YouTube/Instagram embeds
-  "frame-src https://www.youtube.com https://www.instagram.com",
+  // Allow YouTube/Instagram/OpenStreetMap embeds
+  "frame-src https://www.youtube.com https://www.instagram.com https://www.openstreetmap.org",
   "font-src 'self'",
   "connect-src 'self'",
   "object-src 'none'",
