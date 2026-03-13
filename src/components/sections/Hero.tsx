@@ -10,11 +10,26 @@ interface HeroProps {
   config: SiteConfig;
 }
 
+function parseConfigDate(value: string): Date {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return new Date(`${value}T00:00:00Z`);
+  }
+
+  return new Date(value);
+}
+
+function formatConfigDate(value: string, options: Intl.DateTimeFormatOptions): string {
+  return new Intl.DateTimeFormat("en-US", {
+    ...options,
+    timeZone: "UTC",
+  }).format(parseConfigDate(value));
+}
+
 export function Hero({ config }: HeroProps) {
   const hasDate = config.event_start;
 
   const eventDate = hasDate
-    ? new Date(config.event_start!).toLocaleDateString("en-US", {
+    ? formatConfigDate(config.event_start!, {
         month: "long",
         day: "numeric",
         year: "numeric",
@@ -91,7 +106,7 @@ export function Hero({ config }: HeroProps) {
                   {config.event_end && config.event_end !== config.event_start && (
                     <>
                       {" - "}
-                      {new Date(config.event_end).toLocaleDateString("en-US", {
+                      {formatConfigDate(config.event_end, {
                         month: "long",
                         day: "numeric",
                       })}
