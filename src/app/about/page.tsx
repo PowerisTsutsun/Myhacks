@@ -57,6 +57,18 @@ function PinIcon() {
   );
 }
 
+function InstagramIcon() {
+  return <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden><rect x="3.5" y="3.5" width="17" height="17" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>;
+}
+
+function TwitterIcon() {
+  return <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M18.901 3H21l-4.583 5.238L21.807 21h-4.222l-3.307-4.815L10.066 21H7.965l4.902-5.602L7.193 3h4.329l2.99 4.359L18.901 3Zm-.74 16.708h1.167L10.89 4.214H9.64l8.52 15.494Z" /></svg>;
+}
+
+function LinkedInIcon() {
+  return <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M6.94 8.5A1.56 1.56 0 1 0 6.94 5.38a1.56 1.56 0 0 0 0 3.12ZM5.6 9.75h2.68V18H5.6V9.75Zm4.35 0h2.57v1.13h.04c.36-.68 1.23-1.4 2.53-1.4 2.7 0 3.2 1.77 3.2 4.07V18H15.6v-3.97c0-.95-.02-2.17-1.32-2.17-1.32 0-1.52 1.03-1.52 2.1V18H9.95V9.75Z" /></svg>;
+}
+
 export default async function AboutPage() {
   const config = await getSiteConfig();
 
@@ -169,6 +181,49 @@ export default async function AboutPage() {
                   {config.contact_email}
                 </a>
               </p>
+            )}
+            {(config.instagram_url || config.twitter_url || config.linkedin_url) && (
+              <div className="mt-6">
+                <p className="text-xs text-white/55 mb-2.5">Follow Us</p>
+                <div className="flex flex-wrap gap-2">
+                  {config.instagram_url && (
+                    <a
+                      href={config.instagram_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      title="Instagram"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-laser-400/20 bg-laser-400/10 text-laser-300 transition-colors hover:border-laser-400/40 hover:bg-laser-400/20 hover:text-laser-200"
+                    >
+                      <InstagramIcon />
+                    </a>
+                  )}
+                  {config.twitter_url && (
+                    <a
+                      href={config.twitter_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Twitter / X"
+                      title="Twitter / X"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-laser-400/20 bg-laser-400/10 text-laser-300 transition-colors hover:border-laser-400/40 hover:bg-laser-400/20 hover:text-laser-200"
+                    >
+                      <TwitterIcon />
+                    </a>
+                  )}
+                  {config.linkedin_url && (
+                    <a
+                      href={config.linkedin_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn"
+                      title="LinkedIn"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-laser-400/20 bg-laser-400/10 text-laser-300 transition-colors hover:border-laser-400/40 hover:bg-laser-400/20 hover:text-laser-200"
+                    >
+                      <LinkedInIcon />
+                    </a>
+                  )}
+                </div>
+              </div>
             )}
           </section>
 

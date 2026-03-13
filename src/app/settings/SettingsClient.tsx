@@ -245,8 +245,8 @@ function TwoFactorSection({ enabled: initial }: { enabled: boolean }) {
               <p className="text-white/50 text-sm mt-2 mb-4">
                 A 6-digit verification code was sent to your email. Enter it below to activate 2FA.
               </p>
-              <div className="flex gap-3 items-end">
-                <div className="flex-1">
+              <div className="flex max-w-xl flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="w-full sm:max-w-[360px]">
                   <Input
                     dark
                     label="Verification Code"
@@ -257,7 +257,7 @@ function TwoFactorSection({ enabled: initial }: { enabled: boolean }) {
                     className="tracking-widest text-center text-lg font-mono"
                   />
                 </div>
-                <Button variant="primary" onClick={verifyAndEnable} loading={loading}>
+                <Button variant="primary" onClick={verifyAndEnable} loading={loading} className="sm:self-end">
                   Enable 2FA
                 </Button>
               </div>
