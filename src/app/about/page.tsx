@@ -171,7 +171,7 @@ export default async function AboutPage() {
             const encoded = encodeURIComponent(address);
             const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encoded}`;
             const appleMapsUrl = `https://maps.apple.com/?q=${encoded}`;
-            const embedUrl = "https://www.openstreetmap.org/export/embed.html?bbox=-117.785%2C33.634%2C-117.755%2C33.664&layer=mapnik&marker=33.6492%2C-117.7701";
+            const embedUrl = "https://www.openstreetmap.org/export/embed.html?bbox=-117.791%2C33.667%2C-117.767%2C33.682&layer=mapnik&marker=33.67457%2C-117.77906";
             return (
               <section>
                 <h2 className="text-2xl font-bold text-white mb-2">Location</h2>

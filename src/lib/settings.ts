@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "./db";
 import { siteSettings } from "./db/schema";
 
@@ -30,10 +31,11 @@ const DEFAULTS: SiteConfig = {
   instagram_url: null,
   twitter_url: null,
   linkedin_url: null,
-  contact_email: "contact@laserhacks.org",
+  contact_email: "contact@laserhack.org",
 };
 
 export async function getSiteConfig(): Promise<SiteConfig> {
+  noStore();
   try {
     const rows = await db.select().from(siteSettings);
     const map = Object.fromEntries(rows.map((r) => [r.key, r.value ?? ""]));

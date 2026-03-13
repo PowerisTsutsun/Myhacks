@@ -90,17 +90,39 @@ export function WhatIsLaserHacks() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="sm:col-span-2 lg:col-span-2 rounded-2xl overflow-hidden"
+            className="sm:col-span-2 lg:col-span-2 rounded-2xl overflow-hidden flex flex-col"
             style={{ border: "1px solid rgba(75,159,229,0.2)" }}
           >
             <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=-117.785%2C33.634%2C-117.755%2C33.664&layer=mapnik&marker=33.6492%2C-117.7701"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-117.791%2C33.667%2C-117.767%2C33.682&layer=mapnik&marker=33.67457%2C-117.77906"
               width="100%"
               height="100%"
-              style={{ border: 0, display: "block", minHeight: "220px", filter: "invert(90%) hue-rotate(180deg) saturate(0.8)" }}
+              style={{ border: 0, display: "block", minHeight: "220px", filter: "invert(90%) hue-rotate(180deg) saturate(0.8)", flex: 1 }}
               loading="lazy"
               title="Irvine Valley College location"
             />
+            <div className="flex gap-3 px-4 py-3" style={{ background: "rgba(8,20,37,0.95)", borderTop: "1px solid rgba(75,159,229,0.15)" }}>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=5500+Irvine+Center+Dr%2C+Irvine%2C+CA+92618"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white transition-colors"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+              >
+                <PinIcon />
+                Google Maps
+              </a>
+              <a
+                href="https://maps.apple.com/?q=5500+Irvine+Center+Dr%2C+Irvine%2C+CA+92618"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white transition-colors"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+              >
+                <PinIcon />
+                Apple Maps
+              </a>
+            </div>
           </motion.div>
         </div>
 
@@ -121,6 +143,14 @@ export function WhatIsLaserHacks() {
         </motion.div>
       </div>
     </section>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+    </svg>
   );
 }
 

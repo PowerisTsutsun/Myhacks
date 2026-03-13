@@ -33,7 +33,7 @@ async function seedSettings() {
     { key: "venue_address", value: "5500 Irvine Center Dr, Irvine, CA 92618" },
     { key: "registration_mode", value: "external" },
     { key: "external_registration_url", value: "" },
-    { key: "contact_email", value: "contact@laserhacks.org" },
+    { key: "contact_email", value: "contact@laserhack.org" },
   ];
 
   for (const s of settings) {
