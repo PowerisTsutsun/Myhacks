@@ -107,8 +107,8 @@ export function RegisterForm({ eventName = "LaserHacks" }: RegisterFormProps) {
         <Input dark label="Full Name" required autoComplete="name"
           error={errors.fullName?.message} {...register("fullName")} />
 
-        <Input dark label="Student Email" type="email" required autoComplete="email"
-          hint="Must be your IVC email (@ivc.edu)"
+        <Input dark label="Email" type="email" required autoComplete="email"
+          hint="Use a personal email (Gmail, etc.) — @ivc.edu may delay confirmations."
           error={errors.email?.message} {...register("email")} />
 
         <Input dark label="Major" required placeholder="e.g. Computer Science, Business, Art"
@@ -194,8 +194,8 @@ export function RegisterForm({ eventName = "LaserHacks" }: RegisterFormProps) {
                     {...register(`teammates.${index}.lastName`)} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <Input dark label="School Email" type="email"
-                    hint="@ivc.edu preferred"
+                  <Input dark label="Email" type="email"
+                    hint="Any email"
                     error={errors.teammates?.[index]?.email?.message}
                     {...register(`teammates.${index}.email`)} />
                   <Input dark label="Student ID"

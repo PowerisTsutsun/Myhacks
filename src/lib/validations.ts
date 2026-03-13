@@ -25,12 +25,7 @@ export type SignupFormData = z.infer<typeof signupSchema>;
 // ---------------------------------------------------------------------------
 export const registrationSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters").max(100),
-  email: z
-    .string()
-    .email("Invalid email address")
-    .refine((val) => val.toLowerCase().endsWith("@ivc.edu"), {
-      message: "Must use your IVC email address (@ivc.edu)",
-    }),
+  email: z.string().email("Invalid email address"),
   studentId: z.string().optional(),
   major: z.string().min(1, "Please enter your major").max(100),
   experienceLevel: z.enum(["beginner", "intermediate", "advanced"], {

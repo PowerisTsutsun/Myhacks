@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CyberBackground } from "@/components/decorative/CyberBackground";
+import { Suspense } from "react";
+import { VerifyEmailBanner } from "@/components/ui/VerifyEmailBanner";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://laserhack.org";
 
@@ -60,6 +62,9 @@ export default function RootLayout({
         <div style={{ position: "relative", zIndex: 1 }}>
           {children}
         </div>
+        <Suspense>
+          <VerifyEmailBanner />
+        </Suspense>
       </body>
     </html>
   );
