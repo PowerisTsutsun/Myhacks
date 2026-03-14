@@ -106,7 +106,7 @@ export function RegisterForm({ eventName = "LaserHacks" }: RegisterFormProps) {
           type="email"
           required
           autoComplete="email"
-          hint="Use a personal email (Gmail, etc.) â€” @ivc.edu may delay confirmations."
+          hint="Use a personal email (Gmail, etc.) - @ivc.edu may delay confirmations."
           error={errors.email?.message}
           {...register("email")}
         />
@@ -134,9 +134,9 @@ export function RegisterForm({ eventName = "LaserHacks" }: RegisterFormProps) {
           required
           placeholder="Select your level"
           options={[
-            { value: "beginner", label: "Beginner â€” little to no coding experience" },
-            { value: "intermediate", label: "Intermediate â€” some projects under my belt" },
-            { value: "advanced", label: "Advanced â€” experienced developer" },
+            { value: "beginner", label: "Beginner - little to no coding experience" },
+            { value: "intermediate", label: "Intermediate - some projects under my belt" },
+            { value: "advanced", label: "Advanced - experienced developer" },
           ]}
           error={errors.experienceLevel?.message}
           {...register("experienceLevel")}
@@ -148,7 +148,7 @@ export function RegisterForm({ eventName = "LaserHacks" }: RegisterFormProps) {
           required
           placeholder="Select your team status"
           options={[
-            { value: "needs_team", label: "I need a team â€” match me with others" },
+            { value: "needs_team", label: "I need a team - match me with others" },
             { value: "has_partial_team", label: "I have some teammates, looking for more" },
             { value: "has_full_team", label: "I have a full team (up to 4 people)" },
             { value: "solo", label: "Participating solo (no team)" },
@@ -202,7 +202,7 @@ export function RegisterForm({ eventName = "LaserHacks" }: RegisterFormProps) {
                     <span className="text-xs font-semibold text-laser-400/70 uppercase tracking-wide">
                       Teammate {index + 1}
                     </span>
-                    <p className="text-xs text-white/30 mt-0.5">Fill in any combination â€” name, email, or student ID</p>
+                    <p className="text-xs text-white/30 mt-0.5">Fill in any combination - name, email, or student ID</p>
                   </div>
                   <button
                     type="button"
