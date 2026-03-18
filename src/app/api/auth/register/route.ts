@@ -6,9 +6,21 @@ import { signupSchema } from "@/lib/validations";
 import { checkRateLimit } from "@/lib/utils";
 import { generateToken, hashToken, expiresInMinutes } from "@/lib/auth/tokens";
 import { sendVerificationEmail } from "@/lib/email/resend";
+import { createSession } from "@/lib/auth/session";
 import { eq } from "drizzle-orm";
 
 const EMAIL_TTL = Number(process.env.EMAIL_VERIFICATION_TOKEN_TTL_MINUTES ?? 1440); // 24 h
+const SESSION_DURATION = 60 * 60 * 24;
+
+function setSession(response: NextResponse, token: string) {
+  response.cookies.set("lh-session", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: SESSION_DURATION,
+    path: "/",
+  });
+}
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "unknown";
@@ -39,14 +51,39 @@ export async function POST(request: NextRequest) {
   const normalizedEmail = email.toLowerCase();
 
   const [existing] = await db
-    .select({ id: users.id })
+    .select({ id: users.id, name: users.name, emailVerifiedAt: users.emailVerifiedAt, role: users.role })
     .from(users)
     .where(eq(users.email, normalizedEmail))
     .limit(1);
 
   if (existing) {
-    // Generic response to avoid user enumeration
-    return NextResponse.json({ ok: true, requiresVerification: true });
+    if (!existing.emailVerifiedAt) {
+      await db
+        .update(emailVerificationTokens)
+        .set({ usedAt: new Date() })
+        .where(eq(emailVerificationTokens.userId, existing.id));
+
+      const rawToken = generateToken();
+      await db.insert(emailVerificationTokens).values({
+        userId: existing.id,
+        tokenHash: hashToken(rawToken),
+        expiresAt: expiresInMinutes(EMAIL_TTL),
+      });
+      await sendVerificationEmail({ to: normalizedEmail, name: existing.name, token: rawToken });
+
+      // Auto-login the existing unverified user
+      const sessionToken = await createSession({
+        sub: String(existing.id),
+        email: normalizedEmail,
+        name: existing.name,
+        role: existing.role as "admin" | "editor",
+      });
+      const response = NextResponse.json({ ok: true, loggedIn: true });
+      setSession(response, sessionToken);
+      return response;
+    }
+    // Already verified — generic response
+    return NextResponse.json({ ok: true, requiresVerification: false });
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
@@ -64,12 +101,18 @@ export async function POST(request: NextRequest) {
       expiresAt: expiresInMinutes(EMAIL_TTL),
     });
 
-    // Fire-and-forget — signup succeeds even if email fails
-    sendVerificationEmail({ to: user.email, name: user.name, token: rawToken }).catch(
-      (err) => console.error("[signup] verification email failed:", err)
-    );
+    await sendVerificationEmail({ to: user.email, name: user.name, token: rawToken });
 
-    return NextResponse.json({ ok: true, requiresVerification: true });
+    // Auto-login the new user
+    const sessionToken = await createSession({
+      sub: String(user.id),
+      email: user.email,
+      name: user.name,
+      role: "editor",
+    });
+    const response = NextResponse.json({ ok: true, loggedIn: true });
+    setSession(response, sessionToken);
+    return response;
   } catch {
     return NextResponse.json({ error: "Failed to create account." }, { status: 500 });
   }

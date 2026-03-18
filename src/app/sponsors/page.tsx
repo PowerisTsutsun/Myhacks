@@ -10,7 +10,7 @@ import { eq, asc } from "drizzle-orm";
 
 export const metadata: Metadata = {
   title: "Sponsors",
-  description: "Thank you to our sponsors who make LaserHacks possible.",
+  description: "Thank you to our sponsors who make MyHacks possible.",
 };
 
 export const revalidate = 60;
@@ -48,13 +48,13 @@ export default async function SponsorsPage() {
         <div className="bg-navy-900 py-16 sm:py-20 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(37,99,235,0.2) 0%, transparent 70%)" }}
+            style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(22,98,172,0.38) 0%, transparent 70%)" }}
           />
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <p className="text-laser-400 font-semibold text-sm uppercase tracking-widest mb-3">Sponsors</p>
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">Our Sponsors</h1>
-            <p className="text-white/60 text-lg">
-              LaserHacks is made possible by the generous support of our sponsors.
+            <p className="text-white/70 text-lg">
+              MyHacks is made possible by the generous support of our sponsors.
             </p>
           </div>
         </div>
@@ -62,7 +62,7 @@ export default async function SponsorsPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
           {allSponsors.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-white/50 mb-6">Sponsor listings coming soon.</p>
+              <p className="text-white/65 mb-6">Sponsor listings coming soon.</p>
             </div>
           ) : (
             <div className="space-y-12 mb-16">
@@ -122,8 +122,8 @@ export default async function SponsorsPage() {
             }}
           >
             <h2 className="text-2xl font-bold text-white mb-3">Become a Sponsor</h2>
-            <p className="text-white/60 mb-6 max-w-xl mx-auto">
-              Support the next generation of student innovators at IVC. Sponsoring LaserHacks gets
+            <p className="text-white/70 mb-6 max-w-xl mx-auto">
+              Support the next generation of student innovators. Sponsoring MyHacks gets
               your brand in front of hundreds of motivated students.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">

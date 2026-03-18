@@ -80,32 +80,40 @@ export function MediaManager({ initialData }: { initialData: Row[] }) {
 
   return (
     <div>
-      {success && <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm">✓ {success}</div>}
-      {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>}
+      {success && (
+        <div className="mb-4 rounded-xl border px-3 py-3 text-sm text-emerald-100" style={{ background: "rgba(52,211,153,0.16)", borderColor: "rgba(52,211,153,0.38)" }}>
+          ✓ {success}
+        </div>
+      )}
+      {error && (
+        <div className="mb-4 rounded-xl border px-3 py-3 text-sm text-red-100" style={{ background: "rgba(251,113,133,0.14)", borderColor: "rgba(251,113,133,0.35)" }}>
+          {error}
+        </div>
+      )}
 
       {!showForm ? (
         <>
           <div className="flex justify-between items-center mb-4">
-            <p className="text-sm text-slate-500">{rows.length} item{rows.length !== 1 ? "s" : ""}</p>
+            <p className="text-sm text-semantic-text-muted">{rows.length} item{rows.length !== 1 ? "s" : ""}</p>
             <Button onClick={openNew}>+ Add Media</Button>
           </div>
           {rows.length === 0 ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
-              <p className="text-slate-400 mb-3">No media items yet.</p>
+            <div className="admin-surface rounded-2xl border p-10 text-center" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+              <p className="mb-3 text-semantic-text-muted">No media items yet.</p>
               <Button onClick={openNew} variant="outline">Add first item</Button>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
+            <div className="admin-surface divide-y rounded-2xl border" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
               {rows.map((row) => (
                 <div key={row.id} className="flex items-center justify-between gap-4 p-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span className="font-medium text-navy-900 text-sm">{row.title}</span>
+                      <span className="font-medium text-white text-sm">{row.title}</span>
                       <Badge variant="default" className="capitalize">{row.type}</Badge>
-                      {row.isFeatured && <Badge variant="gold">Featured</Badge>}
+                      {row.isFeatured && <Badge variant="green">Featured</Badge>}
                       {!row.isPublished && <Badge variant="gray">Hidden</Badge>}
                     </div>
-                    {row.caption && <p className="text-slate-400 text-xs truncate">{row.caption}</p>}
+                    {row.caption && <p className="truncate text-xs text-semantic-text-muted">{row.caption}</p>}
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <Button size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Button>
@@ -117,13 +125,14 @@ export function MediaManager({ initialData }: { initialData: Row[] }) {
           )}
         </>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 max-w-xl">
+        <div className="admin-surface max-w-xl rounded-2xl border p-5" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-navy-900">{editing ? "Edit Media Item" : "Add Media Item"}</h2>
+            <h2 className="font-semibold text-white">{editing ? "Edit Media Item" : "Add Media Item"}</h2>
             <Button size="sm" variant="ghost" onClick={() => setShowForm(false)}>Cancel</Button>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Select
+              dark
               label="Type"
               required
               options={[
@@ -136,19 +145,19 @@ export function MediaManager({ initialData }: { initialData: Row[] }) {
               error={errors.type?.message}
               {...register("type")}
             />
-            <Input label="Title" required error={errors.title?.message} {...register("title")} />
-            <Textarea label="Caption" error={errors.caption?.message} {...register("caption")} />
-            <Input label="Embed URL" hint="YouTube URL, Instagram post URL, etc." error={errors.embedUrl?.message} {...register("embedUrl")} />
-            <Input label="Thumbnail URL" hint="Optional image preview URL" error={errors.thumbnailUrl?.message} {...register("thumbnailUrl")} />
-            <Input label="External Link" hint="Where users click through to" error={errors.externalUrl?.message} {...register("externalUrl")} />
-            <Input label="Sort Order" type="number" error={errors.sortOrder?.message} {...register("sortOrder", { valueAsNumber: true })} />
+            <Input dark label="Title" required error={errors.title?.message} {...register("title")} />
+            <Textarea dark label="Caption" error={errors.caption?.message} {...register("caption")} />
+            <Input dark label="Embed URL" hint="YouTube URL, Instagram post URL, etc." error={errors.embedUrl?.message} {...register("embedUrl")} />
+            <Input dark label="Thumbnail URL" hint="Optional image preview URL" error={errors.thumbnailUrl?.message} {...register("thumbnailUrl")} />
+            <Input dark label="External Link" hint="Where users click through to" error={errors.externalUrl?.message} {...register("externalUrl")} />
+            <Input dark label="Sort Order" type="number" error={errors.sortOrder?.message} {...register("sortOrder", { valueAsNumber: true })} />
             <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-laser-500" {...register("isFeatured")} />
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-semantic-text-secondary">
+                <input type="checkbox" className="h-4 w-4 rounded border-emerald-400/30 bg-transparent text-emerald-500" {...register("isFeatured")} />
                 Featured
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-laser-500" {...register("isPublished")} />
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-semantic-text-secondary">
+                <input type="checkbox" className="h-4 w-4 rounded border-emerald-400/30 bg-transparent text-emerald-500" {...register("isPublished")} />
                 Published
               </label>
             </div>

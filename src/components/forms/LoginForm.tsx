@@ -43,9 +43,13 @@ export function LoginForm({ redirectTo = "/register" }: { redirectTo?: string })
         return;
       }
 
-      // Step 2: redirect to 2FA page
+      // Step 2: redirect to 2FA page, carrying the method so the page shows the right hint
       if (json.requires2FA) {
-        router.push(`/login/2fa?next=${encodeURIComponent(redirectTo)}`);
+        const params = new URLSearchParams({ next: redirectTo });
+        if (json.method) params.set("method", json.method);
+        if (json.availableMethods?.email) params.set("email2fa", "1");
+        if (json.availableMethods?.totp) params.set("totp", "1");
+        router.push(`/login/2fa?${params.toString()}`);
         return;
       }
 

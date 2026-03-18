@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
     .from(siteSettings)
     .where(eq(siteSettings.key, "event_name"))
     .limit(1);
-  const eventName = modeSetting2?.value ?? "LaserHacks 2026";
+  const eventName = modeSetting2?.value ?? "MyHacks 2026";
 
   await db
     .update(registrations)

@@ -87,16 +87,16 @@ export function ScheduleManager({ initialDays, initialItems }: { initialDays: Da
 
   if (mode === "new-day" || mode === "edit-day") {
     return (
-      <div className="bg-white rounded-xl border border-slate-200 p-5 max-w-md">
+      <div className="admin-surface max-w-md rounded-2xl border p-5" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-navy-900">{editingDay ? "Edit Day" : "Add Day"}</h2>
+          <h2 className="font-semibold text-white">{editingDay ? "Edit Day" : "Add Day"}</h2>
           <Button size="sm" variant="ghost" onClick={() => setMode("list")}>Cancel</Button>
         </div>
-        {error && <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>}
+        {error && <div className="mb-3 rounded-xl border px-3 py-3 text-sm text-red-100" style={{ background: "rgba(251,113,133,0.14)", borderColor: "rgba(251,113,133,0.35)" }}>{error}</div>}
         <form onSubmit={dayForm.handleSubmit(submitDay)} className="space-y-4">
-          <Input label="Label" required hint='e.g. "Friday, Oct 10"' error={dayForm.formState.errors.label?.message} {...dayForm.register("label")} />
-          <Input label="Date" required hint='e.g. "October 10, 2025"' error={dayForm.formState.errors.date?.message} {...dayForm.register("date")} />
-          <Input label="Sort Order" type="number" error={dayForm.formState.errors.sortOrder?.message} {...dayForm.register("sortOrder", { valueAsNumber: true })} />
+          <Input dark label="Label" required hint='e.g. "Friday, Oct 10"' error={dayForm.formState.errors.label?.message} {...dayForm.register("label")} />
+          <Input dark label="Date" required hint='e.g. "October 10, 2025"' error={dayForm.formState.errors.date?.message} {...dayForm.register("date")} />
+          <Input dark label="Sort Order" type="number" error={dayForm.formState.errors.sortOrder?.message} {...dayForm.register("sortOrder", { valueAsNumber: true })} />
           <div className="flex gap-2">
             <Button type="submit" loading={dayForm.formState.isSubmitting}>{editingDay ? "Update" : "Create"}</Button>
             <Button type="button" variant="ghost" onClick={() => setMode("list")}>Cancel</Button>
@@ -108,28 +108,29 @@ export function ScheduleManager({ initialDays, initialItems }: { initialDays: Da
 
   if (mode === "new-item" || mode === "edit-item") {
     return (
-      <div className="bg-white rounded-xl border border-slate-200 p-5 max-w-lg">
+      <div className="admin-surface max-w-lg rounded-2xl border p-5" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-navy-900">{editingItem ? "Edit Schedule Item" : "Add Schedule Item"}</h2>
+          <h2 className="font-semibold text-white">{editingItem ? "Edit Schedule Item" : "Add Schedule Item"}</h2>
           <Button size="sm" variant="ghost" onClick={() => setMode("list")}>Cancel</Button>
         </div>
-        {error && <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>}
+        {error && <div className="mb-3 rounded-xl border px-3 py-3 text-sm text-red-100" style={{ background: "rgba(251,113,133,0.14)", borderColor: "rgba(251,113,133,0.35)" }}>{error}</div>}
         <form onSubmit={itemForm.handleSubmit(submitItem)} className="space-y-4">
           <Select
+            dark
             label="Day"
             required
             options={days.map((d) => ({ value: String(d.id), label: d.label }))}
             error={itemForm.formState.errors.dayId?.message}
             {...itemForm.register("dayId", { valueAsNumber: true })}
           />
-          <Input label="Time" required placeholder="e.g. 9:00 AM" error={itemForm.formState.errors.time?.message} {...itemForm.register("time")} />
-          <Input label="Title" required error={itemForm.formState.errors.title?.message} {...itemForm.register("title")} />
-          <Textarea label="Description" error={itemForm.formState.errors.description?.message} {...itemForm.register("description")} />
-          <Input label="Track" placeholder="e.g. Workshop, Hacking" error={itemForm.formState.errors.track?.message} {...itemForm.register("track")} />
-          <Input label="Location" placeholder="e.g. Room 101" error={itemForm.formState.errors.location?.message} {...itemForm.register("location")} />
-          <Input label="Sort Order" type="number" error={itemForm.formState.errors.sortOrder?.message} {...itemForm.register("sortOrder", { valueAsNumber: true })} />
-          <label className="flex items-center gap-2 cursor-pointer text-sm">
-            <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-laser-500" {...itemForm.register("isImportant")} />
+          <Input dark label="Time" required placeholder="e.g. 9:00 AM" error={itemForm.formState.errors.time?.message} {...itemForm.register("time")} />
+          <Input dark label="Title" required error={itemForm.formState.errors.title?.message} {...itemForm.register("title")} />
+          <Textarea dark label="Description" error={itemForm.formState.errors.description?.message} {...itemForm.register("description")} />
+          <Input dark label="Track" placeholder="e.g. Workshop, Hacking" error={itemForm.formState.errors.track?.message} {...itemForm.register("track")} />
+          <Input dark label="Location" placeholder="e.g. Room 101" error={itemForm.formState.errors.location?.message} {...itemForm.register("location")} />
+          <Input dark label="Sort Order" type="number" error={itemForm.formState.errors.sortOrder?.message} {...itemForm.register("sortOrder", { valueAsNumber: true })} />
+          <label className="flex items-center gap-2 cursor-pointer text-sm text-semantic-text-secondary">
+            <input type="checkbox" className="h-4 w-4 rounded border-emerald-400/30 bg-transparent text-emerald-500" {...itemForm.register("isImportant")} />
             Mark as Important Event
           </label>
           <div className="flex gap-2">
@@ -143,7 +144,11 @@ export function ScheduleManager({ initialDays, initialItems }: { initialDays: Da
 
   return (
     <div>
-      {success && <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm">✓ {success}</div>}
+      {success && (
+        <div className="mb-4 rounded-xl border px-3 py-3 text-sm text-emerald-100" style={{ background: "rgba(52,211,153,0.16)", borderColor: "rgba(52,211,153,0.38)" }}>
+          ✓ {success}
+        </div>
+      )}
 
       <div className="flex gap-2 mb-6">
         <Button onClick={() => { dayForm.reset({ sortOrder: days.length }); setEditingDay(null); setMode("new-day"); }}>
@@ -164,17 +169,17 @@ export function ScheduleManager({ initialDays, initialItems }: { initialDays: Da
       </div>
 
       {days.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
-          <p className="text-slate-400">No schedule days yet. Add a day to get started.</p>
+        <div className="admin-surface rounded-2xl border p-10 text-center" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+          <p className="text-semantic-text-muted">No schedule days yet. Add a day to get started.</p>
         </div>
       ) : (
         <div className="space-y-6">
           {days.map((day) => (
-            <div key={day.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <div className="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200">
+            <div key={day.id} className="admin-surface overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+              <div className="flex items-center justify-between gap-3 border-b px-4 py-3" style={{ background: "rgba(11,29,47,0.98)", borderColor: "rgba(52,211,153,0.16)" }}>
                 <div>
-                  <span className="font-semibold text-navy-900">{day.label}</span>
-                  <span className="ml-2 text-slate-400 text-sm">{day.date}</span>
+                  <span className="font-semibold text-white">{day.label}</span>
+                  <span className="ml-2 text-sm text-semantic-text-muted">{day.date}</span>
                 </div>
                 <div className="flex gap-2">
                   <Button size="sm" variant="ghost" onClick={() => {
@@ -184,20 +189,20 @@ export function ScheduleManager({ initialDays, initialItems }: { initialDays: Da
                   <Button size="sm" variant="danger" onClick={() => deleteDay(day.id)}>Delete Day</Button>
                 </div>
               </div>
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y" style={{ borderColor: "rgba(52,211,153,0.08)" }}>
                 {items.filter((i) => i.dayId === day.id).length === 0 ? (
-                  <p className="text-slate-400 text-sm p-4">No items for this day.</p>
+                  <p className="p-4 text-sm text-semantic-text-muted">No items for this day.</p>
                 ) : (
                   items.filter((i) => i.dayId === day.id).map((item) => (
                     <div key={item.id} className="flex items-start justify-between gap-3 p-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-mono text-xs text-slate-400 w-16">{item.time}</span>
-                          <span className="text-sm text-navy-900">{item.title}</span>
+                          <span className="w-16 font-mono text-xs text-semantic-text-muted">{item.time}</span>
+                          <span className="text-sm text-white">{item.title}</span>
                           {item.isImportant && <Badge variant="laser">Key</Badge>}
                           {item.track && <Badge variant="default" className="capitalize">{item.track}</Badge>}
                         </div>
-                        {item.description && <p className="text-xs text-slate-400 mt-0.5 ml-16 line-clamp-1">{item.description}</p>}
+                        {item.description && <p className="mt-0.5 ml-16 line-clamp-1 text-xs text-semantic-text-muted">{item.description}</p>}
                       </div>
                       <div className="flex gap-2 shrink-0">
                         <Button size="sm" variant="ghost" onClick={() => {

@@ -11,6 +11,36 @@
       "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
       "Liberation Mono", "Courier New", monospace;
+
+    /* Semantic laser-blue RGB — update once, used in inline rgba() throughout */
+    --background: #06111F;
+    --background-secondary: #0A1830;
+    --surface: #10213F;
+    --surface-elevated: #16305A;
+    --surface-hover: #1B3B6F;
+    --border: #243D68;
+    --border-strong: #315487;
+    --text-primary: #F5F9FF;
+    --text-secondary: #B8C7E6;
+    --text-muted: #8EA3C7;
+    --accent-primary: #4DA3FF;
+    --accent-primary-hover: #79BBFF;
+    --accent-secondary: #65E6FF;
+    --success: #34D399;
+    --warning: #FBBF24;
+    --danger: #FB7185;
+    --button-primary: #4DA3FF;
+    --button-primary-hover: #79BBFF;
+    --button-primary-active: #2E81D8;
+    --button-primary-disabled: rgba(46, 129, 216, 0.5);
+    --button-outline-border: rgba(49, 84, 135, 0.95);
+    --button-outline-border-hover: #79BBFF;
+    --button-outline-text: #94C6FF;
+    --button-outline-text-hover: #E9F4FF;
+    --button-outline-bg: rgba(77, 163, 255, 0.12);
+    --laser-rgb: 77, 163, 255;
+    --laser-dark-rgb: 46, 129, 216;
+    --cyan-rgb: 101, 230, 255;
   }
 
   html {
@@ -18,12 +48,27 @@
   }
 
   body {
-    @apply bg-navy-950 text-white antialiased;
+    color: var(--text-primary);
+    background:
+      radial-gradient(circle at top, rgba(var(--laser-rgb), 0.16), transparent 34%),
+      linear-gradient(180deg, var(--background-secondary) 0%, var(--background) 38%, #040c18 100%);
+    @apply antialiased;
     font-family: var(--font-geist-sans);
+  }
+
+  ::selection {
+    background: rgba(var(--laser-rgb), 0.28);
+    color: var(--text-primary);
   }
 
   *:focus-visible {
     @apply outline-2 outline-offset-2 outline-laser-400 rounded-sm;
+  }
+
+  input,
+  select,
+  textarea {
+    color-scheme: dark;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -45,7 +90,7 @@
     text-wrap: balance;
   }
 
-  /* IVC blue gradient text */
+  /* Blue gradient text */
   .gradient-text {
     @apply bg-gradient-to-r from-laser-400 to-laser-600 bg-clip-text text-transparent;
   }
@@ -64,14 +109,19 @@
 
   /* Standardized dark page header used across About, Schedule, FAQ, Sponsors */
   .page-header {
-    @apply bg-navy-900 py-16 sm:py-20 relative overflow-hidden;
+    @apply py-16 sm:py-20 relative overflow-hidden;
+    background:
+      linear-gradient(180deg, rgba(10, 24, 48, 0.98) 0%, rgba(6, 17, 31, 0.92) 100%);
+    border-bottom: 1px solid rgba(49, 84, 135, 0.42);
   }
 
   .page-header-glow {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(21,88,160,0.35) 0%, transparent 70%);
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(var(--laser-rgb), 0.34) 0%, transparent 70%),
+      radial-gradient(ellipse 35% 55% at 50% 10%, rgba(var(--cyan-rgb), 0.14) 0%, transparent 70%);
   }
 
   .page-header-content {
@@ -81,6 +131,36 @@
   .section-eyebrow {
     @apply text-laser-400 font-semibold text-sm uppercase tracking-widest mb-3;
   }
+
+  .app-surface {
+    background: rgba(16, 33, 63, 0.84);
+    border: 1px solid rgba(36, 61, 104, 0.9);
+    box-shadow: 0 14px 40px rgba(2, 8, 23, 0.34);
+  }
+
+  .app-surface-elevated {
+    background: linear-gradient(180deg, rgba(22, 48, 90, 0.96), rgba(16, 33, 63, 0.96));
+    border: 1px solid rgba(49, 84, 135, 0.95);
+    box-shadow: 0 18px 46px rgba(2, 8, 23, 0.38);
+  }
+
+  .admin-surface {
+    background: rgba(8, 10, 10, 0.96);
+    border: 1px solid rgba(52, 211, 153, 0.18);
+    box-shadow: 0 22px 54px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.admin-theme {
+  --button-primary: #22C55E;
+  --button-primary-hover: #34D399;
+  --button-primary-active: #16A34A;
+  --button-primary-disabled: rgba(22, 163, 74, 0.45);
+  --button-outline-border: rgba(52, 211, 153, 0.35);
+  --button-outline-border-hover: #34D399;
+  --button-outline-text: #A7F3D0;
+  --button-outline-text-hover: #F5F9FF;
+  --button-outline-bg: rgba(52, 211, 153, 0.12);
 }
 
 /* ---------------------------------------------------------------------------
@@ -92,20 +172,31 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(75, 159, 229, 0.6) 40%,
-    rgba(75, 159, 229, 0.9) 50%,
-    rgba(75, 159, 229, 0.6) 60%,
+    rgba(77, 166, 255, 0.65) 40%,
+    rgba(77, 166, 255, 0.95) 50%,
+    rgba(77, 166, 255, 0.65) 60%,
     transparent 100%
   );
   filter: blur(0.5px);
-  box-shadow: 0 0 6px rgba(75, 159, 229, 0.5), 0 0 12px rgba(75, 159, 229, 0.2);
+  box-shadow: 0 0 6px rgba(77, 166, 255, 0.55), 0 0 12px rgba(77, 166, 255, 0.22);
 }
 
 .sparkle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.7), 0 0 8px rgba(75, 159, 229, 0.35);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8), 0 0 8px rgba(77, 166, 255, 0.4);
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.28;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
 .cloud-shape {
@@ -118,6 +209,272 @@
 /* ---------------------------------------------------------------------------
    Cyber theme — global sweeping laser beams
    --------------------------------------------------------------------------- */
+.hero-stage {
+  position: relative;
+  padding: clamp(2rem, 5vw, 3.75rem) clamp(1rem, 3vw, 2rem);
+}
+
+.hero-stage::before {
+  content: "";
+  position: absolute;
+  inset: 5% 8% 7%;
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(6, 17, 31, 0.74), rgba(4, 10, 20, 0.28)),
+    radial-gradient(circle at 50% 0%, rgba(var(--laser-rgb), 0.1), transparent 58%);
+  border: 1px solid rgba(125, 180, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 30px 120px rgba(1, 7, 17, 0.28);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.hero-stage::after {
+  content: "";
+  position: absolute;
+  inset: 16% 14% 16%;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(ellipse 52% 26% at 50% 44%, rgba(6, 17, 31, 0.58) 0%, rgba(6, 17, 31, 0.22) 46%, transparent 100%);
+  filter: blur(12px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-badge {
+  backdrop-filter: blur(12px);
+}
+
+.hero-title {
+  position: relative;
+  z-index: 2;
+  text-shadow: none;
+}
+
+.hero-title::before {
+  content: "";
+  position: absolute;
+  inset: -18% -10%;
+  background: radial-gradient(circle at 50% 48%, rgba(var(--laser-rgb), 0.08), transparent 54%);
+  filter: blur(18px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero-wordmark {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  font-size: clamp(4rem, 14vw, 9.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.hero-wordmark-shell {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+}
+
+.hero-wordmark-shell > * {
+  grid-area: 1 / 1;
+}
+
+.hero-wordmark-trace {
+  z-index: 0;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-wordmark-trace-base {
+  opacity: 0;
+}
+
+.hero-wordmark-trace-sweep {
+  opacity: 1;
+}
+
+.hero-wordmark-trace .hero-wordmark-laser,
+.hero-wordmark-trace .hero-wordmark-hacks {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-wordmark-trace .hero-wordmark-laser {
+  -webkit-text-stroke: 0 transparent;
+  background: none;
+  text-shadow: none;
+  filter: none;
+}
+
+.hero-wordmark-trace-base .hero-wordmark-hacks {
+  -webkit-text-stroke: 1px rgba(235, 247, 255, 0);
+  text-shadow: none;
+}
+
+.hero-wordmark-trace-sweep .hero-wordmark {
+  position: relative;
+}
+
+.hero-wordmark-trace-sweep .hero-wordmark-hacks {
+  -webkit-text-stroke: 1.6px rgba(255, 255, 255, 0.18);
+  background: linear-gradient(
+    104deg,
+    transparent 42%,
+    rgba(235, 247, 255, 0) 46%,
+    rgba(245, 251, 255, 1) 48.5%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(240, 249, 255, 1) 51.5%,
+    rgba(220, 239, 255, 0.58) 55%,
+    rgba(180, 220, 255, 0.18) 58%,
+    transparent 63%
+  );
+  background-size: 165% 100%;
+  background-position: 130% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: none;
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, 0.45),
+    0 0 8px rgba(235, 247, 255, 0.16);
+  animation: heroWordmarkTrace 5.2s linear infinite;
+}
+
+.hero-wordmark-shell:hover .hero-wordmark-trace-base {
+  opacity: 0;
+}
+
+.hero-wordmark-shell:hover .hero-wordmark-trace-sweep {
+  opacity: 1;
+}
+
+.hero-wordmark-shell:hover .hero-wordmark-trace-sweep .hero-wordmark-hacks {
+  animation-duration: 3.8s;
+}
+
+.hero-wordmark-laser {
+  color: #f4fbff;
+}
+
+.hero-wordmark-hacks {
+  color: #79bbff;
+}
+
+.hero-meta {
+  position: relative;
+  z-index: 1;
+  padding: 0.55rem 1rem;
+  border-radius: 9999px;
+  max-width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+  background: rgba(5, 12, 24, 0.52);
+  border: 1px solid rgba(95, 170, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  text-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.hero-primary-cta {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(93, 178, 255, 1), rgba(56, 140, 231, 1));
+  box-shadow:
+    0 10px 18px rgba(77, 163, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.hero-primary-cta:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 14px 24px rgba(77, 163, 255, 0.24),
+    0 0 24px rgba(77, 163, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.about-register-cta {
+  position: relative;
+  background: linear-gradient(180deg, rgba(97, 182, 255, 1), rgba(50, 128, 224, 1));
+  box-shadow:
+    0 12px 24px rgba(77, 163, 255, 0.2),
+    0 0 0 rgba(77, 163, 255, 0),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.about-register-cta:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow:
+    0 18px 32px rgba(77, 163, 255, 0.28),
+    0 0 36px rgba(77, 163, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.hero-secondary-cta {
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  background: rgba(7, 15, 28, 0.42);
+}
+
+.laser-grid {
+  opacity: 0.14;
+  background-image:
+    linear-gradient(rgba(109, 172, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(109, 172, 255, 0.16) 1px, transparent 1px),
+    radial-gradient(circle at 20% 24%, rgba(153, 214, 255, 0.22) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 72% 58%, rgba(153, 214, 255, 0.2) 0 1px, transparent 1.5px);
+  background-size: 72px 72px, 72px 72px, 240px 240px, 280px 280px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.35));
+}
+
+.laser-center-haze {
+  background:
+    radial-gradient(ellipse 46% 18% at 50% 16%, rgba(77, 163, 255, 0.08) 0%, rgba(77, 163, 255, 0.03) 30%, transparent 68%),
+    radial-gradient(ellipse 16% 10% at 50% 26%, rgba(101, 230, 255, 0.03) 0%, transparent 74%);
+  filter: blur(8px);
+  animation: hazeBreath 12s ease-in-out infinite;
+}
+
+.laser-vignette {
+  background:
+    radial-gradient(circle at 50% 34%, transparent 0%, rgba(3, 8, 17, 0.06) 42%, rgba(2, 5, 12, 0.52) 100%),
+    linear-gradient(90deg, rgba(2, 5, 12, 0.52) 0%, transparent 18%, transparent 82%, rgba(2, 5, 12, 0.56) 100%);
+}
+
+.laser-depth-back {
+  transform: translate3d(0, 0, 0);
+  animation: layerFloatBack 20s ease-in-out infinite;
+}
+
+.laser-depth-mid {
+  transform: translate3d(0, 0, 0);
+  animation: layerFloatMid 16s ease-in-out infinite;
+}
+
+.laser-depth-front {
+  transform: translate3d(0, 0, 0);
+  animation: layerFloatFront 14s ease-in-out infinite;
+}
+
+.laser-beam {
+  position: absolute;
+  height: var(--beam-core, 1.5px);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--beam-rgb), 0) 0%,
+    rgba(var(--beam-rgb), 0.52) 16%,
+    rgba(255, 255, 255, 0.92) 48%,
+    rgba(var(--beam-rgb), 0.68) 68%,
+    transparent 100%
+  );
+  transform: rotate(var(--beam-angle, -8deg)) translate3d(calc(var(--beam-travel, 140%) * -1), 0, 0);
+  animation: laserTraverse var(--beam-duration, 12s) linear infinite;
+  animation-delay: var(--beam-delay, 0s);
+  will-change: transform, opacity;
+}
+
 .cyber-beam {
   position: absolute;
   left: 0;
@@ -127,11 +484,10 @@
     90deg,
     transparent 0%,
     rgba(var(--beam-rgb), 0.7) 30%,
-    rgba(var(--beam-rgb), 1) 50%,
+    rgba(255, 255, 255, 0.92) 50%,
     rgba(var(--beam-rgb), 0.7) 70%,
     transparent 100%
   );
-  filter: blur(0.5px);
   box-shadow:
     0 0 6px rgba(var(--beam-rgb), 0.8),
     0 0 16px rgba(var(--beam-rgb), 0.4),
@@ -139,6 +495,93 @@
   transform: rotate(var(--beam-angle, -8deg)) translateX(-200%);
   animation: laserSweep var(--beam-dur, 10s) linear infinite;
   animation-delay: var(--beam-delay, 0s);
+}
+
+.laser-beam-primary {
+  box-shadow:
+    0 0 6px rgba(var(--beam-rgb), 0.7),
+    0 0 16px rgba(var(--beam-rgb), 0.2),
+    0 0 30px rgba(var(--beam-rgb), 0.1);
+}
+
+.laser-beam-atmospheric {
+  mix-blend-mode: screen;
+  box-shadow:
+    0 0 14px rgba(var(--beam-rgb), 0.18),
+    0 0 30px rgba(var(--beam-rgb), 0.1),
+    0 0 64px rgba(var(--beam-rgb), 0.05);
+}
+
+.laser-beam-micro {
+  box-shadow:
+    0 0 8px rgba(var(--beam-rgb), 0.5),
+    0 0 18px rgba(var(--beam-rgb), 0.14);
+}
+
+.laser-emitter {
+  position: absolute;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.72) 0 4%, var(--emitter-glow) 18%, transparent 70%);
+  filter: blur(8px);
+}
+
+.laser-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.26) 0%, rgba(121, 187, 255, 0.1) 28%, transparent 68%);
+  mix-blend-mode: screen;
+  animation: hotspotPulse 7s ease-in-out infinite;
+}
+
+.laser-hotspot::before,
+.laser-hotspot::after {
+  content: "";
+  position: absolute;
+  inset: 42%;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 10px rgba(125, 190, 255, 0.48);
+}
+
+.laser-hotspot::after {
+  inset: 30%;
+  background: transparent;
+  border: 1px solid rgba(125, 190, 255, 0.22);
+  box-shadow: none;
+}
+
+.laser-dust-field {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.22) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 34% 68%, rgba(101, 230, 255, 0.18) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.18) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 82% 64%, rgba(77, 163, 255, 0.16) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 58% 48%, rgba(255, 255, 255, 0.18) 0 0.8px, transparent 1.2px);
+  opacity: 0.24;
+  animation: dustDrift 18s linear infinite;
+}
+
+@keyframes laserTraverse {
+  from {
+    transform: rotate(var(--beam-angle, -8deg)) translate3d(calc(var(--beam-travel, 140%) * -1), 0, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(var(--beam-angle, -8deg)) translate3d(var(--beam-travel, 140%), 0, 0);
+    opacity: 0;
+  }
 }
 
 @keyframes laserSweep {
@@ -158,25 +601,125 @@
   }
 }
 
-/* Light sweep across title text */
-@keyframes titleSweep {
-  0%, 85%, 100% { background-position: -200% center; }
-  40%            { background-position: 200% center; }
+@keyframes hazeBreath {
+  0%, 100% {
+    opacity: 0.72;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
 }
 
-.title-sweep {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255,255,255,0.12) 40%,
-    rgba(255,255,255,0.22) 50%,
-    rgba(255,255,255,0.12) 60%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: titleSweep 5s ease-in-out infinite;
-  -webkit-background-clip: text;
-  background-clip: text;
+@keyframes hotspotPulse {
+  0%, 100% {
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes dustDrift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-2%, 1.5%, 0);
+  }
+}
+
+@keyframes layerFloatBack {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-1%, 1%, 0);
+  }
+}
+
+@keyframes layerFloatMid {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0.75%, -0.85%, 0);
+  }
+}
+
+@keyframes layerFloatFront {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(1.2%, -1%, 0);
+  }
+}
+
+@keyframes heroWordmarkTrace {
+  0% {
+    background-position: 130% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-wordmark {
+    font-size: clamp(4rem, 16vw, 7.5rem);
+  }
+
+  .hero-stage {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .hero-stage::before {
+    inset: 8% 0 10%;
+    border-radius: 1.5rem;
+    backdrop-filter: blur(6px);
+  }
+
+  .hero-stage::after {
+    inset: 22% 4% 18%;
+  }
+
+  .laser-grid {
+    opacity: 0.1;
+    background-size: 88px 88px, 88px 88px, 260px 260px, 300px 300px;
+  }
+
+  .laser-depth-front {
+    opacity: 0.55;
+  }
+
+  .laser-dust-field {
+    opacity: 0.14;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laser-depth-back,
+  .laser-depth-mid,
+  .laser-depth-front,
+  .laser-center-haze,
+  .laser-dust-field,
+  .laser-hotspot,
+  .laser-beam {
+    animation: none !important;
+  }
+
+  .hero-wordmark-trace-sweep {
+    opacity: 0.42;
+  }
+
+  .hero-wordmark-trace-sweep .hero-wordmark-hacks {
+    animation: none !important;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -198,9 +741,9 @@
     from 0deg,
     transparent 0deg,
     transparent 310deg,
-    rgba(75, 159, 229, 0.5) 340deg,
-    rgba(147, 210, 255, 0.9) 355deg,
-    rgba(75, 159, 229, 0.5) 360deg
+    rgba(77, 166, 255, 0.55) 340deg,
+    rgba(134, 194, 255, 0.92) 355deg,
+    rgba(77, 166, 255, 0.55) 360deg
   );
   animation: laser-border-spin 2.5s linear infinite;
   opacity: 0;
@@ -236,17 +779,23 @@
 }
 
 .prose-content a {
-  @apply text-laser-600 underline;
+  @apply text-laser-400 underline;
 }
 .prose-content a:hover {
-  @apply text-laser-500;
+  @apply text-laser-300;
 }
 
 /* ---------------------------------------------------------------------------
    Form field focus ring
    --------------------------------------------------------------------------- */
 .field-ring {
-  @apply border border-slate-200 rounded-lg px-3 py-2 text-sm
-    focus:outline-none focus:ring-2 focus:ring-laser-400 focus:border-transparent
-    transition-colors;
+  border: 1px solid rgba(36, 61, 104, 0.92);
+  background: rgba(10, 24, 48, 0.78);
+  color: var(--text-primary);
+  @apply rounded-xl px-3 py-2.5 text-sm transition-colors
+    focus:outline-none focus:ring-2 focus:ring-laser-400 focus:border-transparent;
+}
+
+.field-ring::placeholder {
+  color: var(--text-muted);
 }

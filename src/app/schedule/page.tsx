@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 
 export const metadata: Metadata = {
   title: "Schedule",
-  description: "Full schedule for LaserHacks — talks, workshops, hacking, and demos.",
+  description: "Full schedule for MyHacks — talks, workshops, hacking, and demos.",
 };
 
 export const revalidate = 60;
@@ -48,7 +48,7 @@ export default async function SchedulePage() {
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(37,99,235,0.2) 0%, transparent 70%)",
+              background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(22,98,172,0.38) 0%, transparent 70%)",
             }}
           />
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
@@ -71,13 +71,13 @@ export default async function SchedulePage() {
                     <div className="h-px flex-1 bg-white/10" />
                     <div className="text-center">
                       <p className="font-bold text-white text-lg">{day.label}</p>
-                      <p className="text-white/40 text-sm">{day.date}</p>
+                      <p className="text-white/55 text-sm">{day.date}</p>
                     </div>
                     <div className="h-px flex-1 bg-white/10" />
                   </div>
 
                   {day.items.length === 0 ? (
-                    <p className="text-white/40 text-sm text-center py-6">
+                    <p className="text-white/55 text-sm text-center py-6">
                       Schedule coming soon.
                     </p>
                   ) : (
@@ -96,7 +96,7 @@ export default async function SchedulePage() {
                           }}
                         >
                           <div className="shrink-0 w-24 pt-0.5">
-                            <p className="font-mono text-sm text-white/50">{item.time}</p>
+                            <p className="font-mono text-sm text-white/65">{item.time}</p>
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start gap-2 flex-wrap">
@@ -116,10 +116,10 @@ export default async function SchedulePage() {
                               )}
                             </div>
                             {item.description && (
-                              <p className="text-white/50 text-sm mt-1">{item.description}</p>
+                              <p className="text-white/65 text-sm mt-1">{item.description}</p>
                             )}
                             {item.location && (
-                              <p className="text-white/35 text-xs mt-1 flex items-center gap-1">
+                              <p className="text-white/50 text-xs mt-1 flex items-center gap-1">
                                 <LocationIcon />
                                 {item.location}
                               </p>
@@ -152,7 +152,7 @@ function EmptyState() {
         </svg>
       </div>
       <h2 className="text-xl font-semibold text-white mb-2">Schedule coming soon</h2>
-      <p className="text-white/50">Check back closer to the event date.</p>
+      <p className="text-white/65">Check back closer to the event date.</p>
     </div>
   );
 }

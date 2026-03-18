@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { contactSubmissions } from "@/lib/db/schema";
 import { contactSchema } from "@/lib/validations";
 import { checkRateLimit } from "@/lib/utils";
+import { sendContactNotificationEmail } from "@/lib/email/resend";
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "unknown";
@@ -37,12 +38,34 @@ export async function POST(request: NextRequest) {
 
   const { website: _website, ...fields } = parsed.data;
 
-  await db.insert(contactSubmissions).values({
-    name: fields.name,
-    email: fields.email.toLowerCase(),
+  // Save to DB first
+  try {
+    await db.insert(contactSubmissions).values({
+      name: fields.name,
+      email: fields.email.toLowerCase(),
+      subject: fields.subject,
+      message: fields.message,
+    });
+  } catch (err) {
+    console.error("[contact] db insert failed:", err);
+    return NextResponse.json({ error: "Failed to save your message. Please try again." }, { status: 500 });
+  }
+
+  // Send email notification to the team
+  const emailResult = await sendContactNotificationEmail({
+    fromName: fields.name,
+    fromEmail: fields.email.toLowerCase(),
     subject: fields.subject,
     message: fields.message,
   });
+
+  if (!emailResult.ok) {
+    console.error("[contact] email send failed:", emailResult.error);
+    return NextResponse.json(
+      { error: "Your message was received but we couldn't send a notification. Please try again later." },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -8,11 +9,16 @@ interface UserData {
   id: number;
   name: string;
   email: string;
+  role?: string;
   twoFactorEnabled: boolean;
+  totpEnabled: boolean;
+  twoFactorMethod: string;
   emailNotifications: boolean;
 }
 
-export function SettingsClient({ user }: { user: UserData }) {
+export function SettingsClient({ user, allowEmailTwoFactor = true }: { user: UserData; allowEmailTwoFactor?: boolean }) {
+  const canDeleteAccount = user.email.toLowerCase() !== "admin@example.com";
+
   return (
     <div className="space-y-6">
       {/* Profile (read-only) */}
@@ -28,10 +34,18 @@ export function SettingsClient({ user }: { user: UserData }) {
       <PasswordSection />
 
       {/* Two-Factor Authentication */}
-      <TwoFactorSection enabled={user.twoFactorEnabled} />
+      <TwoFactorSection
+        allowEmailTwoFactor={allowEmailTwoFactor}
+        emailEnabled={user.twoFactorEnabled}
+        totpEnabled={user.totpEnabled}
+        method={user.twoFactorMethod}
+      />
 
       {/* Notifications */}
       <NotificationsSection enabled={user.emailNotifications} />
+
+      {/* Danger Zone */}
+      <DeleteAccountSection canDeleteAccount={canDeleteAccount} />
     </div>
   );
 }
@@ -84,40 +98,15 @@ function PasswordSection() {
     <Card>
       <CardHeader icon={<LockIcon />} title="Change Password" />
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-        {status && (
-          <StatusBanner ok={status.ok} msg={status.msg} />
-        )}
-        <Input
-          dark
-          label="Current Password"
-          type="password"
-          required
-          autoComplete="current-password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-        />
-        <Input
-          dark
-          label="New Password"
-          type="password"
-          required
-          autoComplete="new-password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-        <Input
-          dark
-          label="Confirm New Password"
-          type="password"
-          required
-          autoComplete="new-password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+        {status && <StatusBanner ok={status.ok} msg={status.msg} />}
+        <Input dark label="Current Password" type="password" required autoComplete="current-password"
+          value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+        <Input dark label="New Password" type="password" required autoComplete="new-password"
+          value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+        <Input dark label="Confirm New Password" type="password" required autoComplete="new-password"
+          value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
         <div className="pt-1">
-          <Button type="submit" loading={loading} variant="primary">
-            Update Password
-          </Button>
+          <Button type="submit" loading={loading} variant="primary">Update Password</Button>
         </div>
       </form>
     </Card>
@@ -125,22 +114,49 @@ function PasswordSection() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 2FA setup flow                                                              */
+/* Two-Factor Authentication — email + authenticator app                       */
 /* -------------------------------------------------------------------------- */
-type TwoFactorStep = "idle" | "sent" | "disabling";
+type EmailStep = "idle" | "sent" | "disabling";
+type TotpStep = "idle" | "setting-up" | "disabling";
 
-function TwoFactorSection({ enabled: initial }: { enabled: boolean }) {
-  const [enabled, setEnabled] = useState(initial);
-  const [step, setStep] = useState<TwoFactorStep>("idle");
-  const [code, setCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+function TwoFactorSection({
+  allowEmailTwoFactor = true,
+  emailEnabled: initialEmailEnabled,
+  totpEnabled: initialTotpEnabled,
+  method: initialMethod,
+}: {
+  allowEmailTwoFactor?: boolean;
+  emailEnabled: boolean;
+  totpEnabled: boolean;
+  method: string;
+}) {
+  const [emailEnabled, setEmailEnabled] = useState(initialEmailEnabled);
+  const [totpEnabled, setTotpEnabled] = useState(initialTotpEnabled);
+  const [method, setMethod] = useState(initialMethod);
+  const [methodLoading, setMethodLoading] = useState<"email" | "totp" | null>(null);
 
-  async function sendCode() {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
+  const [emailStep, setEmailStep] = useState<EmailStep>("idle");
+  const [emailCode, setEmailCode] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailSuccess, setEmailSuccess] = useState<string | null>(null);
+
+  const [totpStep, setTotpStep] = useState<TotpStep>("idle");
+  const [totpQr, setTotpQr] = useState<string | null>(null);
+  const [totpSecret, setTotpSecret] = useState<string | null>(null);
+  const [totpCode, setTotpCode] = useState(["", "", "", "", "", ""]);
+  const [totpLoading, setTotpLoading] = useState(false);
+  const [totpError, setTotpError] = useState<string | null>(null);
+  const [totpSuccess, setTotpSuccess] = useState<string | null>(null);
+  const [secretCopied, setSecretCopied] = useState(false);
+  const totpInputs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // ── Email 2FA ─────────────────────────────────────────────────────────────
+
+  async function sendEmailCode() {
+    setEmailLoading(true);
+    setEmailError(null);
+    setEmailSuccess(null);
     try {
       const res = await fetch("/api/account/2fa", {
         method: "POST",
@@ -148,48 +164,42 @@ function TwoFactorSection({ enabled: initial }: { enabled: boolean }) {
         body: JSON.stringify({ action: "initiate" }),
       });
       const json = await res.json();
-      if (res.ok) {
-        setStep("sent");
-      } else {
-        setError(json.error || "Failed to send code.");
-      }
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+      if (res.ok) setEmailStep("sent");
+      else setEmailError(json.error || "Failed to send code.");
+    } catch { setEmailError("Network error. Please try again."); }
+    finally { setEmailLoading(false); }
   }
 
-  async function verifyAndEnable() {
-    if (!code.trim()) { setError("Please enter the verification code."); return; }
-    setLoading(true);
-    setError(null);
+  async function verifyEmailAndEnable() {
+    if (!emailCode.trim()) { setEmailError("Please enter the verification code."); return; }
+    setEmailLoading(true);
+    setEmailError(null);
     try {
       const res = await fetch("/api/account/2fa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "enable", code }),
+        body: JSON.stringify({ action: "enable", code: emailCode }),
       });
       const json = await res.json();
       if (res.ok) {
-        setEnabled(true);
-        setStep("idle");
-        setCode("");
-        setSuccess("Two-factor authentication is now active.");
-      } else {
-        setError(json.error || "Invalid code.");
-      }
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+        setEmailEnabled(true);
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
+        setEmailStep("idle");
+        setEmailCode("");
+        setEmailSuccess(
+          json.twoFactorMethod === "email"
+            ? "Email two-factor authentication is now active."
+            : "Email two-factor authentication is now active as a backup method."
+        );
+      } else setEmailError(json.error || "Invalid code.");
+    } catch { setEmailError("Network error. Please try again."); }
+    finally { setEmailLoading(false); }
   }
 
-  async function disable() {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
+  async function disableEmail() {
+    setEmailLoading(true);
+    setEmailError(null);
+    setEmailSuccess(null);
     try {
       const res = await fetch("/api/account/2fa", {
         method: "POST",
@@ -198,112 +208,388 @@ function TwoFactorSection({ enabled: initial }: { enabled: boolean }) {
       });
       const json = await res.json();
       if (res.ok) {
-        setEnabled(false);
-        setStep("idle");
-        setSuccess("Two-factor authentication has been disabled.");
+        setEmailEnabled(false);
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
+        setEmailStep("idle");
+        setEmailSuccess("Email two-factor authentication has been disabled.");
+      } else setEmailError(json.error || "Failed to disable.");
+    } catch { setEmailError("Network error. Please try again."); }
+    finally { setEmailLoading(false); }
+  }
+
+  // ── Authenticator App (TOTP) ──────────────────────────────────────────────
+
+  async function startTotpSetup(isRegenerate = false) {
+    setTotpLoading(true);
+    setTotpError(null);
+    setTotpSuccess(null);
+    setTotpCode(["", "", "", "", "", ""]);
+    try {
+      const res = await fetch("/api/account/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: isRegenerate ? "regenerate" : "setup" }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setTotpQr(json.qrDataUrl);
+        setTotpSecret(json.secret);
+        setTotpStep("setting-up");
+      } else setTotpError(json.error || "Failed to start setup.");
+    } catch { setTotpError("Network error. Please try again."); }
+    finally { setTotpLoading(false); }
+  }
+
+  function handleTotpDigit(i: number, value: string) {
+    const d = value.replace(/\D/g, "").slice(-1);
+    const next = [...totpCode]; next[i] = d; setTotpCode(next);
+    if (d && i < 5) totpInputs.current[i + 1]?.focus();
+  }
+
+  function handleTotpKeyDown(i: number, e: React.KeyboardEvent) {
+    if (e.key === "Backspace" && !totpCode[i] && i > 0) totpInputs.current[i - 1]?.focus();
+  }
+
+  function handleTotpPaste(e: React.ClipboardEvent) {
+    e.preventDefault();
+    const digits = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (digits.length === 6) { setTotpCode(digits.split("")); totpInputs.current[5]?.focus(); }
+  }
+
+  async function verifyAndEnableTotp() {
+    const code = totpCode.join("");
+    if (code.length < 6) { setTotpError("Enter the full 6-digit code from your app."); return; }
+    setTotpLoading(true);
+    setTotpError(null);
+    try {
+      const res = await fetch("/api/account/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "enable", code }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setTotpEnabled(true);
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
+        setTotpStep("idle");
+        setTotpQr(null);
+        setTotpSecret(null);
+        setTotpSuccess(
+          json.twoFactorMethod === "totp"
+            ? "Authenticator app is now active. It will be used at your next login."
+            : "Authenticator app is now active. You can set it as your default method below."
+        );
       } else {
-        setError(json.error || "Failed to disable.");
+        setTotpError(json.error || "Verification failed.");
+        setTotpCode(["", "", "", "", "", ""]);
+        totpInputs.current[0]?.focus();
       }
+    } catch { setTotpError("Network error. Please try again."); }
+    finally { setTotpLoading(false); }
+  }
+
+  async function disableTotp() {
+    setTotpLoading(true);
+    setTotpError(null);
+    setTotpSuccess(null);
+    try {
+      const res = await fetch("/api/account/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "disable" }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setTotpEnabled(false);
+        if (json.twoFactorMethod) setMethod(json.twoFactorMethod);
+        setTotpStep("idle");
+        setTotpSuccess("Authenticator app removed. Email 2FA will be used if enabled.");
+      } else setTotpError(json.error || "Failed to disable.");
+    } catch { setTotpError("Network error. Please try again."); }
+    finally { setTotpLoading(false); }
+  }
+
+  async function copySecret() {
+    if (!totpSecret) return;
+    await navigator.clipboard.writeText(totpSecret);
+    setSecretCopied(true);
+    setTimeout(() => setSecretCopied(false), 2000);
+  }
+
+  async function setPreferredMethod(nextMethod: "email" | "totp") {
+    if (nextMethod === method) return;
+
+    setMethodLoading(nextMethod);
+    setEmailError(null);
+    setTotpError(null);
+    try {
+      const res = await fetch("/api/account/2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "set-method", method: nextMethod }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        const msg = json.error || "Failed to update your default method.";
+        if (nextMethod === "email") setEmailError(msg);
+        else setTotpError(msg);
+        return;
+      }
+
+      setMethod(nextMethod);
+      if (nextMethod === "email") setEmailSuccess("Email is now your default sign-in verification method.");
+      else setTotpSuccess("Authenticator app is now your default sign-in verification method.");
     } catch {
-      setError("Network error. Please try again.");
+      const msg = "Network error. Please try again.";
+      if (nextMethod === "email") setEmailError(msg);
+      else setTotpError(msg);
     } finally {
-      setLoading(false);
+      setMethodLoading(null);
     }
   }
 
+  // ── Render ────────────────────────────────────────────────────────────────
+
   return (
     <Card>
-      <div className="flex items-start gap-3">
-        <div className="mt-0.5 text-laser-400 shrink-0"><ShieldIcon /></div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="font-semibold text-white text-base">Two-Factor Authentication</h3>
-            {enabled && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)", color: "#6ee7b7" }}>
-                Active
-              </span>
-            )}
+      <div className="flex items-center gap-2.5 mb-5">
+        <span className="text-laser-400"><ShieldIcon /></span>
+        <h2 className="font-semibold text-white text-base">Two-Factor Authentication</h2>
+      </div>
+
+      {allowEmailTwoFactor && emailEnabled && totpEnabled && (
+        <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4">
+          <p className="text-sm font-medium text-white">Default login method</p>
+          <p className="mt-1 text-xs text-white/45">
+            Choose which 2FA method should be used first when you sign in. You can still switch methods on the login verification screen.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setPreferredMethod("email")}
+              disabled={methodLoading !== null}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                method === "email" ? "text-white" : "text-white/45 hover:text-white/70"
+              }`}
+              style={method === "email" ? { background: "rgba(75,159,229,0.18)" } : { background: "rgba(255,255,255,0.04)" }}
+            >
+              {methodLoading === "email" ? "Saving..." : "Email code"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreferredMethod("totp")}
+              disabled={methodLoading !== null}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                method === "totp" ? "text-white" : "text-white/45 hover:text-white/70"
+              }`}
+              style={method === "totp" ? { background: "rgba(75,159,229,0.18)" } : { background: "rgba(255,255,255,0.04)" }}
+            >
+              {methodLoading === "totp" ? "Saving..." : "Authenticator"}
+            </button>
           </div>
+        </div>
+      )}
 
-          {success && <StatusBanner ok={true} msg={success} className="mt-3" />}
-          {error && <StatusBanner ok={false} msg={error} className="mt-3" />}
+      {/* ── Email 2FA ── */}
+      {allowEmailTwoFactor && <div className="space-y-1 mb-5">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-white">Email verification code</p>
+            <p className="text-xs text-white/45 mt-0.5">A code is sent to your email each time you sign in.</p>
+          </div>
+          <MethodBadge active={emailEnabled && method === "email"} />
+        </div>
 
-          {!enabled && step === "idle" && (
-            <>
-              <p className="text-white/50 text-sm mt-2 mb-4">
-                Add an extra layer of security to your account. When enabled, you&apos;ll need to enter a code sent to your email on every login.
-              </p>
-              <Button variant="outline" onClick={sendCode} loading={loading}
-                className="border-laser-400/40 text-laser-400 hover:bg-laser-400/10 hover:border-laser-400/60">
-                Set Up Two-Factor Authentication
-              </Button>
-            </>
-          )}
+        {emailSuccess && <StatusBanner ok={true} msg={emailSuccess} className="mt-2" />}
+        {emailError && <StatusBanner ok={false} msg={emailError} className="mt-2" />}
 
-          {!enabled && step === "sent" && (
-            <>
-              <p className="text-white/50 text-sm mt-2 mb-4">
-                A 6-digit verification code was sent to your email. Enter it below to activate 2FA.
-              </p>
-              <div className="flex gap-3 items-end">
-                <div className="flex-1">
-                  <Input
-                    dark
-                    label="Verification Code"
-                    placeholder="000000"
-                    maxLength={6}
-                    value={code}
-                    onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-                    className="tracking-widest text-center text-lg font-mono"
-                  />
-                </div>
-                <Button variant="primary" onClick={verifyAndEnable} loading={loading}>
-                  Enable 2FA
-                </Button>
+        {!emailEnabled && emailStep === "idle" && (
+          <div className="pt-2">
+            <Button variant="outline" onClick={sendEmailCode} loading={emailLoading}
+              className="border-laser-400/40 text-laser-400 hover:bg-laser-400/10 hover:border-laser-400/60">
+              Enable email 2FA
+            </Button>
+          </div>
+        )}
+
+        {!emailEnabled && emailStep === "sent" && (
+          <div className="pt-2 space-y-3">
+            <p className="text-xs text-white/50">A 6-digit code was sent to your email.</p>
+            <div className="flex max-w-xl flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="w-full sm:max-w-[240px]">
+                <Input dark label="Verification Code" placeholder="000000" maxLength={6}
+                  value={emailCode} onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, ""))}
+                  className="tracking-widest text-center text-lg font-mono" />
               </div>
-              <button
-                type="button"
-                onClick={() => { setStep("idle"); setCode(""); setError(null); }}
-                className="mt-3 text-xs text-white/30 hover:text-white/60 transition-colors"
-              >
+              <Button variant="primary" onClick={verifyEmailAndEnable} loading={emailLoading} className="sm:self-end">
+                Enable 2FA
+              </Button>
+            </div>
+            <button onClick={() => { setEmailStep("idle"); setEmailCode(""); setEmailError(null); }}
+              className="text-xs text-white/30 hover:text-white/60 transition-colors">
+              Cancel
+            </button>
+          </div>
+        )}
+
+        {emailEnabled && emailStep === "idle" && (
+          <div className="pt-2">
+            <button onClick={() => { setEmailStep("disabling"); setEmailError(null); setEmailSuccess(null); }}
+              className="text-xs text-white/35 hover:text-red-400 transition-colors">
+              Disable email 2FA
+            </button>
+          </div>
+        )}
+
+        {emailEnabled && emailStep === "disabling" && (
+          <div className="pt-2 space-y-2">
+            <p className="text-xs text-red-300/80">Disabling email 2FA will remove this protection method.</p>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={disableEmail} loading={emailLoading}
+                className="border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm py-1.5">
+                Yes, disable
+              </Button>
+              <button onClick={() => { setEmailStep("idle"); setEmailError(null); }}
+                className="text-xs text-white/30 hover:text-white/60 transition-colors">
                 Cancel
               </button>
-            </>
-          )}
+            </div>
+          </div>
+        )}
+      </div>}
 
-          {enabled && step === "idle" && (
-            <>
-              <p className="text-white/50 text-sm mt-2 mb-4">
-                Your account is protected. A verification code is sent to your email each time you log in.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => { setStep("disabling"); setError(null); setSuccess(null); }}
-                className="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/50"
-              >
-                Disable Two-Factor Authentication
-              </Button>
-            </>
-          )}
+      {/* Divider */}
+      {allowEmailTwoFactor && <div className="h-px mb-5" style={{ background: "rgba(75,159,229,0.12)" }} />}
 
-          {enabled && step === "disabling" && (
-            <>
-              <p className="text-sm mt-2 mb-4" style={{ color: "#fca5a5" }}>
-                Are you sure? Disabling 2FA will make your account less secure.
-              </p>
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={disable} loading={loading}
-                  className="border-red-500/40 text-red-400 hover:bg-red-500/10">
-                  Yes, Disable
-                </Button>
-                <Button variant="outline" onClick={() => { setStep("idle"); setError(null); }}
-                  className="border-white/15 text-white/60 hover:bg-white/5">
-                  Cancel
-                </Button>
-              </div>
-            </>
-          )}
+      {/* ── Authenticator App (TOTP) ── */}
+      <div className="space-y-1">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-white">Authenticator app</p>
+            <p className="text-xs text-white/45 mt-0.5">
+              Use Google Authenticator, Authy, or any TOTP app — no email needed.
+            </p>
+          </div>
+          <MethodBadge active={totpEnabled} label={totpEnabled ? (method === "totp" ? "Active" : "Enabled") : undefined} />
         </div>
+
+        {totpSuccess && <StatusBanner ok={true} msg={totpSuccess} className="mt-2" />}
+        {totpError && <StatusBanner ok={false} msg={totpError} className="mt-2" />}
+
+        {/* Idle: not set up */}
+        {!totpEnabled && totpStep === "idle" && (
+          <div className="pt-2">
+            <Button variant="outline" onClick={() => startTotpSetup(false)} loading={totpLoading}
+              className="border-laser-400/40 text-laser-400 hover:bg-laser-400/10 hover:border-laser-400/60">
+              Set up authenticator app
+            </Button>
+          </div>
+        )}
+
+        {/* Setup flow: QR + verification */}
+        {totpStep === "setting-up" && (
+          <div className="pt-3 space-y-4">
+            <p className="text-sm text-white/60">
+              Scan the QR code with your authenticator app, then enter the 6-digit code to confirm.
+            </p>
+
+            {/* QR code */}
+            {totpQr && (
+              <div className="inline-block rounded-xl p-3 bg-white">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={totpQr} alt="Authenticator QR code" width={192} height={192} className="block" />
+              </div>
+            )}
+
+            {/* Manual key */}
+            {totpSecret && (
+              <div>
+                <p className="text-xs text-white/40 mb-1.5">Can&apos;t scan? Enter this key manually in your app:</p>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg max-w-sm"
+                  style={{ background: "rgba(13,30,56,0.8)", border: "1px solid rgba(75,159,229,0.18)" }}>
+                  <code className="flex-1 text-xs font-mono text-laser-300 tracking-wider break-all select-all">
+                    {totpSecret.match(/.{1,4}/g)?.join(" ") ?? totpSecret}
+                  </code>
+                  <button onClick={copySecret}
+                    className="shrink-0 text-xs text-white/35 hover:text-laser-400 transition-colors">
+                    {secretCopied ? "Copied!" : "Copy"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Code entry */}
+            <div>
+              <p className="text-xs text-white/50 mb-2">Enter the 6-digit code from your app to confirm setup:</p>
+              <div className="flex gap-2" onPaste={handleTotpPaste}>
+                {totpCode.map((digit, i) => (
+                  <input
+                    key={i}
+                    ref={(el) => { totpInputs.current[i] = el; }}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleTotpDigit(i, e.target.value)}
+                    onKeyDown={(e) => handleTotpKeyDown(i, e)}
+                    className="w-11 h-12 text-center text-lg font-bold rounded-xl border transition-colors focus:outline-none focus:ring-2 focus:ring-laser-400"
+                    style={{
+                      background: "rgba(13,30,56,0.8)",
+                      borderColor: digit ? "rgba(75,159,229,0.6)" : "rgba(255,255,255,0.12)",
+                      color: "white",
+                    }}
+                    aria-label={`Digit ${i + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-3 items-center">
+              <Button onClick={verifyAndEnableTotp} loading={totpLoading}>
+                Verify &amp; Enable
+              </Button>
+              <button
+                onClick={() => { setTotpStep("idle"); setTotpQr(null); setTotpSecret(null); setTotpError(null); setTotpCode(["", "", "", "", "", ""]); }}
+                className="text-sm text-white/30 hover:text-white/60 transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Enabled state */}
+        {totpEnabled && totpStep === "idle" && (
+          <div className="pt-2 flex items-center gap-4">
+            <button
+              onClick={() => startTotpSetup(true)}
+              className="text-xs text-white/35 hover:text-laser-400 transition-colors">
+              Regenerate key
+            </button>
+            <button
+              onClick={() => { setTotpStep("disabling"); setTotpError(null); setTotpSuccess(null); }}
+              className="text-xs text-white/35 hover:text-red-400 transition-colors">
+              Remove authenticator app
+            </button>
+          </div>
+        )}
+
+        {totpEnabled && totpStep === "disabling" && (
+          <div className="pt-2 space-y-2">
+            <p className="text-xs text-red-300/80">
+              This will remove your authenticator app. {emailEnabled ? "Email 2FA will become your active method." : "Your account will have no 2FA protection."}
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={disableTotp} loading={totpLoading}
+                className="border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm py-1.5">
+                Yes, remove
+              </Button>
+              <button onClick={() => { setTotpStep("idle"); setTotpError(null); }}
+                className="text-xs text-white/30 hover:text-white/60 transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );
@@ -349,7 +635,7 @@ function NotificationsSection({ enabled: initial }: { enabled: boolean }) {
             <h3 className="font-semibold text-white text-base">Email Notifications</h3>
             <p className="text-white/50 text-sm mt-1">
               {enabled
-                ? "You will receive email updates about LaserHacks announcements and your registration."
+                ? "You will receive email updates about MyHacks announcements and your registration."
                 : "You won't receive email notifications. You can re-enable this at any time."}
             </p>
             {status && <StatusBanner ok={status.ok} msg={status.msg} className="mt-3" />}
@@ -361,15 +647,81 @@ function NotificationsSection({ enabled: initial }: { enabled: boolean }) {
   );
 }
 
+function DeleteAccountSection({ canDeleteAccount }: { canDeleteAccount: boolean }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  async function handleDelete() {
+    if (!canDeleteAccount) return;
+    if (!confirm("Delete your account permanently? This cannot be undone.")) return;
+
+    setLoading(true);
+    setStatus(null);
+    try {
+      const res = await fetch("/api/account", { method: "DELETE" });
+      const json = await res.json();
+
+      if (!res.ok) {
+        setStatus({ ok: false, msg: json.error || "Failed to delete account." });
+        return;
+      }
+
+      router.replace("/");
+      router.refresh();
+    } catch {
+      setStatus({ ok: false, msg: "Network error. Please try again." });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Card>
+      <div className="flex items-center gap-2.5 mb-5">
+        <span className="text-red-400"><DangerIcon /></span>
+        <h2 className="font-semibold text-white text-base">Danger Zone</h2>
+      </div>
+
+      <div className="flex flex-col gap-4 rounded-xl border p-4" style={{ borderColor: "rgba(248,113,113,0.2)", background: "rgba(127,29,29,0.1)" }}>
+        <div>
+          <p className="text-sm font-medium text-white">Delete account</p>
+          <p className="mt-1 text-sm text-white/55">
+            Permanently remove your account and sign out of this session.
+          </p>
+        </div>
+
+        {status && <StatusBanner ok={status.ok} msg={status.msg} />}
+
+        {canDeleteAccount ? (
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              loading={loading}
+              onClick={handleDelete}
+              className="border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-red-400/60"
+            >
+              Delete Account
+            </Button>
+          </div>
+        ) : (
+          <p className="text-sm text-white/50">
+            This protected system admin account cannot be deleted from settings.
+          </p>
+        )}
+      </div>
+    </Card>
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /* Shared UI primitives                                                         */
 /* -------------------------------------------------------------------------- */
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="rounded-2xl p-6"
-      style={{ background: "rgba(8,20,37,0.7)", border: "1px solid rgba(75,159,229,0.15)", backdropFilter: "blur(10px)" }}
-    >
+    <div className="rounded-2xl p-6"
+      style={{ background: "rgba(8,20,37,0.7)", border: "1px solid rgba(75,159,229,0.15)", backdropFilter: "blur(10px)" }}>
       {children}
     </div>
   );
@@ -393,46 +745,39 @@ function InfoField({ label, value }: { label: string; value: string }) {
   );
 }
 
+function MethodBadge({ active, label }: { active: boolean; label?: string }) {
+  if (!active) return null;
+  return (
+    <span className="shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full"
+      style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)", color: "#6ee7b7" }}>
+      {label ?? "Active"}
+    </span>
+  );
+}
+
 function StatusBanner({ ok, msg, className = "" }: { ok: boolean; msg: string; className?: string }) {
   return (
-    <div
-      className={`px-3 py-2 rounded-lg text-sm ${className}`}
+    <div className={`px-3 py-2 rounded-lg text-sm ${className}`}
       style={{
         background: ok ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)",
         border: `1px solid ${ok ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.3)"}`,
         color: ok ? "#6ee7b7" : "#fca5a5",
-      }}
-    >
+      }}>
       {msg}
     </div>
   );
 }
 
-function Toggle({
-  enabled,
-  loading,
-  onChange,
-}: {
-  enabled: boolean;
-  loading: boolean;
-  onChange: () => void;
-}) {
+function Toggle({ enabled, loading, onChange }: { enabled: boolean; loading: boolean; onChange: () => void }) {
   return (
-    <button
-      type="button"
-      onClick={onChange}
-      disabled={loading}
-      aria-pressed={enabled}
+    <button type="button" onClick={onChange} disabled={loading} aria-pressed={enabled}
       className="relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-laser-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 disabled:opacity-50"
       style={{
         background: enabled ? "rgba(75,159,229,0.9)" : "rgba(255,255,255,0.12)",
         boxShadow: enabled ? "0 0 10px rgba(75,159,229,0.4)" : "none",
-      }}
-    >
-      <span
-        className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200"
-        style={{ transform: enabled ? "translateX(20px)" : "translateX(0)" }}
-      />
+      }}>
+      <span className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200"
+        style={{ transform: enabled ? "translateX(20px)" : "translateX(0)" }} />
     </button>
   );
 }
@@ -451,4 +796,7 @@ function ShieldIcon() {
 }
 function BellIcon() {
   return <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden><path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>;
+}
+function DangerIcon() {
+  return <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.82A1 1 0 003.76 18h16.48a1 1 0 00.87-1.5l-7.4-12.82a1 1 0 00-1.74 0z" /></svg>;
 }

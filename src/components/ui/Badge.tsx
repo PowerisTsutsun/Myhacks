@@ -3,12 +3,12 @@ import { cn } from "@/lib/utils";
 type BadgeVariant = "default" | "laser" | "gold" | "green" | "red" | "gray";
 
 const variantClasses: Record<BadgeVariant, string> = {
-  default: "bg-slate-100 text-slate-700",
-  laser: "bg-laser-100 text-laser-700",
-  gold: "bg-gold-100 text-gold-700",
-  green: "bg-emerald-100 text-emerald-700",
-  red: "bg-red-100 text-red-700",
-  gray: "bg-slate-100 text-slate-500",
+  default: "bg-semantic-surface text-semantic-text-secondary border border-semantic-border",
+  laser: "bg-laser-500/16 text-laser-300 border border-laser-400/40",
+  gold: "bg-gold-500/16 text-gold-300 border border-gold-400/35",
+  green: "bg-semantic-success/12 text-emerald-200 border border-semantic-success/35",
+  red: "bg-semantic-danger/12 text-rose-200 border border-semantic-danger/35",
+  gray: "bg-semantic-background-secondary text-semantic-text-muted border border-semantic-border",
 };
 
 interface BadgeProps {

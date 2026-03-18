@@ -20,7 +20,7 @@ import { eq } from "drizzle-orm";
 
 const email = process.env.SEED_ADMIN_EMAIL;
 const password = process.env.SEED_ADMIN_PASSWORD;
-const name = process.env.SEED_ADMIN_NAME || "LaserHacks Admin";
+const name = process.env.SEED_ADMIN_NAME || "MyHacks Admin";
 
 if (!email || !password) {
   console.error("❌  SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be set in .env.local");

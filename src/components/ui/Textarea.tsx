@@ -15,9 +15,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={fieldId} className={cn("text-sm font-medium", dark ? "text-white/70" : "text-slate-700")}>
+          <label htmlFor={fieldId} className={cn("text-sm font-medium", dark ? "text-semantic-text-secondary" : "text-semantic-text-secondary")}>
             {label}
-            {props.required && <span className="ml-1 text-red-500">*</span>}
+            {props.required && <span className="ml-1 text-semantic-danger">*</span>}
           </label>
         )}
         <textarea
@@ -26,9 +26,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           className={cn(
             "field-ring w-full resize-y min-h-[100px]",
             dark
-              ? "bg-navy-800/80 border border-white/10 text-white placeholder:text-white/30 focus:ring-laser-400"
-              : "bg-white text-slate-900 placeholder:text-slate-400",
-            error && "border-red-400 focus:ring-red-400",
+              ? "bg-navy-800/85 border-semantic-border text-semantic-text-primary placeholder:text-semantic-text-muted focus:ring-laser-400"
+              : "border-semantic-border bg-semantic-background-secondary/75 text-semantic-text-primary placeholder:text-semantic-text-muted",
+            error && "border-semantic-danger/70 focus:ring-semantic-danger",
             className
           )}
           aria-invalid={!!error}
@@ -36,10 +36,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {hint && !error && (
-          <p id={`${fieldId}-hint`} className={cn("text-xs", dark ? "text-white/40" : "text-slate-500")}>{hint}</p>
+          <p id={`${fieldId}-hint`} className={cn("text-xs", dark ? "text-semantic-text-muted" : "text-semantic-text-muted")}>{hint}</p>
         )}
         {error && (
-          <p id={`${fieldId}-error`} className="text-xs text-red-400" role="alert">{error}</p>
+          <p id={`${fieldId}-error`} className="text-xs text-semantic-danger" role="alert">{error}</p>
         )}
       </div>
     );

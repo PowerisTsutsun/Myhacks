@@ -29,7 +29,7 @@ function pad(n: number): string {
   return String(n).padStart(2, "0");
 }
 
-export function Countdown({ targetDate, eventName = "LaserHacks" }: CountdownProps) {
+export function Countdown({ targetDate, eventName = "MyHacks" }: CountdownProps) {
   const target = new Date(targetDate);
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
 

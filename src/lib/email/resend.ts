@@ -11,9 +11,9 @@ function getResend(): Resend {
   return _resend;
 }
 
-const FROM = process.env.RESEND_FROM_EMAIL ?? "LaserHacks <noreply@laserhack.org>";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "MyHacks <noreply@example.com>";
 function normalizeAppUrl(raw?: string): string {
-  if (!raw) return "https://laserhack.org";
+  if (!raw) return "https://example.com";
   if (/^https?:\/\//i.test(raw)) return raw.replace(/\/$/, "");
   return `https://${raw.replace(/\/$/, "")}`;
 }
@@ -29,6 +29,7 @@ async function send(opts: {
   subject: string;
   html: string;
   text: string;
+  replyTo?: string;
 }): Promise<SendResult> {
   try {
     const { error } = await getResend().emails.send({
@@ -37,6 +38,7 @@ async function send(opts: {
       subject: opts.subject,
       html: opts.html,
       text: opts.text,
+      ...(opts.replyTo ? { replyTo: opts.replyTo } : {}),
     });
     if (error) {
       console.error("[email] send error:", error);
@@ -60,9 +62,9 @@ export async function sendVerificationEmail(opts: {
   const url = `${APP_URL}/verify-email?token=${opts.token}`;
   return send({
     to: opts.to,
-    subject: "Verify your LaserHacks email",
+    subject: "Verify your MyHacks email",
     html: verificationTemplate({ name: opts.name, url }),
-    text: `Hi ${opts.name},\n\nVerify your LaserHacks email by visiting:\n${url}\n\nThis link expires in 24 hours.\n\n— LaserHacks Team`,
+    text: `Hi ${opts.name},\n\nVerify your MyHacks email by visiting:\n${url}\n\nThis link expires in 24 hours.\n\n— MyHacks Team`,
   });
 }
 
@@ -76,9 +78,9 @@ export async function send2FACode(opts: {
 }): Promise<SendResult> {
   return send({
     to: opts.to,
-    subject: `${opts.code} — Your LaserHacks login code`,
+    subject: `${opts.code} — Your MyHacks login code`,
     html: twoFactorTemplate({ name: opts.name, code: opts.code }),
-    text: `Hi ${opts.name},\n\nYour LaserHacks verification code is: ${opts.code}\n\nThis code expires in 10 minutes. Do not share it with anyone.\n\n— LaserHacks Team`,
+    text: `Hi ${opts.name},\n\nYour MyHacks verification code is: ${opts.code}\n\nThis code expires in 10 minutes. Do not share it with anyone.\n\n— MyHacks Team`,
   });
 }
 
@@ -90,12 +92,12 @@ export async function sendRegistrationConfirmation(opts: {
   firstName: string;
   eventName?: string;
 }): Promise<SendResult> {
-  const eventName = opts.eventName ?? "LaserHacks 2026";
+  const eventName = opts.eventName ?? "MyHacks 2026";
   return send({
     to: opts.to,
     subject: `You're registered for ${eventName}! 🎉`,
     html: registrationConfirmTemplate({ firstName: opts.firstName, eventName }),
-    text: `Hi ${opts.firstName},\n\nYou're registered for ${eventName}! We're thrilled to have you.\n\nWe'll be in touch with event details, team matching info, and day-of logistics. Keep an eye on your inbox!\n\n— The LaserHacks Team`,
+    text: `Hi ${opts.firstName},\n\nYou're registered for ${eventName}! We're thrilled to have you.\n\nWe'll be in touch with event details, team matching info, and day-of logistics. Keep an eye on your inbox!\n\n— The MyHacks Team`,
   });
 }
 
@@ -110,9 +112,88 @@ export async function sendPasswordResetEmail(opts: {
   const url = `${APP_URL}/reset-password?token=${opts.token}`;
   return send({
     to: opts.to,
-    subject: "Reset your LaserHacks password",
+    subject: "Reset your MyHacks password",
     html: passwordResetTemplate({ name: opts.name, url }),
-    text: `Hi ${opts.name},\n\nReset your LaserHacks password by visiting:\n${url}\n\nThis link expires in 1 hour. If you didn't request this, ignore this email.\n\n— LaserHacks Team`,
+    text: `Hi ${opts.name},\n\nReset your MyHacks password by visiting:\n${url}\n\nThis link expires in 1 hour. If you didn't request this, ignore this email.\n\n— MyHacks Team`,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Email: Contact form notification (sent to team inbox)
+// ---------------------------------------------------------------------------
+const CONTACT_TO = process.env.CONTACT_EMAIL ?? "contact@example.com";
+
+export async function sendContactNotificationEmail(opts: {
+  fromName: string;
+  fromEmail: string;
+  subject: string;
+  message: string;
+}): Promise<SendResult> {
+  const safeName = opts.fromName
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const safeEmail = opts.fromEmail
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const safeSubject = opts.subject
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const escapedMessage = opts.message
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+
+  return send({
+    to: CONTACT_TO,
+    subject: `New contact form message from ${opts.fromName}`,
+    replyTo: opts.fromEmail,
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contact form message</title></head>
+<body style="margin:0;padding:24px;background:#f8fafc;color:#0f172a;font-family:Arial,sans-serif;">
+  <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #dbe3ee;border-radius:12px;padding:24px;">
+    <h1 style="margin:0 0 16px;font-size:20px;line-height:1.3;">New contact form message</h1>
+    <p style="margin:0 0 8px;font-size:14px;"><strong>Name:</strong> ${safeName}</p>
+    <p style="margin:0 0 8px;font-size:14px;"><strong>Email:</strong> ${safeEmail}</p>
+    <p style="margin:0 0 16px;font-size:14px;"><strong>Subject:</strong> ${safeSubject}</p>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e2e8f0;">
+      <p style="margin:0 0 8px;font-size:14px;font-weight:700;">Message</p>
+      <div style="font-size:14px;line-height:1.7;white-space:normal;">${escapedMessage}</div>
+    </div>
+  </div>
+</body>
+</html>`,
+    text: [
+      "New contact form message",
+      "",
+      `Name: ${opts.fromName}`,
+      `Email: ${opts.fromEmail}`,
+      `Subject: ${opts.subject}`,
+      "",
+      "Message:",
+      opts.message,
+    ].join("\n"),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Email: Custom notification (admin broadcast)
+// ---------------------------------------------------------------------------
+export async function sendCustomNotificationEmail(opts: {
+  to: string;
+  name: string;
+  subject: string;
+  body: string;
+}): Promise<SendResult> {
+  return send({
+    to: opts.to,
+    subject: opts.subject,
+    html: customNotificationTemplate({ name: opts.name, body: opts.body }),
+    text: `Hi ${opts.name},\n\n${opts.body}\n\n— MyHacks Team`,
   });
 }
 
@@ -168,17 +249,17 @@ const BTN_STYLE = `
 function wrap(content: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LaserHacks</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MyHacks</title></head>
 <body style="margin:0;padding:16px;background:#f1f5f9;">
 <div style="${BASE_STYLE}">
   <div style="${HEADER_STYLE}">
-    <p style="margin:0;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Laser<span style="color:#90c0f7;">Hacks</span></p>
-    <p style="margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.7);letter-spacing:2px;text-transform:uppercase;">IVC Hackathon</p>
+    <p style="margin:0;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">My<span style="color:#90c0f7;">Hacks</span></p>
+    <p style="margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.7);letter-spacing:2px;text-transform:uppercase;">Hackathon</p>
   </div>
   <div style="${BODY_STYLE}">${content}</div>
   <div style="${FOOTER_STYLE}">
-    <p style="margin:0;">© 2026 LaserHacks — Irvine Valley College</p>
-    <p style="margin:4px 0 0;">Questions? Email <a href="mailto:info@laserhack.org" style="color:#1558a0;">info@laserhack.org</a></p>
+    <p style="margin:0;">© 2026 MyHacks</p>
+    <p style="margin:4px 0 0;">Questions? Contact us through the website</p>
   </div>
 </div>
 </body></html>`;
@@ -189,7 +270,7 @@ function verificationTemplate({ name, url }: { name: string; url: string }): str
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0d1b2a;">Verify your email</h1>
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;">Hi ${name},</p>
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;">
-      Thanks for creating a LaserHacks account! Click the button below to verify your email address and activate your account.
+      Thanks for creating a MyHacks account! Click the button below to verify your email address and activate your account.
     </p>
     <div style="text-align:center;">
       <a href="${url}" style="${BTN_STYLE}">Verify Email Address</a>
@@ -208,7 +289,7 @@ function twoFactorTemplate({ name, code }: { name: string; code: string }): stri
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0d1b2a;">Your login code</h1>
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;">Hi ${name},</p>
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;">
-      Use this verification code to complete your LaserHacks login:
+      Use this verification code to complete your MyHacks login:
     </p>
     <div style="text-align:center;margin:24px 0;">
       <div style="display:inline-block;background:#eff6ff;border:2px solid #bfdbfe;border-radius:12px;padding:20px 40px;">
@@ -239,9 +320,8 @@ function registrationConfirmTemplate({ firstName, eventName }: { firstName: stri
       </ul>
     </div>
     <p style="margin:16px 0 0;color:#475569;line-height:1.6;">
-      LaserHacks is beginner-friendly — no matter your experience level, you belong here.
-      If you have any questions, just reply to this email or reach out at
-      <a href="mailto:info@laserhack.org" style="color:#1558a0;">info@laserhack.org</a>.
+      MyHacks is beginner-friendly — no matter your experience level, you belong here.
+      If you have any questions, just reply to this email or use the contact form on our website.
     </p>
     <p style="margin:20px 0 0;color:#475569;">See you at the hackathon! 🚀</p>
   `);
@@ -252,7 +332,7 @@ function passwordResetTemplate({ name, url }: { name: string; url: string }): st
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0d1b2a;">Reset your password</h1>
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;">Hi ${name},</p>
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;">
-      We received a request to reset your LaserHacks password. Click the button below to choose a new one.
+      We received a request to reset your MyHacks password. Click the button below to choose a new one.
     </p>
     <div style="text-align:center;">
       <a href="${url}" style="${BTN_STYLE}">Reset Password</a>
@@ -263,5 +343,18 @@ function passwordResetTemplate({ name, url }: { name: string; url: string }): st
     <p style="margin:12px 0 0;font-size:12px;color:#cbd5e1;word-break:break-all;">
       Or copy this link: ${url}
     </p>
+  `);
+}
+
+function customNotificationTemplate({ name, body }: { name: string; body: string }): string {
+  const escaped = body
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+  return wrap(`
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;">Hi ${name},</p>
+    <div style="color:#475569;line-height:1.7;">${escaped}</div>
+    <p style="margin:24px 0 0;color:#475569;">— The MyHacks Team</p>
   `);
 }

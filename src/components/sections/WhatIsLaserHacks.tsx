@@ -8,7 +8,7 @@ const HIGHLIGHTS = [
   {
     icon: <RocketIcon />,
     title: "Beginner Friendly",
-    desc: "No experience required. Whether you've never coded before or you're a seasoned developer, LaserHacks welcomes everyone.",
+    desc: "No experience required. Whether you've never coded before or you're a seasoned developer, MyHacks welcomes everyone.",
   },
   {
     icon: <MentorIcon />,
@@ -31,7 +31,7 @@ export function WhatIsLaserHacks() {
   return (
     <section
       className="section-padding relative overflow-hidden"
-      style={{ background: "rgba(8,20,37,0.55)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderTop: "1px solid rgba(75,159,229,0.08)", borderBottom: "1px solid rgba(75,159,229,0.08)" }}
+      style={{ background: "rgba(8,20,37,0.62)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderTop: "1px solid rgba(75,159,229,0.1)", borderBottom: "1px solid rgba(75,159,229,0.1)" }}
     >
       {/* Subtle background glow orbs */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -48,21 +48,21 @@ export function WhatIsLaserHacks() {
           className="text-center mb-12"
         >
           <p className="text-laser-400 font-semibold text-sm uppercase tracking-widest mb-2">
-            What is LaserHacks?
+            What is MyHacks?
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
             A hackathon built for{" "}
             <span className="text-laser-400">every student</span>
           </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto text-balance">
-            LaserHacks is Irvine Valley College&apos;s annual student hackathon — a 24-hour event
+          <p className="text-white/70 text-lg max-w-2xl mx-auto text-balance">
+            MyHacks is a student hackathon — a 24-hour event
             where students of all backgrounds come together to build projects, learn new skills,
             and have a great time.
           </p>
         </motion.div>
 
         {/* Highlight cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5 mb-12">
           {HIGHLIGHTS.map((item, i) => (
             <motion.div
               key={item.title}
@@ -70,60 +70,36 @@ export function WhatIsLaserHacks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="group laser-border-card"
+              className="group laser-border-card rounded-2xl"
+              style={{
+                background: "linear-gradient(180deg, rgba(9,24,46,0.92), rgba(6,16,30,0.92))",
+                border: "1px solid rgba(95,170,255,0.16)",
+                boxShadow: "0 18px 48px rgba(2,8,23,0.28), inset 0 1px 0 rgba(255,255,255,0.04)",
+              }}
             >
               <div
                 className="laser-border-card-inner p-6 relative"
-                style={{ background: "rgba(8,20,37,0.9)", backdropFilter: "blur(8px)" }}
+                style={{
+                  background: "linear-gradient(180deg, rgba(10,24,48,0.96), rgba(7,18,34,0.94))",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.03)",
+                }}
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-laser-400 transition-colors duration-200" style={{ background: "rgba(75,159,229,0.1)", border: "1px solid rgba(75,159,229,0.2)" }}>
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-laser-300 transition-colors duration-200"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(75,159,229,0.16), rgba(75,159,229,0.08))",
+                    border: "1px solid rgba(95,170,255,0.28)",
+                    boxShadow: "0 0 24px rgba(77,163,255,0.12)",
+                  }}
+                >
                   {item.icon}
                 </div>
-                <h3 className="font-semibold text-white mb-2">{item.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{item.desc}</p>
+                <h3 className="font-semibold text-white mb-2 drop-shadow-[0_0_12px_rgba(77,163,255,0.08)]">{item.title}</h3>
+                <p className="text-white/78 text-sm leading-relaxed">{item.desc}</p>
               </div>
             </motion.div>
           ))}
-          {/* Map card */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="sm:col-span-2 lg:col-span-2 rounded-2xl overflow-hidden flex flex-col"
-            style={{ border: "1px solid rgba(75,159,229,0.2)" }}
-          >
-            <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=-117.791%2C33.667%2C-117.767%2C33.682&layer=mapnik&marker=33.67457%2C-117.77906"
-              width="100%"
-              height="100%"
-              style={{ border: 0, display: "block", minHeight: "220px", filter: "invert(90%) hue-rotate(180deg) saturate(0.8)", flex: 1 }}
-              loading="lazy"
-              title="Irvine Valley College location"
-            />
-            <div className="flex gap-3 px-4 py-3" style={{ background: "rgba(8,20,37,0.95)", borderTop: "1px solid rgba(75,159,229,0.15)" }}>
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=5500+Irvine+Center+Dr%2C+Irvine%2C+CA+92618"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white transition-colors"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
-              >
-                <PinIcon />
-                Google Maps
-              </a>
-              <a
-                href="https://maps.apple.com/?q=5500+Irvine+Center+Dr%2C+Irvine%2C+CA+92618"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white transition-colors"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
-              >
-                <PinIcon />
-                Apple Maps
-              </a>
-            </div>
-          </motion.div>
         </div>
 
         {/* CTA row */}
@@ -135,7 +111,7 @@ export function WhatIsLaserHacks() {
           className="flex flex-col sm:flex-row items-center justify-center gap-3"
         >
           <Button asChild size="lg" variant="primary">
-            <Link href="/register">Register for Free</Link>
+            <Link href="/register">Register</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="border-white/20 text-white/80 hover:bg-white/8 hover:border-white/35 hover:text-white">
             <Link href="/#about">Learn More</Link>
@@ -143,14 +119,6 @@ export function WhatIsLaserHacks() {
         </motion.div>
       </div>
     </section>
-  );
-}
-
-function PinIcon() {
-  return (
-    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-    </svg>
   );
 }
 
@@ -190,4 +158,3 @@ function LightbulbIcon() {
     </svg>
   );
 }
-

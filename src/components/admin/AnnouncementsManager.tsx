@@ -38,14 +38,11 @@ export function AnnouncementsManager({ initialData }: { initialData: Row[] }) {
     handleSubmit,
     reset,
     setValue,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<AnnouncementFormData>({
     resolver: zodResolver(announcementSchema),
     defaultValues: { isPublished: false },
   });
-
-  const titleValue = watch("title");
 
   function openNew() {
     setEditing(null);
@@ -89,7 +86,10 @@ export function AnnouncementsManager({ initialData }: { initialData: Row[] }) {
         body: JSON.stringify(payload),
       });
       const json = await res.json();
-      if (!res.ok) { setError(json.error || "Failed."); return; }
+      if (!res.ok) {
+        setError(json.error || "Failed.");
+        return;
+      }
 
       if (editing) {
         setRows((prev) => prev.map((r) => (r.id === editing.id ? json : r)));
@@ -113,33 +113,48 @@ export function AnnouncementsManager({ initialData }: { initialData: Row[] }) {
 
   return (
     <div>
-      {success && <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm">✓ {success}</div>}
-      {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm" role="alert">{error}</div>}
+      {success && (
+        <div
+          className="mb-4 rounded-xl border px-3 py-3 text-sm text-emerald-100"
+          style={{ background: "rgba(52,211,153,0.16)", borderColor: "rgba(52,211,153,0.38)" }}
+        >
+          {success}
+        </div>
+      )}
+      {error && (
+        <div
+          className="mb-4 rounded-xl border px-3 py-3 text-sm text-red-100"
+          role="alert"
+          style={{ background: "rgba(251,113,133,0.14)", borderColor: "rgba(251,113,133,0.35)" }}
+        >
+          {error}
+        </div>
+      )}
 
       {!showForm ? (
         <>
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-sm text-slate-500">{rows.length} item{rows.length !== 1 ? "s" : ""}</p>
+          <div className="mb-4 flex items-center justify-between">
+            <p className="text-sm text-semantic-text-muted">{rows.length} item{rows.length !== 1 ? "s" : ""}</p>
             <Button onClick={openNew}>+ New Announcement</Button>
           </div>
 
           {rows.length === 0 ? (
             <EmptyState label="No announcements yet." onAdd={openNew} />
           ) : (
-            <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
+            <div className="admin-surface divide-y rounded-2xl border" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
               {rows.map((row) => (
                 <div key={row.id} className="flex items-start justify-between gap-4 p-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span className="font-medium text-navy-900 text-sm">{row.title}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-medium text-white">{row.title}</span>
                       <Badge variant={row.isPublished ? "green" : "gray"}>
                         {row.isPublished ? "Published" : "Draft"}
                       </Badge>
                     </div>
-                    <p className="text-slate-400 text-xs">
-                      {formatDateShort(row.createdAt)} · /{row.slug}
+                    <p className="text-xs text-semantic-text-muted">
+                      {formatDateShort(row.createdAt)} - /{row.slug}
                     </p>
-                    <p className="text-slate-500 text-xs mt-1 line-clamp-2">{row.body}</p>
+                    <p className="mt-1 line-clamp-2 text-xs text-semantic-text-secondary">{row.body}</p>
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <Button size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Button>
@@ -151,14 +166,15 @@ export function AnnouncementsManager({ initialData }: { initialData: Row[] }) {
           )}
         </>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-navy-900">{editing ? "Edit Announcement" : "New Announcement"}</h2>
+        <div className="admin-surface rounded-2xl border p-5" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-semibold text-white">{editing ? "Edit Announcement" : "New Announcement"}</h2>
             <Button size="sm" variant="ghost" onClick={() => setShowForm(false)}>Cancel</Button>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Input
+              dark
               label="Title"
               required
               error={errors.title?.message}
@@ -169,15 +185,20 @@ export function AnnouncementsManager({ initialData }: { initialData: Row[] }) {
               })}
             />
             <Input
+              dark
               label="Slug"
               required
               hint="URL-friendly identifier"
               error={errors.slug?.message}
               {...register("slug")}
             />
-            <Textarea label="Body" required error={errors.body?.message} className="min-h-[160px]" {...register("body")} />
-            <label className="flex items-center gap-2 cursor-pointer text-sm">
-              <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-laser-500" {...register("isPublished")} />
+            <Textarea dark label="Body" required error={errors.body?.message} className="min-h-[160px]" {...register("body")} />
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-semantic-text-secondary">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-emerald-400/30 bg-transparent text-emerald-500"
+                {...register("isPublished")}
+              />
               Publish immediately
             </label>
             <div className="flex gap-2">
@@ -193,8 +214,8 @@ export function AnnouncementsManager({ initialData }: { initialData: Row[] }) {
 
 function EmptyState({ label, onAdd }: { label: string; onAdd: () => void }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
-      <p className="text-slate-400 mb-3">{label}</p>
+    <div className="admin-surface rounded-2xl border p-10 text-center" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+      <p className="mb-3 text-semantic-text-muted">{label}</p>
       <Button onClick={onAdd} variant="outline">Get started</Button>
     </div>
   );

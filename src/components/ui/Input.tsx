@@ -17,21 +17,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className={cn("text-sm font-medium", dark ? "text-white/70" : "text-slate-700")}
+            className={cn("text-sm font-medium", dark ? "text-semantic-text-secondary" : "text-semantic-text-secondary")}
           >
             {label}
-            {props.required && <span className="ml-1 text-red-400">*</span>}
+            {props.required && <span className="ml-1 text-semantic-danger">*</span>}
           </label>
         )}
         <input
           ref={ref}
           id={inputId}
           className={cn(
-            "w-full rounded-lg px-3 py-2 text-sm transition-colors",
+            "w-full rounded-xl px-3 py-2.5 text-sm transition-colors",
             dark
-              ? "bg-navy-800/80 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-laser-400 focus:border-transparent"
-              : "field-ring bg-white text-slate-900 placeholder:text-slate-400",
-            error && (dark ? "border-red-500/50 focus:ring-red-400" : "border-red-400 focus:ring-red-400"),
+              ? "field-ring bg-navy-800/85 border-semantic-border text-semantic-text-primary placeholder:text-semantic-text-muted"
+              : "field-ring border-semantic-border bg-semantic-background-secondary/75 text-semantic-text-primary placeholder:text-semantic-text-muted",
+            error && "border-semantic-danger/70 focus:ring-semantic-danger",
             className
           )}
           aria-invalid={!!error}
@@ -41,12 +41,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {hint && !error && (
-          <p id={`${inputId}-hint`} className={cn("text-xs", dark ? "text-white/40" : "text-slate-500")}>
+          <p id={`${inputId}-hint`} className={cn("text-xs", dark ? "text-semantic-text-muted" : "text-semantic-text-muted")}>
             {hint}
           </p>
         )}
         {error && (
-          <p id={`${inputId}-error`} className={cn("text-xs", dark ? "text-red-400" : "text-red-600")} role="alert">
+          <p id={`${inputId}-error`} className="text-xs text-semantic-danger" role="alert">
             {error}
           </p>
         )}

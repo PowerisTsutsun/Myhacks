@@ -25,12 +25,7 @@ export type SignupFormData = z.infer<typeof signupSchema>;
 // ---------------------------------------------------------------------------
 export const registrationSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters").max(100),
-  email: z
-    .string()
-    .email("Invalid email address")
-    .refine((val) => val.toLowerCase().endsWith("@ivc.edu"), {
-      message: "Must use your IVC email address (@ivc.edu)",
-    }),
+  email: z.string().email("Invalid email address"),
   studentId: z.string().optional(),
   major: z.string().min(1, "Please enter your major").max(100),
   experienceLevel: z.enum(["beginner", "intermediate", "advanced"], {
@@ -134,7 +129,7 @@ export const scheduleItemSchema = z.object({
 export const sponsorSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   tier: z.enum(["platinum", "gold", "silver", "bronze", "community"]),
-  logoUrl: z.string().url("Must be a valid URL").optional().nullable().or(z.literal("")),
+  logoUrl: z.union([z.string().url(), z.string().startsWith("/")]).optional().nullable().or(z.literal("")),
   websiteUrl: z.string().url("Must be a valid URL").optional().nullable().or(z.literal("")),
   description: z.string().optional().nullable(),
   sortOrder: z.number().int().default(0),
@@ -176,6 +171,7 @@ export const siteSettingsSchema = z.object({
   instagram_url: z.string().url().optional().nullable().or(z.literal("")),
   twitter_url: z.string().url().optional().nullable().or(z.literal("")),
   linkedin_url: z.string().url().optional().nullable().or(z.literal("")),
+  discord_url: z.string().url().optional().nullable().or(z.literal("")),
   contact_email: z.string().email().optional().nullable().or(z.literal("")),
 });
 

@@ -15,23 +15,25 @@ export type SiteConfig = {
   instagram_url: string | null;
   twitter_url: string | null;
   linkedin_url: string | null;
+  discord_url: string | null;
   contact_email: string | null;
 };
 
 const DEFAULTS: SiteConfig = {
-  event_name: "LaserHacks",
-  tagline: "IVC's beginner-friendly annual hackathon",
+  event_name: "MyHacks",
+  tagline: "A beginner-friendly hackathon for everyone",
   event_start: null,
   event_end: null,
-  venue_name: "Irvine Valley College",
-  venue_address: "5500 Irvine Center Dr, Irvine, CA 92618",
+  venue_name: null,
+  venue_address: null,
   registration_mode: "external",
   external_registration_url: null,
   sponsor_packet_url: null,
   instagram_url: null,
   twitter_url: null,
   linkedin_url: null,
-  contact_email: "contact@laserhack.org",
+  discord_url: null,
+  contact_email: null,
 };
 
 export async function getSiteConfig(): Promise<SiteConfig> {
@@ -52,6 +54,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
       instagram_url: map["instagram_url"] || null,
       twitter_url: map["twitter_url"] || null,
       linkedin_url: map["linkedin_url"] || null,
+      discord_url: map["discord_url"] || null,
       contact_email: map["contact_email"] || DEFAULTS.contact_email,
     };
   } catch {

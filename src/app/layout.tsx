@@ -1,41 +1,43 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CyberBackground } from "@/components/decorative/CyberBackground";
+import { Suspense } from "react";
+import { VerifyEmailBanner } from "@/components/ui/VerifyEmailBanner";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://laserhack.org";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: "LaserHacks",
-    template: "%s | LaserHacks",
+    default: "MyHacks",
+    template: "%s | MyHacks",
   },
   description:
-    "LaserHacks is Irvine Valley College's annual student hackathon — beginner-friendly, collaborative, and open to all skill levels.",
-  keywords: ["hackathon", "IVC", "Irvine Valley College", "STEM", "coding", "beginner", "LaserHacks"],
-  authors: [{ name: "ASIVC" }],
+    "MyHacks is a beginner-friendly hackathon — collaborative and open to all skill levels.",
+  keywords: ["hackathon", "STEM", "coding", "beginner", "MyHacks"],
+  authors: [{ name: "MyHacks Team" }],
   openGraph: {
     type: "website",
     locale: "en_US",
     url: APP_URL,
-    siteName: "LaserHacks",
-    title: "LaserHacks — IVC's Beginner-Friendly Hackathon",
+    siteName: "MyHacks",
+    title: "MyHacks — A Beginner-Friendly Hackathon",
     description:
-      "LaserHacks is Irvine Valley College's annual student hackathon — beginner-friendly, collaborative, and open to all skill levels.",
+      "MyHacks is a beginner-friendly hackathon — collaborative and open to all skill levels.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "LaserHacks",
+        alt: "MyHacks",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LaserHacks — IVC's Beginner-Friendly Hackathon",
+    title: "MyHacks — A Beginner-Friendly Hackathon",
     description:
-      "LaserHacks is Irvine Valley College's annual student hackathon.",
+      "MyHacks is a beginner-friendly hackathon.",
     images: ["/og-image.png"],
   },
   icons: {
@@ -60,6 +62,9 @@ export default function RootLayout({
         <div style={{ position: "relative", zIndex: 1 }}>
           {children}
         </div>
+        <Suspense>
+          <VerifyEmailBanner />
+        </Suspense>
       </body>
     </html>
   );

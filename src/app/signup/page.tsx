@@ -7,7 +7,7 @@ import { SignupForm } from "@/components/forms/SignupForm";
 
 export const metadata: Metadata = {
   title: "Create Account",
-  description: "Create a LaserHacks account to register for the event.",
+  description: "Create a MyHacks account to register for the event.",
 };
 
 export default async function SignupPage({
@@ -41,7 +41,7 @@ export default async function SignupPage({
 
             <SignupForm redirectTo={redirectTo} />
 
-            <p className="mt-6 text-center text-sm text-white/40">
+            <p className="mt-6 text-center text-sm text-white/55">
               Already have an account?{" "}
               <Link
                 href={`/login${next ? `?next=${encodeURIComponent(next)}` : ""}`}

@@ -3,6 +3,7 @@ import { registrations } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
+import { DeleteRegistrationButton } from "./DeleteRegistrationButton";
 
 export default async function RegistrationsPage() {
   const rows = await db
@@ -10,45 +11,53 @@ export default async function RegistrationsPage() {
     .from(registrations)
     .orderBy(desc(registrations.createdAt));
 
-  const EXPERIENCE_BADGE: Record<string, "laser" | "gold" | "green"> = {
+  const EXPERIENCE_BADGE: Record<string, "default" | "green"> = {
     beginner: "green",
-    intermediate: "laser",
-    advanced: "gold",
+    intermediate: "default",
+    advanced: "green",
   };
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-navy-900">Registrations</h1>
-          <p className="text-slate-500 text-sm mt-1">{rows.length} total registration{rows.length !== 1 ? "s" : ""}</p>
+          <h1 className="text-2xl font-bold text-white">Registrations</h1>
+          <p className="mt-1 text-sm text-semantic-text-muted">
+            {rows.length} total registration{rows.length !== 1 ? "s" : ""}
+          </p>
         </div>
       </div>
 
       {rows.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
-          <p className="text-slate-400">No registrations yet.</p>
+        <div className="admin-surface rounded-2xl border p-10 text-center" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+          <p className="text-semantic-text-muted">No registrations yet.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="admin-surface overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Name</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Email</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Major</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Level</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Team</th>
-                  <th className="text-left px-4 py-3 font-medium text-slate-600">Registered</th>
+                <tr
+                  className="border-b"
+                  style={{ background: "rgba(11,29,47,0.98)", borderColor: "rgba(52,211,153,0.16)" }}
+                >
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Name</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Email</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Student ID</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Major</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Level</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Team</th>
+                  <th className="px-4 py-3 text-left font-medium text-semantic-text-muted">Registered</th>
+                  <th className="px-4 py-3 text-right font-medium text-semantic-text-muted">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y" style={{ borderColor: "rgba(52,211,153,0.08)" }}>
                 {rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-navy-900">{row.fullName}</td>
-                    <td className="px-4 py-3 text-slate-600">{row.email}</td>
-                    <td className="px-4 py-3 text-slate-500">{row.major || "—"}</td>
+                  <tr key={row.id} className="transition-colors hover:bg-emerald-500/[0.05]">
+                    <td className="px-4 py-3 font-medium text-white">{row.fullName}</td>
+                    <td className="px-4 py-3 text-semantic-text-secondary">{row.email}</td>
+                    <td className="px-4 py-3 text-semantic-text-muted font-mono text-xs">{row.studentId || "-"}</td>
+                    <td className="px-4 py-3 text-semantic-text-muted">{row.major || "-"}</td>
                     <td className="px-4 py-3">
                       <Badge variant={EXPERIENCE_BADGE[row.experienceLevel] || "default"} className="capitalize">
                         {row.experienceLevel}
@@ -59,7 +68,10 @@ export default async function RegistrationsPage() {
                         {row.teamStatus.replace("_", " ")}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-slate-400">{formatDate(row.createdAt)}</td>
+                    <td className="px-4 py-3 text-semantic-text-muted">{formatDate(row.createdAt)}</td>
+                    <td className="px-4 py-3 text-right">
+                      <DeleteRegistrationButton id={row.id} name={row.fullName} />
+                    </td>
                   </tr>
                 ))}
               </tbody>

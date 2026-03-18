@@ -15,15 +15,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-laser-500 hover:bg-laser-600 active:bg-laser-600 text-white shadow-sm hover:shadow-glow-sm",
+    "bg-[var(--button-primary)] hover:bg-[var(--button-primary-hover)] active:bg-[var(--button-primary-active)] text-white shadow-sm hover:shadow-glow-sm disabled:bg-[var(--button-primary-disabled)]",
   secondary:
-    "bg-navy-700 hover:bg-navy-600 text-white shadow-sm border border-white/10",
+    "bg-navy-700 hover:bg-navy-600 active:bg-navy-600 text-semantic-text-primary shadow-sm border border-semantic-border hover:border-semantic-border-strong disabled:border-semantic-border/60",
   outline:
-    "border border-laser-500/60 text-laser-400 hover:bg-laser-500/10 hover:border-laser-400",
+    "border border-[var(--button-outline-border)] text-[var(--button-outline-text)] hover:bg-[var(--button-outline-bg)] hover:border-[var(--button-outline-border-hover)] hover:text-[var(--button-outline-text-hover)]",
   ghost:
-    "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
+    "text-semantic-text-secondary hover:bg-white/[0.06] hover:text-semantic-text-primary",
   danger:
-    "bg-red-600 hover:bg-red-700 active:bg-red-700 text-white shadow-sm",
+    "bg-semantic-danger/90 hover:bg-semantic-danger active:bg-rose-500 text-white shadow-sm disabled:bg-semantic-danger/50",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -39,7 +39,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const composedClass = cn(
       "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-150 cursor-pointer select-none",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-laser-400 focus-visible:ring-offset-2",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-laser-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950",
       "disabled:pointer-events-none disabled:opacity-50",
       variantClasses[variant],
       sizeClasses[size],

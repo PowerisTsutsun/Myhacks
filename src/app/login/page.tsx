@@ -7,7 +7,7 @@ import { LoginForm } from "@/components/forms/LoginForm";
 
 export const metadata: Metadata = {
   title: "Log In",
-  description: "Log in to your LaserHacks account.",
+  description: "Log in to your MyHacks account.",
 };
 
 export default async function LoginPage({
@@ -29,7 +29,7 @@ export default async function LoginPage({
             style={{
               background: "rgba(8,20,37,0.9)",
               backdropFilter: "blur(12px)",
-              boxShadow: "0 0 0 1px rgba(75,159,229,0.15), 0 20px 60px rgba(0,0,0,0.5)",
+              boxShadow: "0 0 0 1px rgba(77,166,255,0.2), 0 20px 60px rgba(0,0,0,0.5)",
             }}
           >
             {reset === "1" && (
@@ -48,7 +48,7 @@ export default async function LoginPage({
 
             <LoginForm redirectTo={redirectTo} />
 
-            <p className="mt-6 text-center text-sm text-white/40">
+            <p className="mt-6 text-center text-sm text-white/55">
               No account?{" "}
               <Link
                 href={`/signup${next ? `?next=${encodeURIComponent(next)}` : ""}`}

@@ -17,6 +17,10 @@ export const users = pgTable("users", {
   role: text("role", { enum: ["admin", "editor"] }).notNull().default("editor"),
   emailVerifiedAt: timestamp("email_verified_at"),
   twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
+  // TOTP authenticator app support
+  totpSecret: text("totp_secret"),
+  totpEnabled: boolean("totp_enabled").notNull().default(false),
+  twoFactorMethod: text("two_factor_method", { enum: ["email", "totp"] }).notNull().default("email"),
   emailNotifications: boolean("email_notifications").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

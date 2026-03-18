@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { Button } from "@/components/ui/Button";
 import { getSiteConfig } from "@/lib/settings";
 
 const VALUES = [
@@ -44,7 +46,7 @@ const VALUES = [
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Learn about LaserHacks — IVC's beginner-friendly annual hackathon.",
+  description: "Learn about MyHacks — a beginner-friendly hackathon for everyone.",
 };
 
 function PinIcon() {
@@ -53,6 +55,18 @@ function PinIcon() {
       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
     </svg>
   );
+}
+
+function InstagramIcon() {
+  return <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden><rect x="3.5" y="3.5" width="17" height="17" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>;
+}
+
+function TwitterIcon() {
+  return <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M18.901 3H21l-4.583 5.238L21.807 21h-4.222l-3.307-4.815L10.066 21H7.965l4.902-5.602L7.193 3h4.329l2.99 4.359L18.901 3Zm-.74 16.708h1.167L10.89 4.214H9.64l8.52 15.494Z" /></svg>;
+}
+
+function LinkedInIcon() {
+  return <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M6.94 8.5A1.56 1.56 0 1 0 6.94 5.38a1.56 1.56 0 0 0 0 3.12ZM5.6 9.75h2.68V18H5.6V9.75Zm4.35 0h2.57v1.13h.04c.36-.68 1.23-1.4 2.53-1.4 2.7 0 3.2 1.77 3.2 4.07V18H15.6v-3.97c0-.95-.02-2.17-1.32-2.17-1.32 0-1.52 1.03-1.52 2.1V18H9.95V9.75Z" /></svg>;
 }
 
 export default async function AboutPage() {
@@ -64,13 +78,18 @@ export default async function AboutPage() {
       <main className="pt-20">
         {/* Page header */}
         <div className="bg-navy-900 py-16 sm:py-20 relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(37,99,235,0.2) 0%, transparent 70%)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(22,98,172,0.38) 0%, transparent 70%)" }} />
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <p className="text-laser-400 font-semibold text-sm uppercase tracking-widest mb-3">About</p>
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">What is LaserHacks?</h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto text-balance">
+            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">What is MyHacks?</h1>
+            <p className="text-white/70 text-lg max-w-2xl mx-auto text-balance">
               A hackathon built for every student — regardless of experience, background, or major.
             </p>
+            <div className="mt-8 flex items-center justify-center">
+              <Button asChild size="lg" variant="primary" className="about-register-cta">
+                <Link href="/register">Register</Link>
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -78,14 +97,14 @@ export default async function AboutPage() {
           {/* Mission */}
           <section>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Our Mission</h2>
-            <p className="text-white/60 leading-relaxed mb-4">
-              LaserHacks was founded to make the hackathon experience accessible to every student at
-              Irvine Valley College. We believe the best ideas come from diverse teams, and that
+            <p className="text-white/70 leading-relaxed mb-4">
+              MyHacks was founded to make the hackathon experience accessible to every student.
+              We believe the best ideas come from diverse teams, and that
               coding experience should never be a barrier to entry.
             </p>
-            <p className="text-white/60 leading-relaxed">
+            <p className="text-white/70 leading-relaxed">
               Whether you&apos;re a computer science student or a visual arts major, whether you&apos;ve written
-              thousands of lines of code or none at all — LaserHacks is for you.
+              thousands of lines of code or none at all — MyHacks is for you.
             </p>
           </section>
 
@@ -104,7 +123,7 @@ export default async function AboutPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-white mb-1">{v.title}</h3>
-                    <p className="text-white/50 text-sm">{v.desc}</p>
+                    <p className="text-white/65 text-sm">{v.desc}</p>
                   </div>
                 </div>
               ))}
@@ -114,9 +133,9 @@ export default async function AboutPage() {
           {/* Who can participate */}
           <section>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Who Can Participate?</h2>
-            <ul className="space-y-3 text-white/60">
+            <ul className="space-y-3 text-white/70">
               {[
-                "Current Irvine Valley College students (any major)",
+                "Current students (any major)",
                 "Community college students from partner institutions",
                 "Students who have never coded before are especially welcome",
                 "Teams of 1–4 people (solo participation allowed)",
@@ -136,32 +155,74 @@ export default async function AboutPage() {
             style={{ background: "rgba(21,88,160,0.15)", border: "1px solid rgba(75,159,229,0.2)" }}
           >
             <h2 className="text-2xl font-bold text-white mb-3">You don&apos;t need to know how to code.</h2>
-            <p className="text-white/60 leading-relaxed mb-4">
-              Seriously. LaserHacks is designed for beginners first. We run workshops at the start of
+            <p className="text-white/70 leading-relaxed mb-4">
+              Seriously. MyHacks is designed for beginners first. We run workshops at the start of
               the event, pair teams with mentors, and encourage projects at any technical level. A
               beautifully designed poster, a thoughtful wireframe, a simple website — all valid submissions.
             </p>
-            <p className="text-white/60 leading-relaxed">
-              Many of our past participants had never built anything before LaserHacks. Many went on
+            <p className="text-white/70 leading-relaxed">
+              Many of our past participants had never built anything before MyHacks. Many went on
               to study computer science, land internships, and build startups. It starts here.
             </p>
           </section>
 
           {/* Hosted by */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-3">Hosted by IVC</h2>
-            <p className="text-white/60 leading-relaxed">
-              LaserHacks is organized by the Associated Students of Irvine Valley College (ASIVC)
-              and volunteer student organizers. We partner with the IVC Computer Science department,
-              local tech companies, and alumni to make the event possible.
+            <h2 className="text-2xl font-bold text-white mb-3">Who We Are</h2>
+            <p className="text-white/70 leading-relaxed">
+              MyHacks is organized by a team of passionate student volunteers.
+              We partner with local tech companies, mentors, and alumni to make the event possible.
             </p>
             {config.contact_email && (
-              <p className="mt-3 text-white/60">
+              <p className="mt-3 text-white/70">
                 Questions? Email us at{" "}
                 <a href={`mailto:${config.contact_email}`} className="text-laser-400 underline hover:text-laser-300">
                   {config.contact_email}
                 </a>
               </p>
+            )}
+            {(config.instagram_url || config.twitter_url || config.linkedin_url) && (
+              <div className="mt-6">
+                <p className="text-xs text-white/55 mb-2.5">Follow Us</p>
+                <div className="flex flex-wrap gap-2">
+                  {config.instagram_url && (
+                    <a
+                      href={config.instagram_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      title="Instagram"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-laser-400/20 bg-laser-400/10 text-laser-300 transition-colors hover:border-laser-400/40 hover:bg-laser-400/20 hover:text-laser-200"
+                    >
+                      <InstagramIcon />
+                    </a>
+                  )}
+                  {config.twitter_url && (
+                    <a
+                      href={config.twitter_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Twitter / X"
+                      title="Twitter / X"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-laser-400/20 bg-laser-400/10 text-laser-300 transition-colors hover:border-laser-400/40 hover:bg-laser-400/20 hover:text-laser-200"
+                    >
+                      <TwitterIcon />
+                    </a>
+                  )}
+                  {config.linkedin_url && (
+                    <a
+                      href={config.linkedin_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn"
+                      title="LinkedIn"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-laser-400/20 bg-laser-400/10 text-laser-300 transition-colors hover:border-laser-400/40 hover:bg-laser-400/20 hover:text-laser-200"
+                    >
+                      <LinkedInIcon />
+                    </a>
+                  )}
+                </div>
+              </div>
             )}
           </section>
 
@@ -176,7 +237,7 @@ export default async function AboutPage() {
               <section>
                 <h2 className="text-2xl font-bold text-white mb-2">Location</h2>
                 {config.venue_name && <p className="text-white/70 font-medium">{config.venue_name}</p>}
-                {config.venue_address && <p className="text-white/40 text-sm mb-5">{config.venue_address}</p>}
+                {config.venue_address && <p className="text-white/55 text-sm mb-5">{config.venue_address}</p>}
 
                 <div
                   className="rounded-2xl overflow-hidden mb-4"

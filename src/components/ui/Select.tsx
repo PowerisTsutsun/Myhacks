@@ -16,9 +16,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={fieldId} className={cn("text-sm font-medium", dark ? "text-white/70" : "text-slate-700")}>
+          <label htmlFor={fieldId} className={cn("text-sm font-medium", dark ? "text-semantic-text-secondary" : "text-semantic-text-secondary")}>
             {label}
-            {props.required && <span className="ml-1 text-red-500">*</span>}
+            {props.required && <span className="ml-1 text-semantic-danger">*</span>}
           </label>
         )}
         <select
@@ -27,9 +27,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           className={cn(
             "field-ring w-full appearance-none cursor-pointer",
             dark
-              ? "bg-navy-800/80 border border-white/10 text-white focus:ring-laser-400 [&>option]:bg-navy-900 [&>option]:text-white"
-              : "bg-white text-slate-900 placeholder:text-slate-400",
-            error && "border-red-400 focus:ring-red-400",
+              ? "bg-navy-800/85 border-semantic-border text-semantic-text-primary focus:ring-laser-400 [&>option]:bg-navy-900 [&>option]:text-semantic-text-primary"
+              : "border-semantic-border bg-semantic-background-secondary/75 text-semantic-text-primary",
+            error && "border-semantic-danger/70 focus:ring-semantic-danger",
             className
           )}
           aria-invalid={!!error}
@@ -47,7 +47,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ))}
         </select>
         {error && (
-          <p className="text-xs text-red-600" role="alert">{error}</p>
+          <p className="text-xs text-semantic-danger" role="alert">{error}</p>
         )}
       </div>
     );

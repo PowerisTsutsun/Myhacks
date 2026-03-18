@@ -65,10 +65,10 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <Image src="/logo.png" alt="LaserHacks" width={48} height={48} className="object-contain" />
+          <Link href="/" className="flex items-center gap-0.5 group">
+            <Image src="/logo.png" alt="MyHacks" width={48} height={48} className="object-contain" />
             <span className="font-bold text-lg text-white">
-              Laser<span className="text-laser-400">Hacks</span>
+              My<span className="text-laser-400">Hacks</span>
             </span>
           </Link>
 
@@ -115,7 +115,7 @@ export function Navbar() {
                 </button>
               </>
             ) : (
-              <Button asChild size="sm" variant="primary">
+              <Button asChild size="md" variant="primary" className="px-5 py-2.5 text-base">
                 <Link href="/login">Log in</Link>
               </Button>
             )}

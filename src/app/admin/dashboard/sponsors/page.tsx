@@ -7,8 +7,8 @@ export default async function AdminSponsorsPage() {
   const rows = await db.select().from(sponsors).orderBy(asc(sponsors.sortOrder));
   return (
     <div>
-      <h1 className="text-2xl font-bold text-navy-900 mb-1">Sponsors</h1>
-      <p className="text-slate-500 text-sm mb-6">Manage sponsor listings and tiers.</p>
+      <h1 className="text-2xl font-bold text-white mb-1">Sponsors</h1>
+      <p className="mb-6 text-sm text-semantic-text-muted">Manage sponsor listings and tiers.</p>
       <SponsorsManager initialData={rows} />
     </div>
   );

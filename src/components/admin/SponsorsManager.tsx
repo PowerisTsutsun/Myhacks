@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { sponsorSchema, type SponsorFormData } from "@/lib/validations";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import Image from "next/image";
 
 type Row = {
   id: number;
@@ -20,9 +21,9 @@ type Row = {
   isPublished: boolean;
 };
 
-const TIER_BADGE: Record<string, "laser" | "gold" | "default" | "gray"> = {
-  platinum: "laser",
-  gold: "gold",
+const TIER_BADGE: Record<string, "green" | "default" | "gray"> = {
+  platinum: "green",
+  gold: "green",
   silver: "default",
   bronze: "default",
   community: "gray",
@@ -34,16 +35,22 @@ export function SponsorsManager({ initialData }: { initialData: Row[] }) {
   const [showForm, setShowForm] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function flash(msg: string) { setSuccess(msg); setTimeout(() => setSuccess(null), 3000); }
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<SponsorFormData>({
+  const { register, handleSubmit, reset, setValue, watch, formState: { errors, isSubmitting } } = useForm<SponsorFormData>({
     resolver: zodResolver(sponsorSchema),
     defaultValues: { tier: "community", isPublished: true, sortOrder: rows.length },
   });
 
+  const watchedLogoUrl = watch("logoUrl");
+
   function openNew() {
     setEditing(null);
+    setLogoPreview(null);
     reset({ tier: "community", isPublished: true, sortOrder: rows.length });
     setShowForm(true);
   }
@@ -52,14 +59,37 @@ export function SponsorsManager({ initialData }: { initialData: Row[] }) {
     if (!showForm) return;
     if (editing) {
       reset({ name: editing.name, tier: editing.tier as SponsorFormData["tier"], logoUrl: editing.logoUrl || "", websiteUrl: editing.websiteUrl || "", description: editing.description || "", sortOrder: editing.sortOrder, isPublished: editing.isPublished });
+      setLogoPreview(editing.logoUrl || null);
     } else {
       reset({ tier: "community", isPublished: true, sortOrder: rows.length });
+      setLogoPreview(null);
     }
   }, [showForm, editing]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function openEdit(row: Row) {
     setEditing(row);
     setShowForm(true);
+  }
+
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+      const json = await res.json();
+      if (!res.ok) { setError(json.error || "Upload failed."); return; }
+      setValue("logoUrl", json.url, { shouldValidate: true });
+      setLogoPreview(json.url);
+    } catch {
+      setError("Upload failed.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   }
 
   async function onSubmit(data: SponsorFormData) {
@@ -85,31 +115,39 @@ export function SponsorsManager({ initialData }: { initialData: Row[] }) {
 
   return (
     <div>
-      {success && <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm">✓ {success}</div>}
-      {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>}
+      {success && (
+        <div className="mb-4 rounded-xl border px-3 py-3 text-sm text-emerald-100" style={{ background: "rgba(52,211,153,0.16)", borderColor: "rgba(52,211,153,0.38)" }}>
+          ✓ {success}
+        </div>
+      )}
+      {error && (
+        <div className="mb-4 rounded-xl border px-3 py-3 text-sm text-red-100" style={{ background: "rgba(251,113,133,0.14)", borderColor: "rgba(251,113,133,0.35)" }}>
+          {error}
+        </div>
+      )}
 
       {!showForm ? (
         <>
           <div className="flex justify-between items-center mb-4">
-            <p className="text-sm text-slate-500">{rows.length} sponsor{rows.length !== 1 ? "s" : ""}</p>
+            <p className="text-sm text-semantic-text-muted">{rows.length} sponsor{rows.length !== 1 ? "s" : ""}</p>
             <Button onClick={openNew}>+ Add Sponsor</Button>
           </div>
           {rows.length === 0 ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
-              <p className="text-slate-400 mb-3">No sponsors added yet.</p>
+            <div className="admin-surface rounded-2xl border p-10 text-center" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
+              <p className="mb-3 text-semantic-text-muted">No sponsors added yet.</p>
               <Button onClick={openNew} variant="outline">Add first sponsor</Button>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
+            <div className="admin-surface divide-y rounded-2xl border" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
               {rows.map((row) => (
                 <div key={row.id} className="flex items-center justify-between gap-4 p-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium text-navy-900 text-sm">{row.name}</span>
+                      <span className="font-medium text-white text-sm">{row.name}</span>
                       <Badge variant={TIER_BADGE[row.tier] || "default"} className="capitalize">{row.tier}</Badge>
                       {!row.isPublished && <Badge variant="gray">Hidden</Badge>}
                     </div>
-                    {row.websiteUrl && <p className="text-xs text-slate-400 mt-0.5 truncate">{row.websiteUrl}</p>}
+                    {row.websiteUrl && <p className="mt-0.5 truncate text-xs text-semantic-text-muted">{row.websiteUrl}</p>}
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <Button size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Button>
@@ -121,14 +159,15 @@ export function SponsorsManager({ initialData }: { initialData: Row[] }) {
           )}
         </>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 max-w-xl">
+        <div className="admin-surface max-w-xl rounded-2xl border p-5" style={{ borderColor: "rgba(52,211,153,0.18)" }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-navy-900">{editing ? "Edit Sponsor" : "Add Sponsor"}</h2>
+            <h2 className="font-semibold text-white">{editing ? "Edit Sponsor" : "Add Sponsor"}</h2>
             <Button size="sm" variant="ghost" onClick={() => setShowForm(false)}>Cancel</Button>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input label="Sponsor Name" required error={errors.name?.message} {...register("name")} />
+            <Input dark label="Sponsor Name" required error={errors.name?.message} {...register("name")} />
             <Select
+              dark
               label="Tier"
               required
               options={[
@@ -141,12 +180,48 @@ export function SponsorsManager({ initialData }: { initialData: Row[] }) {
               error={errors.tier?.message}
               {...register("tier")}
             />
-            <Input label="Logo URL" type="url" placeholder="https://..." error={errors.logoUrl?.message} {...register("logoUrl")} />
-            <Input label="Website URL" type="url" placeholder="https://..." error={errors.websiteUrl?.message} {...register("websiteUrl")} />
-            <Input label="Description (optional)" error={errors.description?.message} {...register("description")} />
-            <Input label="Sort Order" type="number" error={errors.sortOrder?.message} {...register("sortOrder", { valueAsNumber: true })} />
-            <label className="flex items-center gap-2 cursor-pointer text-sm">
-              <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-laser-500" {...register("isPublished")} />
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-semantic-text-secondary">Logo (transparent PNG)</p>
+              <div className="flex items-center gap-3">
+                <label
+                  className="flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm text-semantic-text-secondary transition-colors hover:text-white"
+                  style={{ borderColor: "rgba(52,211,153,0.3)", background: "rgba(52,211,153,0.06)" }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".png,image/png"
+                    className="sr-only"
+                    onChange={handleLogoUpload}
+                    disabled={uploading}
+                  />
+                  {uploading ? "Uploading…" : "Upload PNG"}
+                </label>
+                {(logoPreview || watchedLogoUrl) && (
+                  <div
+                    className="flex h-10 w-24 items-center justify-center rounded-lg border"
+                    style={{ borderColor: "rgba(52,211,153,0.2)", background: "repeating-conic-gradient(#2a2a2a 0% 25%, #1a1a1a 0% 50%) 0 0 / 10px 10px" }}
+                  >
+                    <Image
+                      src={logoPreview || watchedLogoUrl || ""}
+                      alt="Logo preview"
+                      width={88}
+                      height={36}
+                      className="max-h-9 max-w-[88px] object-contain"
+                      unoptimized
+                    />
+                  </div>
+                )}
+              </div>
+              <Input dark label="Or paste Logo URL" type="url" placeholder="https://..." error={errors.logoUrl?.message} {...register("logoUrl", {
+                onChange: (e) => setLogoPreview(e.target.value || null),
+              })} />
+            </div>
+            <Input dark label="Website URL" type="url" placeholder="https://..." error={errors.websiteUrl?.message} {...register("websiteUrl")} />
+            <Input dark label="Description (optional)" error={errors.description?.message} {...register("description")} />
+            <Input dark label="Sort Order" type="number" error={errors.sortOrder?.message} {...register("sortOrder", { valueAsNumber: true })} />
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-semantic-text-secondary">
+              <input type="checkbox" className="h-4 w-4 rounded border-emerald-400/30 bg-transparent text-emerald-500" {...register("isPublished")} />
               Published
             </label>
             <div className="flex gap-2">
