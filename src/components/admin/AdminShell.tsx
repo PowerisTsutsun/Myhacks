@@ -53,7 +53,7 @@ export function AdminShell({ children, user }: AdminShellProps) {
           style={{ borderBottom: "1px solid rgba(52,211,153,0.14)" }}
         >
           <Link href="/admin/dashboard" className="font-bold text-lg text-white">
-            Laser<span className="text-emerald-400">Hacks</span>
+            My<span className="text-emerald-400">Hacks</span>
           </Link>
           <p className="mt-0.5 text-xs font-medium uppercase tracking-widest text-semantic-text-muted">
             Admin Panel
