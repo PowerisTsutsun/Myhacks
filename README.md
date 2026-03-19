@@ -1,4 +1,4 @@
-# MyHacks (laserhacks.org)
+# MyHacks
 
 Official website for Irvine Valley College's beginner-friendly annual hackathon.
 
