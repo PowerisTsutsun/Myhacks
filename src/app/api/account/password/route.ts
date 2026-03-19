@@ -28,6 +28,13 @@ export async function POST(request: NextRequest) {
   const [user] = await db.select().from(users).where(eq(users.id, Number(session.sub))).limit(1);
   if (!user) return NextResponse.json({ error: "User not found." }, { status: 404 });
 
+  if (!user.passwordHash) {
+    return NextResponse.json(
+      { error: "This account uses social login and has no password to change. Set a new password from the forgot password page." },
+      { status: 400 }
+    );
+  }
+
   const valid = await bcrypt.compare(currentPassword, user.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Current password is incorrect." }, { status: 400 });

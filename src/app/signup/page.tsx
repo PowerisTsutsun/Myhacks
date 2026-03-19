@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getSiteConfig } from "@/lib/settings";
 import { SignupForm } from "@/components/forms/SignupForm";
+import { OAuthButtons } from "@/components/auth/OAuthButtons";
 
 export const metadata: Metadata = {
   title: "Create Account",
@@ -37,6 +38,19 @@ export default async function SignupPage({
                 Get started
               </p>
               <h1 className="text-3xl font-bold text-white">Create Account</h1>
+            </div>
+
+            <OAuthButtons redirectTo={redirectTo} />
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-white/10" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="px-3 text-white/30" style={{ background: "rgba(13,27,42,0.85)" }}>
+                  or create account with email
+                </span>
+              </div>
             </div>
 
             <SignupForm redirectTo={redirectTo} />

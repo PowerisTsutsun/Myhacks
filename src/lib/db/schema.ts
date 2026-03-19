@@ -12,7 +12,7 @@ import { relations } from "drizzle-orm";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: text("email").notNull().unique(),
-  passwordHash: text("password_hash").notNull(),
+  passwordHash: text("password_hash"),
   name: text("name").notNull(),
   role: text("role", { enum: ["admin", "editor"] }).notNull().default("editor"),
   emailVerifiedAt: timestamp("email_verified_at"),
@@ -68,6 +68,28 @@ export const passwordResetTokens = pgTable("password_reset_tokens", {
   usedAt: timestamp("used_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+// ---------------------------------------------------------------------------
+// OAuth linked accounts (Google, Microsoft, etc.)
+// ---------------------------------------------------------------------------
+export const oauthAccounts = pgTable(
+  "oauth_accounts",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    provider: text("provider", { enum: ["google", "microsoft"] }).notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniqueProviderAccount: unique("unique_provider_account").on(
+      t.provider,
+      t.providerAccountId
+    ),
+  })
+);
 
 export const siteSettings = pgTable("site_settings", {
   id: serial("id").primaryKey(),
@@ -304,6 +326,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   emailVerificationTokens: many(emailVerificationTokens),
   twoFactorCodes: many(twoFactorCodes),
   passwordResetTokens: many(passwordResetTokens),
+  oauthAccounts: many(oauthAccounts),
 }));
 
 export const emailVerificationTokensRelations = relations(emailVerificationTokens, ({ one }) => ({
@@ -316,4 +339,8 @@ export const twoFactorCodesRelations = relations(twoFactorCodes, ({ one }) => ({
 
 export const passwordResetTokensRelations = relations(passwordResetTokens, ({ one }) => ({
   user: one(users, { fields: [passwordResetTokens.userId], references: [users.id] }),
+}));
+
+export const oauthAccountsRelations = relations(oauthAccounts, ({ one }) => ({
+  user: one(users, { fields: [oauthAccounts.userId], references: [users.id] }),
 }));

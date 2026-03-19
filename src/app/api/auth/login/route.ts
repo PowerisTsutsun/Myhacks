@@ -68,6 +68,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
 
+  // OAuth-only user trying email/password login
+  if (!user.passwordHash) {
+    return NextResponse.json(
+      { error: "This account uses Google or Microsoft sign-in. Please use the social login buttons." },
+      { status: 401 }
+    );
+  }
+
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });

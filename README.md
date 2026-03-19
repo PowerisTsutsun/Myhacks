@@ -8,7 +8,7 @@ Official website for Irvine Valley College's beginner-friendly annual hackathon.
 - Tailwind CSS
 - Framer Motion
 - Neon Postgres + Drizzle ORM
-- JWT auth (`jose`) + `bcryptjs`
+- JWT auth (`jose`) + `bcryptjs` + OAuth (Google, Microsoft)
 - Zod + React Hook Form
 - Resend (email)
 
@@ -37,6 +37,10 @@ cp .env.example .env.local
 - `RESEND_API_KEY`
 - `RESEND_FROM_EMAIL`
 - `CONTACT_EMAIL`
+- `GOOGLE_CLIENT_ID` (optional — enables Google login)
+- `GOOGLE_CLIENT_SECRET`
+- `MICROSOFT_CLIENT_ID` (optional — enables Microsoft login)
+- `MICROSOFT_CLIENT_SECRET`
 
 4. Push schema
 
@@ -84,7 +88,7 @@ src/
   app/             # pages + route handlers
   components/      # UI, forms, admin, layout sections
   lib/
-    auth/          # auth/session/guard utilities
+    auth/          # auth/session/guard/oauth utilities
     db/            # schema + db client
     api.ts         # shared API helpers (id parsing + 400 responses)
 scripts/           # seed/admin utility scripts
@@ -112,6 +116,22 @@ Recent cleanup standardized:
 - Shared system-admin constant via `src/lib/auth/constants.ts`
 
 This reduced repeated parsing and hard-coded values across admin/account routes.
+
+## OAuth Setup
+
+### Google
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com) → Credentials → Create OAuth 2.0 Client ID
+2. Add authorized redirect URI: `{APP_URL}/api/auth/oauth/google/callback`
+3. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env.local`
+
+### Microsoft
+
+1. Go to [Azure Portal](https://portal.azure.com) → App registrations → New registration
+2. Supported account types: "Accounts in any organizational directory and personal Microsoft accounts"
+3. Add redirect URI (Web): `{APP_URL}/api/auth/oauth/microsoft/callback`
+4. Under API permissions, add `User.Read`
+5. Set `MICROSOFT_CLIENT_ID` and `MICROSOFT_CLIENT_SECRET` in `.env.local`
 
 ## Deployment
 
