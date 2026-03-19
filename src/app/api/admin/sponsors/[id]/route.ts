@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/guard";
+import { badRequest, parsePositiveInt } from "@/lib/api";
 import { db } from "@/lib/db";
 import { sponsors } from "@/lib/db/schema";
 import { sponsorSchema } from "@/lib/validations";
@@ -9,8 +10,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   const guard = await requireAdmin(request);
   if (guard.response) return guard.response;
 
-  const id = parseInt(params.id);
-  if (isNaN(id)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  const id = parsePositiveInt(params.id);
+  if (id === null) return badRequest("Invalid ID");
 
   let body: unknown;
   try {
@@ -56,8 +57,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   const guard = await requireAdmin(request);
   if (guard.response) return guard.response;
 
-  const id = parseInt(params.id);
-  if (isNaN(id)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  const id = parsePositiveInt(params.id);
+  if (id === null) return badRequest("Invalid ID");
 
   try {
     await db.delete(sponsors).where(eq(sponsors.id, id));

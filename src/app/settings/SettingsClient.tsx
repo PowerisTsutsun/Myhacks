@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { SYSTEM_ADMIN_EMAIL } from "@/lib/auth/constants";
 
 interface UserData {
   id: number;
@@ -17,7 +18,7 @@ interface UserData {
 }
 
 export function SettingsClient({ user, allowEmailTwoFactor = true }: { user: UserData; allowEmailTwoFactor?: boolean }) {
-  const canDeleteAccount = user.email.toLowerCase() !== "admin@example.com";
+  const canDeleteAccount = user.email.toLowerCase() !== SYSTEM_ADMIN_EMAIL;
 
   return (
     <div className="space-y-6">

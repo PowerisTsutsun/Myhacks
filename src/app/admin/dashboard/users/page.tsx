@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SYSTEM_ADMIN_EMAIL } from "@/lib/auth/constants";
 
 interface User {
   id: number;
@@ -10,8 +11,6 @@ interface User {
   twoFactorEnabled: boolean;
   createdAt: string;
 }
-
-const SYSTEM_ADMIN_EMAIL = "admin@example.com";
 
 function getRoleLabel(role: "admin" | "editor") {
   return role === "editor" ? "user" : "admin";

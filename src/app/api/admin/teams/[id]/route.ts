@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/guard";
+import { badRequest, parsePositiveInt } from "@/lib/api";
 import { db } from "@/lib/db";
 import { teams, teamMembers } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -13,8 +14,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
   if (guard.response) return guard.response;
 
   const { id } = await params;
-  const teamId = parseInt(id, 10);
-  if (isNaN(teamId)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  const teamId = parsePositiveInt(id);
+  if (teamId === null) return badRequest("Invalid ID");
 
   let body: unknown;
   try {
@@ -53,8 +54,8 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   if (guard.response) return guard.response;
 
   const { id } = await params;
-  const teamId = parseInt(id, 10);
-  if (isNaN(teamId)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  const teamId = parsePositiveInt(id);
+  if (teamId === null) return badRequest("Invalid ID");
 
   try {
     await db.delete(teams).where(eq(teams.id, teamId));
@@ -70,8 +71,8 @@ export async function POST(request: NextRequest, { params }: Params) {
   if (guard.response) return guard.response;
 
   const { id } = await params;
-  const teamId = parseInt(id, 10);
-  if (isNaN(teamId)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  const teamId = parsePositiveInt(id);
+  if (teamId === null) return badRequest("Invalid ID");
 
   let body: unknown;
   try {

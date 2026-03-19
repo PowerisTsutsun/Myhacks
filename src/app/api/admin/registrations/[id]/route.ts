@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/guard";
+import { badRequest, parsePositiveInt } from "@/lib/api";
 import { db } from "@/lib/db";
 import { registrations } from "@/lib/db/schema";
 
@@ -12,10 +13,8 @@ export async function DELETE(
   const guard = await requireAdmin(request);
   if (guard.response) return guard.response;
 
-  const id = Number(params.id);
-  if (Number.isNaN(id)) {
-    return NextResponse.json({ error: "Invalid registration ID." }, { status: 400 });
-  }
+  const id = parsePositiveInt(params.id);
+  if (id === null) return badRequest("Invalid registration ID.");
 
   try {
     const [deleted] = await db

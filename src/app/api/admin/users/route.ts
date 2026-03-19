@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/guard";
+import { SYSTEM_ADMIN_EMAIL } from "@/lib/auth/constants";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
-
-const SYSTEM_ADMIN_EMAIL = "admin@example.com";
 
 export async function GET() {
   const guard = await requireAdmin();

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { badRequest, parsePositiveInt } from "@/lib/api";
 import { db } from "@/lib/db";
 import { contactSubmissions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -8,8 +9,8 @@ export async function POST(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const id = Number(params.id);
-  if (isNaN(id)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+  const id = parsePositiveInt(params.id);
+  if (id === null) return badRequest("Invalid id");
 
   await db
     .update(contactSubmissions)
